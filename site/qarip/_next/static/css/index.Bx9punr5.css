@@ -17,3 +17,13 @@
 .swatch i{width:9px;height:9px;border-radius:50%;border:1px solid #ffffff55;display:block;background:#fff}
 @media (max-width:900px){.reels-pick{grid-template-columns:none}.phone-preview{margin-top:0}}
 @media (max-width:560px){.reels-options{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+.reels-copy-edit{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.reels-copy-edit input{width:100%;min-width:0;border:1px solid #454540;border-radius:10px;background:#111;color:#fff;padding:8px 9px;font-size:12px;font-weight:700;outline:0}
+.reels-copy-edit input:focus{border-color:var(--acid)}
+.reels-copy-edit input::placeholder{color:#6f6f68}
+.reels-size{display:flex;align-items:center;gap:8px}
+.reels-size .reels-label{margin:0}
+.reels-size input[type=range]{flex:1;min-width:0;accent-color:var(--acid)}
+.reels-size strong{font-size:11px;font-weight:800;min-width:2.8em;text-align:right;color:#fff}
+.subtitle-stack .sub-hook{font-size:inherit;text-transform:inherit}
