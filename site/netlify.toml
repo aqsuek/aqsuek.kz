@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/qarip"
+  to = "/qarip/"
+  status = 301

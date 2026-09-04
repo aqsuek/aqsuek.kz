@@ -1,0 +1,3 @@
+DirectoryIndex index.html
+RewriteEngine On
+RewriteRule ^qarip$ /qarip/ [R=301,L]
