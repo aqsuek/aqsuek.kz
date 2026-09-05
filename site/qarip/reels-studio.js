@@ -9,8 +9,14 @@
     .reels-copy h2{letter-spacing:-.055em;line-height:.88}
     .reels-copy h2:after{content:"Жұпты таңдаңыз · мәтінді жазыңыз · PNG сақтаңыз";display:block;margin-top:24px;color:#9b9b94;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
     .phone-preview{position:relative;box-shadow:0 28px 60px #0009,0 0 0 1px #ffffff18}
+    .phone-preview:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,#080b1608 26%,#0c0d12aa 76%,#090a0fdd 100%);pointer-events:none}
     .phone-preview:after{content:"LIVE PREVIEW";position:absolute;z-index:5;top:13px;left:16px;color:#fff9;font:700 8px/1 Arial,sans-serif;letter-spacing:.18em}
     .reel-ui{padding-left:94px}
+    .subtitle-stack{z-index:4!important;top:auto!important;bottom:84px!important;left:24px!important;right:24px!important;transform:none!important;text-align:left!important;text-shadow:0 4px 18px #000!important}
+    .subtitle-stack .sub-hook{max-width:100%;margin:0!important;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important}
+    .subtitle-stack .sub-mark{display:inline-block;margin-top:12px!important;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:rotate(-1.2deg)}
+    .font-chip{display:none!important}
+    .reel-progress{z-index:5!important;bottom:20px!important;left:24px!important;right:24px!important}
     .reels-controls{position:relative;z-index:1;width:min(520px,100%);padding:22px;border:1px solid #ffffff18;border-radius:22px;background:#20201d;box-shadow:0 20px 45px #0004}
     .reels-label{display:flex;align-items:center;gap:10px;margin:0!important;color:#d9ff47!important;font:800 10px/1 Arial,sans-serif!important;letter-spacing:.16em}
     .reels-label:after{content:"";height:1px;flex:1;background:#ffffff20}
