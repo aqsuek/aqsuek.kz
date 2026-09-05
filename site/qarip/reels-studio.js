@@ -7,12 +7,13 @@
     .reels-pick:before{content:"";position:absolute;inset:20px;border:1px solid #ffffff12;pointer-events:none}
     .reels-copy{position:relative;z-index:1;text-align:center}
     .reels-copy h2{letter-spacing:-.055em;line-height:.88}
-    .reels-copy h2:after{content:"Жұпты таңдаңыз · мәтінді жазыңыз · PNG сақтаңыз";display:block;margin-top:24px;color:#9b9b94;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+    .reels-copy h2:after{display:none}
     .phone-preview{position:relative;box-shadow:0 28px 60px #0009,0 0 0 1px #ffffff18}
-    .phone-preview:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,#080b1608 26%,#0c0d12aa 76%,#090a0fdd 100%);pointer-events:none}
-    .phone-preview:after{content:"LIVE PREVIEW";position:absolute;z-index:5;top:13px;left:16px;color:#fff9;font:700 8px/1 Arial,sans-serif;letter-spacing:.18em}
-    .reel-ui{padding-left:94px}
-    .subtitle-stack{z-index:4!important;top:auto!important;bottom:84px!important;left:24px!important;right:24px!important;transform:none!important;text-align:left!important;text-shadow:0 4px 18px #000!important}
+    .phone-preview:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,#080b1608 26%,#0c0d1266 76%,#090a0f99 100%);pointer-events:none}
+    .phone-preview:after{display:none}
+    .reel-ui{padding-left:0}
+    .subtitle-stack{z-index:4!important;top:50%!important;bottom:auto!important;left:50%!important;right:auto!important;width:calc(100% - 48px);transform:translate(calc(-50% + var(--drag-x,0px)),calc(-50% + var(--drag-y,0px)))!important;text-align:center!important;text-shadow:0 4px 18px #000!important;cursor:grab;touch-action:none;user-select:none}
+    .subtitle-stack:active{cursor:grabbing}
     .subtitle-stack .sub-hook{max-width:100%;margin:0!important;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important}
     .subtitle-stack .sub-mark{display:inline-block;margin-top:12px!important;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:rotate(-1.2deg)}
     .font-chip{display:none!important}
@@ -55,4 +56,41 @@
   const style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
+
+  function enableTextDrag() {
+    const preview = document.querySelector(".phone-preview");
+    const stack = preview?.querySelector(".subtitle-stack");
+    if (!preview || !stack || stack.dataset.dragReady) return;
+    stack.dataset.dragReady = "1";
+    let position = { x: 0, y: 0 };
+    try {
+      position = { ...position, ...JSON.parse(localStorage.getItem("qarip-reels-text-position") || "{}") };
+    } catch {}
+    const paint = () => {
+      stack.style.setProperty("--drag-x", `${position.x}px`);
+      stack.style.setProperty("--drag-y", `${position.y}px`);
+    };
+    paint();
+    stack.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      const start = { pointerX: event.clientX, pointerY: event.clientY, x: position.x, y: position.y };
+      stack.setPointerCapture(event.pointerId);
+      const move = (moveEvent) => {
+        position.x = Math.max(-88, Math.min(88, start.x + moveEvent.clientX - start.pointerX));
+        position.y = Math.max(-150, Math.min(150, start.y + moveEvent.clientY - start.pointerY));
+        paint();
+      };
+      const end = () => {
+        stack.removeEventListener("pointermove", move);
+        stack.removeEventListener("pointerup", end);
+        stack.removeEventListener("pointercancel", end);
+        localStorage.setItem("qarip-reels-text-position", JSON.stringify(position));
+      };
+      stack.addEventListener("pointermove", move);
+      stack.addEventListener("pointerup", end);
+      stack.addEventListener("pointercancel", end);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", enableTextDrag);
+  else enableTextDrag();
 })();
