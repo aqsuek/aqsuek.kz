@@ -9,7 +9,7 @@
 
   const css = `
     .reels-pick{
-      position:relative;overflow:hidden;
+      position:relative;overflow:visible;
       background:radial-gradient(circle at 12% 20%,#253d9b55 0,transparent 28%),radial-gradient(circle at 92% 82%,#d9ff4730 0,transparent 23%),#151513;
     }
     .reels-pick:before{content:"";position:absolute;inset:20px;border:1px solid #ffffff12;pointer-events:none}
@@ -59,9 +59,26 @@
     .reels-controls>.reels-label[data-section="text"]:before{content:"01 · МӘТІНІҢІЗ"}
     .reels-controls>.reels-label[data-section="style"]:before{content:"02 · СУБТИТР СТИЛІ"}
     .reels-controls>.reels-label[data-section="palette"]:before{content:"03 · ТҮС ПАЛИТРАСЫ"}
-    .reels-options{margin-top:12px!important;border:0!important;gap:9px!important}
-    .reels-options:not(.reels-colors){grid-template-columns:repeat(2,minmax(0,1fr))!important}
-    .reels-options:not(.reels-colors) button{min-height:66px;padding:10px 12px!important;border:1px solid #ffffff22!important;border-radius:12px!important;background:#191918!important;text-align:left!important;display:grid!important;grid-template-columns:20px 1fr!important;align-items:center!important}
+    .reels-options{margin-top:12px!important;border:0!important;gap:8px!important}
+    .reels-options:not(.reels-colors){
+      display:grid!important;
+      grid-template-columns:none!important;
+      grid-template-rows:repeat(2,minmax(56px,auto));
+      grid-auto-flow:column;
+      grid-auto-columns:calc(25% - 6px);
+      overflow-x:auto;
+      overflow-y:hidden;
+      scroll-snap-type:x mandatory;
+      scrollbar-width:thin;
+      padding-bottom:6px;
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior-x:contain;
+      touch-action:pan-x;
+      cursor:grab;
+    }
+    .reels-options:not(.reels-colors)::-webkit-scrollbar{height:4px}
+    .reels-options:not(.reels-colors)::-webkit-scrollbar-thumb{background:#ffffff33;border-radius:99px}
+    .reels-options:not(.reels-colors) button{min-height:56px;min-width:0;scroll-snap-align:start;padding:8px 10px!important;border:1px solid #ffffff22!important;border-radius:12px!important;background:#191918!important;text-align:left!important;display:grid!important;grid-template-columns:20px 1fr!important;align-items:center!important}
     .reels-options:not(.reels-colors) button b{font-size:14px!important;line-height:1.15!important}
     .reels-options:not(.reels-colors) button:after{display:block;grid-column:2;color:#85857f;font:700 8px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
     .reels-options:not(.reels-colors) button:nth-child(1):after{content:"ЭДИТОРИАЛ"}
@@ -95,8 +112,16 @@
     .phone-preview.sticker-export .reel-ui,
     .phone-preview.sticker-export .reel-progress,
     .phone-preview.sticker-export .font-chip{display:none!important}
-    @media(max-width:900px){.reels-pick{padding:52px 16px 44px!important}.reels-pick:before{inset:10px}.reels-controls{box-sizing:border-box}.reels-copy h2:after{margin-top:18px}.reels-options:not(.reels-colors) button b{font-size:13px!important}}
-    @media(max-width:390px){.reels-controls{padding:14px}.reels-options:not(.reels-colors) button{padding:8px!important;min-height:60px}.reels-options:not(.reels-colors) button b{font-size:12px!important}.reels-colors button b{font-size:9px!important}}
+    @media(max-width:900px){
+      .reels-pick{padding:24px 16px 36px!important}
+      .reels-pick:before{inset:10px}
+      .reels-controls{box-sizing:border-box}
+      .reels-copy h2:after{margin-top:12px}
+      .phone-preview{position:sticky;top:8px;z-index:12;width:min(158px,42vw)!important;background:#12131a;box-shadow:0 16px 40px #000a}
+      .reels-options:not(.reels-colors){grid-auto-columns:calc(50% - 4px)}
+      .reels-options:not(.reels-colors) button b{font-size:13px!important}
+    }
+    @media(max-width:390px){.reels-controls{padding:14px}.reels-options:not(.reels-colors) button{padding:8px!important;min-height:54px}.reels-options:not(.reels-colors) button b{font-size:12px!important}.reels-colors button b{font-size:9px!important}}
   `;
   const style = document.createElement("style");
   style.textContent = css;
@@ -528,6 +553,53 @@
     }
   }
 
+  function bindStyleCarousel() {
+    const rail = document.querySelector(".reels-options:not(.reels-colors)");
+    if (!rail || rail.dataset.carouselReady === "1") return;
+    rail.dataset.carouselReady = "1";
+    let drag = null;
+    rail.addEventListener("pointerdown", (event) => {
+      drag = { x: event.clientX, left: rail.scrollLeft, moved: false, id: event.pointerId };
+      rail.setPointerCapture(event.pointerId);
+    });
+    rail.addEventListener("pointermove", (event) => {
+      if (!drag || event.pointerId !== drag.id) return;
+      const dx = event.clientX - drag.x;
+      if (Math.abs(dx) > 8) {
+        drag.moved = true;
+        rail.dataset.dragged = "1";
+      }
+      if (drag.moved) rail.scrollLeft = drag.left - dx;
+    });
+    const end = () => {
+      drag = null;
+      setTimeout(() => {
+        rail.dataset.dragged = "0";
+      }, 0);
+    };
+    rail.addEventListener("pointerup", end);
+    rail.addEventListener("pointercancel", end);
+    rail.addEventListener(
+      "click",
+      (event) => {
+        if (rail.dataset.dragged !== "1") return;
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      true
+    );
+  }
+
+  function keepStyleInCarousel() {
+    const rail = document.querySelector(".reels-options:not(.reels-colors)");
+    const selected = rail?.querySelector("button.selected");
+    if (!rail || !selected) return;
+    const railBox = rail.getBoundingClientRect();
+    const btnBox = selected.getBoundingClientRect();
+    if (btnBox.left >= railBox.left && btnBox.right <= railBox.right) return;
+    rail.scrollBy({ left: btnBox.left - railBox.left - 8, behavior: "auto" });
+  }
+
   function ensureStickerButton() {
     const actions = document.querySelector(".reels-actions");
     if (!actions || actions.querySelector(".reels-sticker")) return;
@@ -570,6 +642,8 @@
       applyLayerLook(stack.querySelector(".sub-extra"), "extra");
       ensureStickerButton();
       if (!stack.querySelector("[data-selected='1']")) selectLayer(stack, "hook");
+      bindStyleCarousel();
+      keepStyleInCarousel();
       return;
     }
     preview.dataset.toolsReady = "1";
@@ -655,6 +729,8 @@
 
     if (!stack.querySelector("[data-selected]")) selectLayer(stack, "hook");
     ensureStickerButton();
+    bindStyleCarousel();
+    keepStyleInCarousel();
     if (preview.dataset.observeReady !== "1") {
       preview.dataset.observeReady = "1";
       let timer = 0;
