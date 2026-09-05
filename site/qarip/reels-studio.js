@@ -568,6 +568,40 @@
     return out;
   }
 
+  function cropToVisibleLayers(canvas, preview, stack) {
+    const frame = preview.getBoundingClientRect();
+    if (!frame.width || !frame.height) return cropTransparent(canvas);
+    const nodes = ["hook", "mark", "extra"]
+      .filter(isOn)
+      .map((key) => stack.querySelector(layerSelector(key)))
+      .filter((el) => el && getComputedStyle(el).display !== "none");
+    if (!nodes.length) return cropTransparent(canvas);
+    const scaleX = canvas.width / frame.width;
+    const scaleY = canvas.height / frame.height;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    nodes.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      minX = Math.min(minX, rect.left);
+      minY = Math.min(minY, rect.top);
+      maxX = Math.max(maxX, rect.right);
+      maxY = Math.max(maxY, rect.bottom);
+    });
+    const pad = 28;
+    const x = Math.max(0, Math.floor((minX - frame.left) * scaleX - pad));
+    const y = Math.max(0, Math.floor((minY - frame.top) * scaleY - pad));
+    const w = Math.min(canvas.width - x, Math.ceil((maxX - minX) * scaleX + pad * 2));
+    const h = Math.min(canvas.height - y, Math.ceil((maxY - minY) * scaleY + pad * 2));
+    if (w < 8 || h < 8) return cropTransparent(canvas);
+    const out = document.createElement("canvas");
+    out.width = w;
+    out.height = h;
+    out.getContext("2d").drawImage(canvas, x, y, w, h, 0, 0, w, h);
+    return out;
+  }
+
   async function writePng(blob) {
     try {
       await withTimeout(navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]), 2500, "clipboard");
@@ -582,47 +616,28 @@
   }
 
   async function renderStackSticker(preview, stack) {
-    const frame = preview.getBoundingClientRect();
-    const pad = Math.round(Math.max(frame.width, frame.height) * 0.6);
-    const host = document.createElement("div");
-    host.style.cssText = `position:fixed;left:-12000px;top:0;width:${Math.round(frame.width + pad * 2)}px;height:${Math.round(frame.height + pad * 2)}px;background:transparent;overflow:visible;pointer-events:none`;
-    const clone = stack.cloneNode(true);
-    clone.querySelectorAll(".reels-handle").forEach((node) => node.remove());
-    clone.querySelectorAll("[data-layer-off='1']").forEach((node) => node.remove());
-    clone.querySelectorAll("[data-selected]").forEach((node) => node.removeAttribute("data-selected"));
-    clone.style.position = "absolute";
-    clone.style.left = `${pad}px`;
-    clone.style.top = `${pad}px`;
-    clone.style.width = `${frame.width}px`;
-    clone.style.height = `${frame.height}px`;
-    clone.style.inset = "auto";
-    clone.style.overflow = "visible";
-    clone.style.background = "transparent";
-    clone.style.transform = "none";
-    ["hook", "mark", "extra"].forEach((key) => {
-      ["x", "y", "scale", "rotate"].forEach((prop) => {
-        const name = `--${key}-${prop}`;
-        clone.style.setProperty(name, stack.style.getPropertyValue(name));
-      });
-    });
-    host.appendChild(clone);
-    document.body.appendChild(host);
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    try {
-      const shot = await withTimeout(
-        window.html2canvas(host, {
-          scale: 2,
-          backgroundColor: null,
-          logging: false,
-          useCORS: true,
-        }),
-        15000,
-        "html2canvas"
-      );
-      return cropTransparent(shot);
-    } finally {
-      host.remove();
-    }
+    const shot = await withTimeout(
+      window.html2canvas(preview, {
+        scale: 2,
+        backgroundColor: null,
+        logging: false,
+        useCORS: true,
+        onclone(doc) {
+          const clone = doc.querySelector(".phone-preview");
+          if (!clone) return;
+          clone.style.setProperty("background", "transparent", "important");
+          clone.style.setProperty("border-color", "transparent", "important");
+          clone.style.setProperty("box-shadow", "none", "important");
+          clone.querySelectorAll(".reels-handle, .reel-ui, .reel-orbit, .reel-progress, .font-chip").forEach((node) => node.remove());
+          clone.querySelectorAll("[data-layer-off='1']").forEach((node) => node.remove());
+          clone.querySelectorAll("[data-selected]").forEach((node) => node.removeAttribute("data-selected"));
+        },
+      }),
+      15000,
+      "html2canvas"
+    );
+    return cropToVisibleLayers(shot, preview, stack);
   }
 
   async function copySticker() {
@@ -633,7 +648,7 @@
     const label = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Көшірілуде…";
-    preview.classList.add("exporting");
+    preview.classList.add("exporting", "sticker-export");
     try {
       await loadHtml2Canvas();
       const canvas = await renderStackSticker(preview, stack);
@@ -649,7 +664,7 @@
       console.warn(error);
       toast("Көшіру шықпады. Қайта көріңіз.");
     } finally {
-      preview.classList.remove("exporting");
+      preview.classList.remove("exporting", "sticker-export");
       btn.disabled = false;
       btn.textContent = label;
     }
