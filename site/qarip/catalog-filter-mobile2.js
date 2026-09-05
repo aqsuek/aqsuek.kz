@@ -151,7 +151,6 @@
 
   async function copyCardSticker(card, button) {
     const preview = card.querySelector(".font-preview");
-    const label = button.textContent;
     if (!preview) return;
     button.disabled = true;
     button.textContent = "…";
@@ -180,7 +179,7 @@
       } catch {}
       if (!copied) {
         const link = document.createElement("a");
-        link.download = "qarip-sticker.png";
+        link.download = "qarip.png";
         link.href = URL.createObjectURL(blob);
         link.click();
         setTimeout(() => URL.revokeObjectURL(link.href), 2500);
@@ -188,26 +187,32 @@
       stickerToast(
         copied
           ? "Көшірілді. Instagram Stories-қа қойыңыз."
-          : "Стикер сақталды. Stories-қа фотодан қосыңыз."
+          : "Сақталды. Stories-қа фотодан қосыңыз."
       );
     } catch (error) {
       console.warn(error);
       stickerToast("Көшіру шықпады. Қайта көріңіз.");
     } finally {
       button.disabled = false;
-      button.textContent = label;
+      button.textContent = "Көшіру";
     }
   }
 
   function addStickers(cards) {
     cards.forEach((card) => {
       const bottom = card.querySelector(".card-bottom");
-      if (!bottom || bottom.querySelector(".font-sticker")) return;
-      const button = document.createElement("button");
+      if (!bottom) return;
+      let button = bottom.querySelector(".font-sticker");
+      if (button) {
+        button.textContent = "Көшіру";
+        button.title = "Мәтінді көшіру";
+        return;
+      }
+      button = document.createElement("button");
       button.type = "button";
       button.className = "font-sticker";
-      button.textContent = "Стикер";
-      button.title = "Instagram стикерін көшіру";
+      button.textContent = "Көшіру";
+      button.title = "Мәтінді көшіру";
       button.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();

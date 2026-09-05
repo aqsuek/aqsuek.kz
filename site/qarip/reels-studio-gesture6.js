@@ -36,7 +36,7 @@
     .subtitle-stack .sub-mark{top:58%;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
-    .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
+    .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:4px}
     .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
     [data-selected="1"]>.reels-handle{display:block!important}
     .reels-handle.resize,.reels-handle.stretch-l{
@@ -129,7 +129,7 @@
       .reels-pick:before{inset:10px}
       .reels-controls{box-sizing:border-box}
       .reels-copy h2:after{margin-top:12px}
-      .phone-preview{position:sticky;top:8px;z-index:12;width:min(100%,96vw)!important;aspect-ratio:16/9!important}
+      .phone-preview{width:min(100%,96vw)!important;aspect-ratio:16/9!important}
     }
     @media(max-width:390px){.reels-controls{padding:14px}}
   `;
@@ -427,6 +427,11 @@
     if (current?.classList.contains("sub-extra")) return "extra";
     if (current?.classList.contains("sub-hook")) return "hook";
     return visibleKeys()[0] || "hook";
+  }
+
+  function clearSelect(stack) {
+    stack?.querySelectorAll("[data-selected]").forEach((item) => item.removeAttribute("data-selected"));
+    document.querySelectorAll(".text-layer-picks button").forEach((btn) => btn.classList.remove("active"));
   }
 
   function selectLayer(stack, key) {
@@ -848,7 +853,7 @@
       return "copied";
     } catch {}
     const link = document.createElement("a");
-    link.download = "qarip-sticker.png";
+    link.download = "qarip.png";
     link.href = URL.createObjectURL(blob);
     link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 2500);
@@ -885,7 +890,6 @@
     const stack = preview?.querySelector(".subtitle-stack");
     const btn = document.querySelector(".reels-sticker");
     if (!preview || !stack || !btn) return;
-    const label = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Көшірілуде…";
     preview.classList.add("exporting", "sticker-export");
@@ -898,7 +902,7 @@
       toast(
         result === "copied"
           ? "Көшірілді. Instagram Stories-қа қойыңыз."
-          : "Стикер сақталды. Stories-қа фотодан қосыңыз."
+          : "Сақталды. Stories-қа фотодан қосыңыз."
       );
     } catch (error) {
       console.warn(error);
@@ -906,7 +910,7 @@
     } finally {
       preview.classList.remove("exporting", "sticker-export");
       btn.disabled = false;
-      btn.textContent = label;
+      btn.textContent = "Көшіру";
     }
   }
 
@@ -1057,17 +1061,21 @@
 
   function ensureStickerButton() {
     const actions = document.querySelector(".reels-actions");
-    if (!actions || actions.querySelector(".reels-sticker")) return;
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "reels-act reels-sticker";
-    button.textContent = "Стикер · Instagram";
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      copySticker();
-    });
-    actions.prepend(button);
+    if (!actions) return;
+    let button = actions.querySelector(".reels-sticker");
+    if (!button) {
+      button = document.createElement("button");
+      button.type = "button";
+      button.className = "reels-act reels-sticker";
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        copySticker();
+      });
+      actions.prepend(button);
+    }
+    button.textContent = "Көшіру";
+    button.setAttribute("aria-label", "Көшіру");
   }
 
   function boot() {
@@ -1115,8 +1123,12 @@
       ensureStickerButton();
       ensureFontPicker(stack);
       ensureFaceRow(stack);
-      if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
-        selectLayer(stack, visibleKeys()[0] || "hook");
+      if (preview.dataset.deselectReady !== "1") {
+        preview.dataset.deselectReady = "1";
+        preview.addEventListener("pointerdown", (event) => {
+          if (event.target.closest(".sub-hook, .sub-mark, .sub-extra, .reels-handle")) return;
+          clearSelect(stack);
+        });
       }
       return;
     }
@@ -1216,8 +1228,12 @@
       save();
     });
 
-    if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
-      selectLayer(stack, visibleKeys()[0] || "hook");
+    if (preview.dataset.deselectReady !== "1") {
+      preview.dataset.deselectReady = "1";
+      preview.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".sub-hook, .sub-mark, .sub-extra, .reels-handle")) return;
+        clearSelect(stack);
+      });
     }
     ensureStickerButton();
     ensureFontPicker(stack);
