@@ -1,9 +1,11 @@
 (() => {
   const ALL = "Барлығы";
+  const PAGE_SIZE = 32;
+  let visibleLimit = PAGE_SIZE;
 
   const style = document.createElement("style");
   style.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}';
+    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(style);
 
   function activeCategory() {
@@ -16,14 +18,35 @@
     return ((input && input.value) || "").trim().toLowerCase();
   }
 
-  function apply(forcedCat) {
+  function renderMoreButton(matching, total) {
+    let more = document.querySelector(".catalog-more");
+    if (matching.length <= visibleLimit) {
+      more?.remove();
+      return;
+    }
+    if (!more) {
+      more = document.createElement("button");
+      more.type = "button";
+      more.className = "catalog-more";
+      more.addEventListener("click", () => {
+        visibleLimit += PAGE_SIZE;
+        apply();
+      });
+      document.querySelector(".font-grid")?.after(more);
+    }
+    const remaining = matching.length - visibleLimit;
+    more.textContent = `Тағы ${Math.min(remaining, PAGE_SIZE)} қаріпті ашу · ${matching.length} / ${total}`;
+  }
+
+  function apply(forcedCat, resetLimit = false) {
+    if (resetLimit) visibleLimit = PAGE_SIZE;
     const cat = forcedCat || activeCategory();
     const q = query();
     const grid = document.querySelector(".font-grid");
     if (!grid) return;
     const cards = grid.querySelectorAll(":scope > .font-card");
     const seen = new Set();
-    let shown = 0;
+    const matching = [];
     cards.forEach((card) => {
       const name = (card.querySelector("h3")?.textContent || "").trim();
       const maker = (card.querySelector(".card-top p")?.textContent || "").trim();
@@ -34,11 +57,15 @@
       if (name) seen.add(name);
       const matchCat = cat === ALL || fontStyle === cat;
       const matchQ = !q || `${name} ${maker}`.toLowerCase().includes(q);
-      const show = matchCat && matchQ && !duplicate;
+      if (matchCat && matchQ && !duplicate) matching.push(card);
+    });
+
+    const shownCards = new Set(matching.slice(0, visibleLimit));
+    cards.forEach((card) => {
+      const show = shownCards.has(card);
       if (show) {
         card.removeAttribute("data-filter-hide");
         card.style.removeProperty("display");
-        shown += 1;
       } else {
         card.setAttribute("data-filter-hide", "1");
         card.style.display = "none";
@@ -46,12 +73,13 @@
     });
     const count = document.querySelector(".workspace-heading .count");
     if (count) {
-      count.textContent = `${shown} / ${seen.size || cards.length} қаріп`;
+      count.textContent = `${Math.min(matching.length, visibleLimit)} / ${seen.size || cards.length} қаріп`;
     }
+    renderMoreButton(matching, seen.size || cards.length);
   }
 
   function schedule(cat) {
-    apply(cat);
+    apply(cat, true);
     requestAnimationFrame(() => apply(cat));
     setTimeout(() => apply(cat), 40);
     setTimeout(() => apply(), 120);
@@ -68,7 +96,7 @@
   );
 
   document.addEventListener("input", (event) => {
-    if (event.target.closest(".search input")) apply();
+    if (event.target.closest(".search input")) apply(undefined, true);
   });
 
   function start() {
