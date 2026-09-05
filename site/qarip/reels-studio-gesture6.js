@@ -1376,6 +1376,7 @@
   }
 
   function boot() {
+    if (!/\/qarip\/(stories|reels)\/?$/.test(location.pathname)) return;
     const preview = document.querySelector(".phone-preview");
     const stack = preview?.querySelector(".subtitle-stack");
     const editor = document.querySelector(".reels-copy-edit");

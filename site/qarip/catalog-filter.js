@@ -1,15 +1,106 @@
 (() => {
   const ALL = "Барлығы";
+  const STORIES_GROUP = "Stories";
   const PAGE_SIZE = 32;
   const KZ_GLYPHS = ["Ә", "Ғ", "Қ", "Ң", "Ө", "Ұ", "Ү", "Һ"];
   let visibleLimit = PAGE_SIZE;
   let mode = "all";
   let style = ALL;
+  let licenseMode = "all";
+  let fontIndex = new Map();
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.card-actions{display:flex;align-items:center;gap:8px}.font-sticker{flex:0 0 auto;padding:0 12px;min-height:42px;border:1px solid #181816;border-radius:999px;background:#d9ff47;color:#181816;font:800 11px/1 Arial,sans-serif;letter-spacing:.03em;cursor:pointer}.font-sticker:disabled{opacity:.55}.qarip-sticker-toast{position:fixed;z-index:80;left:50%;bottom:22px;transform:translateX(-50%);display:none;max-width:min(92vw,420px);padding:12px 16px;border-radius:12px;background:#181816;color:#d9ff47;font:700 13px/1.35 Arial,sans-serif;box-shadow:0 12px 40px #0006}.qarip-sticker-toast[data-show="1"]{display:block}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#181816;white-space:nowrap}.fav-filter.active{background:#181816;color:#d9ff47}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5c5c56;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-card[data-filter-hide="1"]{display:none!important}.font-sticker,.qarip-sticker-toast{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#181816;white-space:nowrap}.fav-filter.active{background:#181816;color:#d9ff47}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5c5c56;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(styleSheet);
+
+  function slugify(name, download) {
+    const Q = window.Qarip;
+    const raw = Q?.cleanText(name) || "";
+    const fromName = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    if (fromName) return fromName;
+    const file = String(download || "").split("/").pop() || "font";
+    return file.replace(/\.[a-z0-9]+$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "font";
+  }
+
+  function recordFor(card) {
+    const name = (card.querySelector("h3")?.textContent || "").trim();
+    return fontIndex.get(name) || null;
+  }
+
+  function ensureFiltersUi() {
+    const controls = document.querySelector(".controls");
+    if (!controls) return;
+    controls.querySelectorAll(".filters-toggle").forEach((el) => el.remove());
+    delete controls.dataset.filtersOpen;
+    const cats = controls.querySelector(".categories");
+    if (cats && !cats.querySelector('[data-group="stories"]')) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.group = "stories";
+      btn.dataset.style = STORIES_GROUP;
+      btn.title = "Рилс, Stories және 9:16 субтитрге арналған әдемі қаріптер";
+      btn.innerHTML = 'Stories<small>0</small>';
+      const first = cats.querySelector("button");
+      if (first) first.after(btn);
+      else cats.append(btn);
+    }
+    controls.querySelectorAll(".license-filters").forEach((el) => el.remove());
+    ensureCatCarousel(controls, cats);
+  }
+
+  function ensureCatCarousel(controls, cats) {
+    if (!cats) return;
+    let wrap = cats.closest(".cat-carousel");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "cat-carousel";
+      wrap.dataset.open = "0";
+      cats.replaceWith(wrap);
+      wrap.append(cats);
+    }
+    let more = wrap.querySelector(".cat-more");
+    if (!more) {
+      more = document.createElement("button");
+      more.type = "button";
+      more.className = "cat-more";
+      more.setAttribute("aria-expanded", "false");
+      more.setAttribute("aria-label", "Барлық сүзгілерді көрсету");
+      more.textContent = "↓";
+      more.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const open = wrap.dataset.open === "1" ? "0" : "1";
+        wrap.dataset.open = open;
+        more.textContent = open === "1" ? "↑" : "↓";
+        more.setAttribute("aria-expanded", String(open === "1"));
+        more.setAttribute("aria-label", open === "1" ? "Сүзгілерді жию" : "Барлық сүзгілерді көрсету");
+        requestAnimationFrame(syncCatOverflow);
+      });
+      wrap.append(more);
+    }
+    const fav = controls.querySelector(".fav-filter");
+    if (fav && fav.parentElement !== cats) cats.append(fav);
+    requestAnimationFrame(syncCatOverflow);
+  }
+
+  function syncCatOverflow() {
+    const wrap = document.querySelector(".cat-carousel");
+    if (!wrap) return;
+    const cats = wrap.querySelector(".categories");
+    const more = wrap.querySelector(".cat-more");
+    if (!cats || !more) return;
+    if (wrap.dataset.open === "1") {
+      more.hidden = false;
+      wrap.classList.add("has-more");
+      return;
+    }
+    more.hidden = false;
+    wrap.classList.add("has-more");
+    const overflow = cats.scrollWidth > cats.clientWidth + 2;
+    more.hidden = !overflow;
+    wrap.classList.toggle("has-more", overflow);
+  }
 
   function styleName(button) {
     if (!button) return ALL;
@@ -20,6 +111,7 @@
   }
 
   function savedNames() {
+    if (window.Qarip?.savedNames) return window.Qarip.savedNames();
     try {
       return new Set(JSON.parse(localStorage.getItem("qarip-favorites") || "[]"));
     } catch {
@@ -34,6 +126,7 @@
 
   function paintActive() {
     document.querySelectorAll(".categories button").forEach((button) => {
+      if (button.classList.contains("fav-filter")) return;
       const name = styleName(button);
       button.classList.toggle("active", mode !== "fav" && name === style);
     });
@@ -76,162 +169,36 @@
   }
 
   function kazakhGlyphsMissing(family) {
-    if (!family) return false;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return false;
-    ctx.font = `72px ${family}`;
-    const tofu = ctx.measureText("\uFFFF").width;
-    const tofu2 = ctx.measureText("\uFFFE").width;
-    let missing = 0;
-    for (const ch of KZ_GLYPHS) {
-      const width = ctx.measureText(ch).width;
-      if (width === 0 || Math.abs(width - tofu) < 0.6 || Math.abs(width - tofu2) < 0.6) missing += 1;
-    }
-    return missing >= 2;
+    const report = window.Qarip?.kazakhGlyphReport?.(family);
+    if (!report) return false;
+    return report.status !== "full";
   }
 
-  function stickerToast(message) {
-    let el = document.querySelector(".qarip-sticker-toast");
-    if (!el) {
-      el = document.createElement("p");
-      el.className = "qarip-sticker-toast";
-      document.body.appendChild(el);
+  function applyGlyphDataset(card, family) {
+    const report = window.Qarip?.kazakhGlyphReport?.(family);
+    if (!report || !report.loaded) {
+      card.dataset.glyph = "wait";
+      delete card.dataset.missing;
+      return;
     }
-    el.textContent = message;
-    el.dataset.show = "1";
-    clearTimeout(stickerToast.timer);
-    stickerToast.timer = setTimeout(() => {
-      el.dataset.show = "0";
-    }, 3200);
-  }
-
-  function renderFontSticker(preview) {
-    const text = (preview.textContent || "").replace(/\s+/g, " ").trim();
-    if (!text) return null;
-    const cs = getComputedStyle(preview);
-    const family = cs.fontFamily || preview.style.fontFamily || "sans-serif";
-    const weight = cs.fontWeight || "700";
-    const fontStyle = cs.fontStyle || "normal";
-    const scale = 3;
-    let fontSize = Math.round((parseFloat(cs.fontSize) || 34) * scale);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const fontFor = (size) => `${fontStyle} ${weight} ${size}px ${family}`;
-    ctx.font = fontFor(fontSize);
-    ctx.textBaseline = "alphabetic";
-    const maxWidth = 1600;
-    let textWidth = ctx.measureText(text).width;
-    if (textWidth > maxWidth) {
-      fontSize = Math.max(36, Math.floor((fontSize * maxWidth) / textWidth));
-      ctx.font = fontFor(fontSize);
-      textWidth = ctx.measureText(text).width;
-    }
-    const stroke = Math.max(8, Math.round(fontSize * 0.14));
-    const pad = stroke + 28;
-    canvas.width = Math.ceil(textWidth) + pad * 2;
-    canvas.height = Math.ceil(fontSize * 1.45) + pad * 2;
-    ctx.font = fontFor(fontSize);
-    ctx.textBaseline = "alphabetic";
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.miterLimit = 2;
-    ctx.strokeStyle = "#0b0b0b";
-    ctx.lineWidth = stroke;
-    ctx.fillStyle = "#ffffff";
-    ctx.shadowColor = "rgba(0,0,0,.4)";
-    ctx.shadowBlur = Math.round(fontSize * 0.12);
-    ctx.shadowOffsetY = Math.round(fontSize * 0.05);
-    const x = pad;
-    const y = pad + fontSize;
-    ctx.strokeText(text, x, y);
-    ctx.fillText(text, x, y);
-    return canvas;
-  }
-
-  async function copyCardSticker(card, button) {
-    const preview = card.querySelector(".font-preview");
-    if (!preview) return;
-    button.disabled = true;
-    button.textContent = "…";
-    try {
-      const cs = getComputedStyle(preview);
-      const family = cs.fontFamily || preview.style.fontFamily || "sans-serif";
-      const size = parseFloat(cs.fontSize) || 34;
-      const weight = cs.fontWeight || "700";
-      const fontStyle = cs.fontStyle || "normal";
-      if (document.fonts?.load) {
-        try {
-          await document.fonts.load(`${fontStyle} ${weight} ${size}px ${family}`);
-        } catch {}
-      }
-      const canvas = renderFontSticker(preview);
-      if (!canvas) {
-        stickerToast("Алдымен жоғарыдағы мәтінді жазыңыз.");
-        return;
-      }
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-      if (!blob) throw new Error("blob");
-      let copied = false;
-      try {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        copied = true;
-      } catch {}
-      if (!copied) {
-        const link = document.createElement("a");
-        link.download = "qarip.png";
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        setTimeout(() => URL.revokeObjectURL(link.href), 2500);
-      }
-      stickerToast(
-        copied
-          ? "Көшірілді. Instagram Stories-қа қойыңыз."
-          : "Сақталды. Stories-қа фотодан қосыңыз."
-      );
-    } catch (error) {
-      console.warn(error);
-      stickerToast("Көшіру шықпады. Қайта көріңіз.");
-    } finally {
-      button.disabled = false;
-      button.textContent = "Көшіру";
+    card.dataset.glyph = report.status;
+    if (report.status === "some" && report.missing.length) {
+      card.dataset.missing = report.missing.join(" ");
+    } else {
+      delete card.dataset.missing;
     }
   }
 
-  function addStickers(cards) {
+  function stripStickers(cards) {
     cards.forEach((card) => {
-      const bottom = card.querySelector(".card-bottom");
-      if (!bottom) return;
-      let button = bottom.querySelector(".font-sticker");
-      if (button) {
-        button.textContent = "Көшіру";
-        button.title = "Мәтінді көшіру";
-        return;
-      }
-      button = document.createElement("button");
-      button.type = "button";
-      button.className = "font-sticker";
-      button.textContent = "Көшіру";
-      button.title = "Мәтінді көшіру";
-      button.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        copyCardSticker(card, button);
-      });
-      const download = bottom.querySelector("a[download]");
-      if (download) {
-        let actions = bottom.querySelector(".card-actions");
-        if (!actions) {
-          actions = document.createElement("div");
-          actions.className = "card-actions";
-          download.replaceWith(actions);
-          actions.append(download);
-        }
-        actions.prepend(button);
-      } else {
-        bottom.append(button);
-      }
+      card.querySelectorAll(".font-sticker").forEach((btn) => btn.remove());
+      const actions = card.querySelector(".card-actions");
+      if (!actions) return;
+      const parent = actions.parentNode;
+      while (actions.firstChild) parent.insertBefore(actions.firstChild, actions);
+      actions.remove();
     });
+    document.querySelector(".qarip-sticker-toast")?.remove();
   }
 
   function labelGlyphStatus(card) {
@@ -257,15 +224,20 @@
   }
 
   function ensureFavButton() {
-    document.querySelector(".license-filter")?.remove();
     const controls = document.querySelector(".controls");
-    if (!controls || controls.querySelector(".fav-filter")) return;
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "filter-button fav-filter";
-    button.setAttribute("aria-pressed", "false");
-    button.innerHTML = 'Ұнағандар<small>0</small>';
-    controls.append(button);
+    if (!controls) return;
+    const cats = document.querySelector(".cat-carousel .categories") || controls.querySelector(".categories");
+    let button = controls.querySelector(".fav-filter");
+    if (!button) {
+      button = document.createElement("button");
+      button.type = "button";
+      button.className = "filter-button fav-filter";
+      button.setAttribute("aria-pressed", "false");
+      button.innerHTML = 'Ұнағандар<small>0</small>';
+      (cats || controls).append(button);
+    } else if (cats && button.parentElement !== cats) {
+      cats.append(button);
+    }
   }
 
   function updateFavCount() {
@@ -274,37 +246,57 @@
   }
 
   function decorateCatalog(cards) {
+    const Q = window.Qarip;
     const categoryTotals = new Map();
     const seen = new Set();
     cards.forEach((card) => {
-      const name = card.querySelector("h3")?.textContent?.trim();
+      const name = Q?.cleanText(card.querySelector("h3")?.textContent) || card.querySelector("h3")?.textContent?.trim();
       if (!name || seen.has(name)) return;
       seen.add(name);
-      const category = card.querySelector(".meta > span")?.textContent?.trim();
+      const rec = fontIndex.get(name);
+      const category = rec?.style || card.querySelector(".meta > span")?.textContent?.trim();
       if (category) {
         card.dataset.style = category;
         categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
       }
-
-      const license = card.querySelector(".meta > span:last-child");
-      if (license && !license.dataset.labelled) {
-        license.dataset.labelled = "1";
-        if (license.textContent.trim() === "OFL") {
-          license.textContent = "Ашық лицензия · OFL";
-          license.classList.add("license-open");
-        } else if (license.textContent.trim() === "Тікелей") {
-          license.textContent = "Лицензиясын тексеру";
-          license.classList.add("license-check");
-        }
+      const makerEl = card.querySelector(".card-top p");
+      const author = rec ? rec.author : Q?.displayAuthor(makerEl?.textContent);
+      if (makerEl) {
+        if (author) makerEl.textContent = author;
+        else makerEl.hidden = true;
       }
-      labelGlyphStatus(card);
+      const licenseKey = rec?.license || "check";
+      card.dataset.license = licenseKey;
+      card.dataset.slug = rec?.slug || slugify(name, rec?.download);
+      if (rec?.category) card.dataset.category = rec.category;
+      if (rec?.useCase) card.dataset.usecase = rec.useCase;
+      if (Array.isArray(rec?.tags)) card.dataset.tags = rec.tags.join(" ");
+      else if (rec?.tags) card.dataset.tags = rec.tags;
+      const family = rec?.family || card.querySelector(".font-preview")?.style.fontFamily || "";
+      card.dataset.family = family.replace(/^["']|["']$/g, "");
+      if (rec?.preview) card.dataset.preview = rec.preview;
+      if (rec?.download) card.dataset.download = rec.download;
+      const license = card.querySelector(".meta > span:last-child");
+      if (license) {
+        license.title = Q?.licenseInfo(licenseKey).title || "";
+      }
+      if (card.dataset.fontLoaded === "1") applyGlyphDataset(card, `"${card.dataset.family}"`);
+      else card.dataset.glyph = "wait";
     });
 
+    ensureFiltersUi();
     ensureFavButton();
     document.querySelectorAll(".categories button").forEach((button) => {
+      if (button.classList.contains("fav-filter")) return;
       const category = styleName(button);
       button.dataset.style = category;
-      const total = category === ALL ? seen.size : categoryTotals.get(category) || 0;
+      let total = 0;
+      if (category === ALL) total = seen.size;
+      else if (category === STORIES_GROUP) {
+        seen.forEach((name) => {
+          if (fontIndex.get(name)?.useCase === "stories") total += 1;
+        });
+      } else total = categoryTotals.get(category) || 0;
       let count = button.querySelector("small");
       if (!count) {
         count = document.createElement("small");
@@ -357,11 +349,21 @@
       const name = (card.querySelector("h3")?.textContent || "").trim();
       const maker = (card.querySelector(".card-top p")?.textContent || "").trim();
       const fontStyle = card.dataset.style || (card.querySelector(".meta > span")?.textContent || "").trim();
+      const license = card.dataset.license || "check";
       const duplicate = name !== "" && seen.has(name);
       if (name) seen.add(name);
-      const matchStyle = mode === "fav" ? fav.has(name) : style === ALL || fontStyle === style;
-      const matchQ = !q || `${name} ${maker}`.toLowerCase().includes(q);
-      if (matchStyle && matchQ && !duplicate) matching.push(card);
+      const matchStyle =
+        mode === "fav"
+          ? fav.has(name)
+          : style === ALL
+            ? true
+            : style === STORIES_GROUP
+              ? card.dataset.usecase === "stories"
+              : fontStyle === style;
+      const matchLicense = licenseMode === "all" || license === licenseMode;
+      const hay = `${name} ${maker} ${fontStyle} ${card.dataset.category || ""} ${card.dataset.tags || ""} ${card.dataset.usecase || ""}`.toLowerCase();
+      const matchQ = !q || hay.includes(q);
+      if (matchStyle && matchLicense && matchQ && !duplicate) matching.push(card);
     });
 
     const shownCards = new Set(matching.slice(0, visibleLimit));
@@ -384,6 +386,13 @@
     paintActive();
     const favBtn = document.querySelector(".fav-filter");
     if (favBtn) favBtn.setAttribute("aria-pressed", String(mode === "fav"));
+    requestAnimationFrame(syncCatOverflow);
+  }
+
+  function applyGroupFromUrl() {
+    try {
+      if (new URLSearchParams(location.search).get("group") === "stories") selectStyle(STORIES_GROUP);
+    } catch {}
   }
 
   function selectStyle(name) {
@@ -416,6 +425,26 @@
     true
   );
 
+  document.addEventListener("click", (event) => {
+    const download = event.target.closest(".card-bottom a[download], .card-bottom a[aria-label$='жүктеу'], a.font-download");
+    if (download && window.Qarip) {
+      const card = download.closest(".font-card") || download.closest(".font-detail");
+      const href = download.getAttribute("href") || card?.dataset.download || "";
+      const filename = (href.split("/").pop() || "").split("?")[0];
+      const license = card?.dataset.license || "check";
+      if (window.Qarip.handleDownloadClick(event, license, href, filename)) return;
+    }
+    const heading = event.target.closest(".font-card h3");
+    if (heading && !event.target.closest("a,button")) {
+      const card = heading.closest(".font-card");
+      const slug = card?.dataset.slug;
+      if (slug) {
+        event.preventDefault();
+        location.href = `/qarip/font/${slug}/`;
+      }
+    }
+  });
+
   document.addEventListener("input", (event) => {
     if (event.target.closest(".search input")) apply(true);
   });
@@ -431,24 +460,110 @@
     history.pushState(null, "", `#${id}`);
   });
 
+  function observeVisibleFonts(cards) {
+    if (!("IntersectionObserver" in window)) {
+      cards.forEach((card) => loadCardFont(card));
+      return;
+    }
+    if (!observeVisibleFonts.io) {
+      observeVisibleFonts.io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) loadCardFont(entry.target);
+        });
+      }, { rootMargin: "120px 0px", threshold: 0.01 });
+    }
+    cards.forEach((card) => observeVisibleFonts.io.observe(card));
+  }
+
+  async function loadCardFont(card) {
+    if (card.dataset.fontReady === "1") return;
+    const family = card.dataset.family || "";
+    const url = card.dataset.preview || "";
+    const ok = window.Qarip?.loadFamily ? await window.Qarip.loadFamily(family, url) : false;
+    if (!ok) {
+      card.dataset.glyph = "wait";
+      return;
+    }
+    card.dataset.fontReady = "1";
+    card.dataset.fontLoaded = "1";
+    applyGlyphDataset(card, `"${family}"`);
+  }
+
+  function polishFooter() {
+    const text =
+      "Qarip қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
+    document.querySelectorAll("#about p, footer p").forEach((el) => {
+      el.textContent = text;
+      el.dataset.qaripDisclaimer = "1";
+    });
+  }
+
+  function bindPreviewDefault() {
+    const tester = document.querySelector("#tester.sticky-tester");
+    const input = tester?.querySelector('input[aria-label="Қаріпті тексеру мәтіні"]') || document.querySelector('.sticky-tester input[aria-label="Қаріпті тексеру мәтіні"]');
+    const next = window.Qarip?.PREVIEW_TEXT;
+    if (!input || !next) return;
+    const label = tester?.querySelector(".tester-label span");
+    if (label) label.textContent = "Өз мәтініңді жаз";
+    if (tester && !tester.dataset.hintBound) {
+      tester.dataset.hintBound = "1";
+      tester.querySelector(".tester-label")?.addEventListener("click", () => input.focus());
+    }
+    if (!input.value.trim() || input.value === "Қазақ елі — тәуелсіз, заманауи және болашаққа сенімді ел. Ә Ғ Қ Ң Ө Ұ Ү Һ І" || input.value === "Қазақша мәтін үлгісі") {
+      const proto = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
+      proto?.set?.call(input, next);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
+
+  function isStoriesPage() {
+    return window.QaripSite?.isStoriesPage?.() || /\/qarip\/stories\/?$/.test(location.pathname);
+  }
+
+  async function loadFontIndex() {
+    if (fontIndex.size) return;
+    try {
+      const res = await fetch("/qarip/data/fonts.json", { cache: "no-store" });
+      const rows = await res.json();
+      (Array.isArray(rows) ? rows : []).forEach((row) => {
+        if (row?.name) fontIndex.set(row.name, row);
+      });
+    } catch {}
+  }
+
   function start() {
+    if (isStoriesPage()) {
+      polishFooter();
+      window.QaripSite?.apply?.();
+      return;
+    }
     const grid = document.querySelector(".font-grid");
     if (!grid || grid.dataset.filterObserved === "1") return;
     grid.dataset.filterObserved = "1";
-    decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-    addFavorites(grid.querySelectorAll(":scope > .font-card"));
-    addStickers(grid.querySelectorAll(":scope > .font-card"));
-    apply();
+    loadFontIndex().then(() => {
+      decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+      addFavorites(grid.querySelectorAll(":scope > .font-card"));
+      stripStickers(grid.querySelectorAll(":scope > .font-card"));
+      observeVisibleFonts(grid.querySelectorAll(":scope > .font-card"));
+      apply();
+      applyGroupFromUrl();
+    });
+    polishFooter();
+    bindPreviewDefault();
+    window.QaripSite?.apply?.();
+    window.Qarip?.ensureModal?.();
+    window.addEventListener("resize", () => requestAnimationFrame(syncCatOverflow));
     let timer = 0;
     new MutationObserver(() => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-        addFavorites(grid.querySelectorAll(":scope > .font-card"));
-        addStickers(grid.querySelectorAll(":scope > .font-card"));
-        apply();
-      }, 0);
-    }).observe(grid, { childList: true });
+        timer = setTimeout(() => {
+          decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+          addFavorites(grid.querySelectorAll(":scope > .font-card"));
+          stripStickers(grid.querySelectorAll(":scope > .font-card"));
+          observeVisibleFonts(grid.querySelectorAll(":scope > .font-card"));
+          apply();
+        }, 40);
+    }).observe(grid, { childList: true, subtree: true });
   }
 
   function refreshGlyphs() {
@@ -458,7 +573,7 @@
       delete span.dataset.glyphChecked;
     });
     decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-    addStickers(grid.querySelectorAll(":scope > .font-card"));
+    stripStickers(grid.querySelectorAll(":scope > .font-card"));
     apply();
   }
 
@@ -469,13 +584,22 @@
   }
   window.addEventListener("load", () => {
     setTimeout(() => {
+      if (isStoriesPage()) {
+        polishFooter();
+        window.QaripSite?.apply?.();
+        return;
+      }
       const grid = document.querySelector(".font-grid");
       if (!grid) return;
       const cards = grid.querySelectorAll(":scope > .font-card");
       decorateCatalog(cards);
       addFavorites(cards);
-      addStickers(cards);
+      stripStickers(cards);
+      observeVisibleFonts(cards);
       apply();
+      polishFooter();
+      bindPreviewDefault();
+      window.QaripSite?.apply?.();
       const ready = document.fonts?.ready;
       if (ready && typeof ready.then === "function") ready.then(() => setTimeout(refreshGlyphs, 50));
       else setTimeout(refreshGlyphs, 400);
