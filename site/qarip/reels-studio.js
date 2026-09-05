@@ -32,14 +32,18 @@
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
     .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
     .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
-    .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
-    .subtitle-stack .sub-mark{top:58%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
-    .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
+    .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(calc(var(--hook-scale,1) * var(--hook-stretch,1)), var(--hook-scale,1))}
+    .subtitle-stack .sub-mark{top:58%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(calc(var(--mark-scale,1) * var(--mark-stretch,1)), var(--mark-scale,1))}
+    .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(calc(var(--extra-scale,1) * var(--extra-stretch,1)), var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
     .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
     [data-selected="1"]>.reels-handle{display:block!important}
-    .reels-handle.resize{right:-18px;bottom:-18px;background:#d9ff47;border-color:#171715}
+    .reels-handle.resize,.reels-handle.stretch-l{
+      top:50%;bottom:auto;width:18px;height:32px;border-radius:9px;background:#d9ff47;border-color:#171715;cursor:ew-resize;transform:translateY(-50%)
+    }
+    .reels-handle.resize{right:-16px;left:auto}
+    .reels-handle.stretch-l{left:-16px;right:auto}
     .reels-handle.rotate{left:50%;top:-40px;transform:translateX(-50%)}
     .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
     .reels-handle.delete{left:-18px;top:-18px;width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
@@ -129,7 +133,7 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
+  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, stretch: 1, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
   let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
@@ -155,6 +159,7 @@
       stack.style.setProperty(`--${key}-x`, `${layer.x}px`);
       stack.style.setProperty(`--${key}-y`, `${layer.y}px`);
       stack.style.setProperty(`--${key}-scale`, layer.scale);
+      stack.style.setProperty(`--${key}-stretch`, layer.stretch || 1);
       stack.style.setProperty(`--${key}-rotate`, `${layer.rotation}deg`);
     });
   }
@@ -171,9 +176,13 @@
     for (let i = 0; i < 5; i += 1) {
       const box = el.getBoundingClientRect();
       if (box.width < 1 || box.height < 1) return;
-      if (mayScale && (box.width > innerW + 0.5 || box.height > innerH + 0.5)) {
-        const factor = Math.min(innerW / box.width, innerH / box.height);
-        state[key].scale = Math.max(0.25, state[key].scale * factor);
+      if (mayScale && box.width > innerW + 0.5) {
+        state[key].stretch = Math.max(0.35, (state[key].stretch || 1) * (innerW / box.width));
+        paint(stack);
+        continue;
+      }
+      if (mayScale && box.height > innerH + 0.5) {
+        state[key].scale = Math.max(0.25, state[key].scale * (innerH / box.height));
         paint(stack);
         continue;
       }
@@ -455,32 +464,43 @@
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
 
-  function bindHandlePointers(element, resize, rotate, del, stack, key) {
+  function axisX(center, rotationDeg, x, y) {
+    const rot = (rotationDeg * Math.PI) / 180;
+    return (x - center.x) * Math.cos(rot) + (y - center.y) * Math.sin(rot);
+  }
+
+  function bindStretchHandle(handle, element, stack, key) {
     const select = () => selectLayer(stack, key);
-    resize.addEventListener("pointerdown", (event) => {
+    handle.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
       select();
       const center = layerCenter(element);
-      const startDist = Math.max(12, Math.hypot(event.clientX - center.x, event.clientY - center.y));
-      const startScale = state[key].scale;
-      resize.setPointerCapture(event.pointerId);
+      const start = Math.abs(axisX(center, state[key].rotation, event.clientX, event.clientY)) || 12;
+      const startStretch = state[key].stretch || 1;
+      handle.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
-        const dist = Math.hypot(moveEvent.clientX - center.x, moveEvent.clientY - center.y);
-        state[key].scale = Math.max(0.25, Math.min(4, startScale * (dist / startDist)));
+        const now = Math.abs(axisX(center, state[key].rotation, moveEvent.clientX, moveEvent.clientY));
+        state[key].stretch = Math.max(0.35, Math.min(5, startStretch * (now / start)));
         paint(stack);
         containLayer(stack, key, true);
       };
       const end = () => {
-        resize.removeEventListener("pointermove", move);
-        resize.removeEventListener("pointerup", end);
-        resize.removeEventListener("pointercancel", end);
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", end);
+        handle.removeEventListener("pointercancel", end);
         save();
       };
-      resize.addEventListener("pointermove", move);
-      resize.addEventListener("pointerup", end);
-      resize.addEventListener("pointercancel", end);
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", end);
+      handle.addEventListener("pointercancel", end);
     });
+  }
+
+  function bindHandlePointers(element, resize, rotate, del, stack, key, stretchL) {
+    const select = () => selectLayer(stack, key);
+    bindStretchHandle(resize, element, stack, key);
+    if (stretchL) bindStretchHandle(stretchL, element, stack, key);
     rotate.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -518,21 +538,27 @@
     if (!element) return;
     applyLayerLook(element, key);
     let resize = element.querySelector(":scope > .reels-handle.resize");
+    let stretchL = element.querySelector(":scope > .reels-handle.stretch-l");
     let rotate = element.querySelector(":scope > .reels-handle.rotate");
     let del = element.querySelector(":scope > .reels-handle.delete");
-    if (!resize || !rotate || !del) {
+    if (!resize || !stretchL || !rotate || !del || resize.dataset.stretch !== "1") {
       element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
       resize = document.createElement("span");
       resize.className = "reels-handle resize";
-      resize.setAttribute("aria-label", "Өлшемін өзгерту");
+      resize.dataset.stretch = "1";
+      resize.setAttribute("aria-label", "Жанына созу");
+      stretchL = document.createElement("span");
+      stretchL.className = "reels-handle stretch-l";
+      stretchL.dataset.stretch = "1";
+      stretchL.setAttribute("aria-label", "Жанына созу");
       rotate = document.createElement("span");
       rotate.className = "reels-handle rotate";
       rotate.setAttribute("aria-label", "Бұру");
       del = document.createElement("span");
       del.className = "reels-handle delete";
       del.setAttribute("aria-label", "Өшіру");
-      element.append(resize, rotate, del);
-      bindHandlePointers(element, resize, rotate, del, stack, key);
+      element.append(resize, stretchL, rotate, del);
+      bindHandlePointers(element, resize, rotate, del, stack, key, stretchL);
     }
     if (element.dataset.layerReady === "1") return;
     element.dataset.layerReady = "1";
