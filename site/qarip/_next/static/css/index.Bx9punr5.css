@@ -168,3 +168,14 @@ footer .footer-end{flex-wrap:wrap}
   .header-end{gap:8px}
   .topbar .social-links a{font-size:10px}
 }
+
+.intro-cta-row{position:relative;z-index:2;margin-top:22px}
+.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}
+.intro-cta:hover{background:#d9ff47;color:#181816}
+@media (max-width:900px){
+  nav{display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}
+  .topbar{height:auto;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}
+  .topbar .brand{grid-area:brand}
+  .topbar .header-end{grid-area:social}
+  .topbar nav{grid-area:nav}
+}

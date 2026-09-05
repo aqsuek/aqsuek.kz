@@ -60,7 +60,10 @@
     .reels-copy-edit{margin-top:12px!important;display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
     .reels-copy-edit input{min-width:0;border-radius:10px!important;border-color:#ffffff22!important;background:#161615!important;color:#fff!important;padding:12px!important}
     .reels-size{display:none!important}
-    .reels-actions{display:none!important}
+    .reels-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+    .reels-actions a.reels-act{display:none!important}
+    .reels-actions .reels-act:first-child{background:#d9ff47;color:#171715;border-color:#d9ff47}
+    .phone-preview.exporting .reels-handle,.phone-preview.exporting .text-add{display:none!important}
     @media(max-width:900px){.reels-pick{padding:52px 16px 44px!important}.reels-pick:before{inset:10px}.reels-controls{box-sizing:border-box}.reels-copy h2:after{margin-top:18px}.reels-options:not(.reels-colors) button b{font-size:13px!important}}
     @media(max-width:390px){.reels-controls{padding:14px}.reels-options:not(.reels-colors) button{padding:8px!important;min-height:60px}.reels-options:not(.reels-colors) button b{font-size:12px!important}.reels-colors button b{font-size:9px!important}.text-add{right:-45px}}
   `;
