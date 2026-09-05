@@ -5,12 +5,12 @@
 
   const style = document.createElement("style");
   style.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(style);
 
   function activeCategory() {
     const btn = document.querySelector(".categories button.active");
-    return (btn && btn.textContent.trim()) || ALL;
+    return (btn && (btn.dataset.category || btn.textContent.trim())) || ALL;
   }
 
   function query() {
@@ -36,6 +36,40 @@
     }
     const remaining = matching.length - visibleLimit;
     more.textContent = `Тағы ${Math.min(remaining, PAGE_SIZE)} қаріпті ашу · ${matching.length} / ${total}`;
+  }
+
+  function decorateCatalog(cards) {
+    const categoryTotals = new Map();
+    const seen = new Set();
+    cards.forEach((card) => {
+      const name = card.querySelector("h3")?.textContent?.trim();
+      if (!name || seen.has(name)) return;
+      seen.add(name);
+      const category = card.querySelector(".meta > span")?.textContent?.trim();
+      if (category) categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
+
+      const license = card.querySelector(".meta > span:last-child");
+      if (!license || license.dataset.labelled) return;
+      license.dataset.labelled = "1";
+      if (license.textContent.trim() === "OFL") {
+        license.textContent = "Ашық лицензия · OFL";
+        license.classList.add("license-open");
+      } else if (license.textContent.trim() === "Тікелей") {
+        license.textContent = "Лицензиясын тексеру";
+        license.classList.add("license-check");
+      }
+    });
+
+    document.querySelectorAll(".categories button").forEach((button) => {
+      const category = button.dataset.category || button.textContent.trim();
+      button.dataset.category = category;
+      const total = category === ALL ? seen.size : categoryTotals.get(category) || 0;
+      if (!button.querySelector("small")) {
+        const count = document.createElement("small");
+        count.textContent = total;
+        button.appendChild(count);
+      }
+    });
   }
 
   function apply(forcedCat, resetLimit = false) {
@@ -90,7 +124,7 @@
     (event) => {
       const btn = event.target.closest(".categories button");
       if (!btn) return;
-      schedule(btn.textContent.trim());
+      schedule(btn.dataset.category || btn.textContent.trim());
     },
     true
   );
@@ -100,10 +134,11 @@
   });
 
   function start() {
-    apply();
     const grid = document.querySelector(".font-grid");
     if (!grid || grid.dataset.filterObserved === "1") return;
     grid.dataset.filterObserved = "1";
+    decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+    apply();
     let timer = 0;
     new MutationObserver(() => {
       clearTimeout(timer);
