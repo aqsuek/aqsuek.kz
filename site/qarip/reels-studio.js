@@ -18,9 +18,9 @@
     .reels-copy h2:after{display:none}
     .phone-preview{
       position:relative;
-      width:min(520px,92vw)!important;
+      width:min(720px,96vw)!important;
       max-width:100%;
-      aspect-ratio:4/3!important;
+      aspect-ratio:16/9!important;
       height:auto!important;
       border:1px solid #ffffff22!important;
       border-radius:16px!important;
@@ -33,7 +33,7 @@
     .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
     .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
     .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
-    .subtitle-stack .sub-mark{top:58%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(calc(-1.2deg + var(--mark-rotate,0deg))) scale(var(--mark-scale,1))}
+    .subtitle-stack .sub-mark{top:58%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
@@ -44,6 +44,12 @@
     .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
     .reels-handle.delete{left:-18px;top:-18px;width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
     .reels-handle.delete:before{content:"×"}
+    .reels-guide{position:absolute;z-index:6;background:#d9ff47;pointer-events:none;opacity:0}
+    .reels-guide.x{top:0;bottom:0;left:50%;width:1px;transform:translateX(-50%)}
+    .reels-guide.y{left:0;right:0;top:50%;height:1px;transform:translateY(-50%)}
+    .phone-preview[data-snap-x="1"] .reels-guide.x,
+    .phone-preview[data-snap-y="1"] .reels-guide.y{opacity:.9}
+    .subtitle-stack [data-snap-rot="1"]{outline-color:#fff}
     .text-add{display:none!important}
     .text-color-tools{display:grid;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #ffffff16}
     .text-add-btn{width:100%;min-height:42px;border:1px dashed #d9ff4788;border-radius:10px;background:#191918;color:#d9ff47;font:800 12px/1 Arial,sans-serif;letter-spacing:.06em;cursor:pointer}
@@ -108,13 +114,14 @@
     .phone-preview.sticker-export .reel-orbit,
     .phone-preview.sticker-export .reel-ui,
     .phone-preview.sticker-export .reel-progress,
-    .phone-preview.sticker-export .font-chip{display:none!important}
+    .phone-preview.sticker-export .font-chip,
+    .phone-preview.sticker-export .reels-guide{display:none!important}
     @media(max-width:900px){
       .reels-pick{padding:24px 16px 36px!important}
       .reels-pick:before{inset:10px}
       .reels-controls{box-sizing:border-box}
       .reels-copy h2:after{margin-top:12px}
-      .phone-preview{position:sticky;top:8px;z-index:12;width:min(100%,92vw)!important;aspect-ratio:4/3!important}
+      .phone-preview{position:sticky;top:8px;z-index:12;width:min(100%,96vw)!important;aspect-ratio:16/9!important}
     }
     @media(max-width:390px){.reels-controls{padding:14px}}
   `;
@@ -189,6 +196,84 @@
 
   function containAll(stack) {
     visibleKeys().forEach((key) => containLayer(stack, key, true));
+  }
+
+  const ANGLE_STOPS = [0, 45, 90, 135, 180, 225, 270, 315];
+  const ANGLE_SNAP = 8;
+  const AXIS_SNAP = 8;
+
+  function snapAngle(deg) {
+    const a = ((deg % 360) + 360) % 360;
+    let nearest = 0;
+    let best = 999;
+    ANGLE_STOPS.forEach((stop) => {
+      let delta = Math.abs(a - stop);
+      if (delta > 180) delta = 360 - delta;
+      if (delta < best) {
+        best = delta;
+        nearest = stop;
+      }
+    });
+    if (best <= ANGLE_SNAP) return nearest;
+    return deg;
+  }
+
+  function ensureGuides(preview) {
+    if (!preview || preview.querySelector(".reels-guide")) return;
+    const x = document.createElement("i");
+    x.className = "reels-guide x";
+    const y = document.createElement("i");
+    y.className = "reels-guide y";
+    preview.append(x, y);
+  }
+
+  function setSnap(preview, el, flags) {
+    if (preview) {
+      preview.dataset.snapX = flags.x ? "1" : "0";
+      preview.dataset.snapY = flags.y ? "1" : "0";
+    }
+    if (el) {
+      if (flags.rot) el.dataset.snapRot = "1";
+      else el.removeAttribute("data-snap-rot");
+    }
+  }
+
+  function clearSnap(preview, el) {
+    setSnap(preview, el, { x: false, y: false, rot: false });
+  }
+
+  function magnetMove(stack, key) {
+    const preview = stack.closest(".phone-preview") || document.querySelector(".phone-preview");
+    const el = stack.querySelector(layerSelector(key));
+    if (!preview || !el) return;
+    ensureGuides(preview);
+    const frame = preview.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    const cx = frame.left + frame.width / 2;
+    const cy = frame.top + frame.height / 2;
+    const lx = box.left + box.width / 2;
+    const ly = box.top + box.height / 2;
+    const flags = { x: false, y: false, rot: false };
+    if (Math.abs(lx - cx) <= AXIS_SNAP) {
+      state[key].x += cx - lx;
+      flags.x = true;
+    }
+    if (Math.abs(ly - cy) <= AXIS_SNAP) {
+      state[key].y += cy - ly;
+      flags.y = true;
+    }
+    paint(stack);
+    setSnap(preview, el, flags);
+  }
+
+  function magnetRotate(stack, key, raw) {
+    const snapped = snapAngle(raw);
+    state[key].rotation = snapped;
+    const preview = stack.closest(".phone-preview") || document.querySelector(".phone-preview");
+    const el = stack.querySelector(layerSelector(key));
+    if (preview) ensureGuides(preview);
+    const a = ((snapped % 360) + 360) % 360;
+    setSnap(preview, el, { x: false, y: false, rot: ANGLE_STOPS.includes(a) });
   }
 
   function isOn(key) {
@@ -406,7 +491,7 @@
       rotate.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
         const ang = Math.atan2(moveEvent.clientY - center.y, moveEvent.clientX - center.x) * (180 / Math.PI);
-        state[key].rotation = startRot + (ang - startAng);
+        magnetRotate(stack, key, startRot + (ang - startAng));
         paint(stack);
         containLayer(stack, key, true);
       };
@@ -414,6 +499,7 @@
         rotate.removeEventListener("pointermove", move);
         rotate.removeEventListener("pointerup", end);
         rotate.removeEventListener("pointercancel", end);
+        clearSnap(stack.closest(".phone-preview"), element);
         save();
       };
       rotate.addEventListener("pointermove", move);
@@ -464,12 +550,14 @@
         state[key].x = start.x + moveEvent.clientX - start.pointerX;
         state[key].y = start.y + moveEvent.clientY - start.pointerY;
         paint(stack);
+        magnetMove(stack, key);
         containLayer(stack, key, false);
       };
       const end = () => {
         element.removeEventListener("pointermove", move);
         element.removeEventListener("pointerup", end);
         element.removeEventListener("pointercancel", end);
+        clearSnap(stack.closest(".phone-preview"), element);
         save();
       };
       element.addEventListener("pointermove", move);
@@ -501,7 +589,7 @@
         event.preventDefault();
         const dist = pinchDist(event.touches[0], event.touches[1]);
         state[key].scale = Math.max(0.25, Math.min(4, pinch.scale * (dist / Math.max(12, pinch.dist))));
-        state[key].rotation = pinch.rotation + (pinchAng(event.touches[0], event.touches[1]) - pinch.ang);
+        magnetRotate(stack, key, pinch.rotation + (pinchAng(event.touches[0], event.touches[1]) - pinch.ang));
         paint(stack);
         containLayer(stack, key, true);
       },
@@ -510,6 +598,7 @@
     element.addEventListener("touchend", (event) => {
       if (event.touches.length < 2 && element._qaripPinch) {
         element._qaripPinch = null;
+        clearSnap(stack.closest(".phone-preview"), element);
         save();
       }
     });
@@ -901,6 +990,7 @@
     const stack = preview?.querySelector(".subtitle-stack");
     const editor = document.querySelector(".reels-copy-edit");
     if (!preview || !stack) return;
+    ensureGuides(preview);
     paint(stack);
     if (state.extra.on) {
       if (!stack.querySelector(".sub-extra")) createExtra(stack, editor, false);
