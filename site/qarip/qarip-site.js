@@ -55,7 +55,8 @@
 
   function phoneHTML(item, extraClass = "") {
     const hookClass = item.upper ? "is-upper" : "";
-    return `<a class="qarip-phone ${extraClass}" href="/qarip/stories/" style="background:${item.bg}">
+    return `<a class="qarip-phone ${extraClass}" href="/qarip/stories/" style="--phone-bg:${item.bg}">
+      <i class="qarip-phone-glow" aria-hidden="true"></i>
       <strong class="${hookClass}" style="font-family:${item.hookFamily};font-style:${item.hookStyle}">${item.hook}</strong>
       <span style="font-family:${item.markFamily}">${item.mark}</span>
       <em>${item.name}</em>
@@ -119,32 +120,6 @@
       if (svg) eyebrow.append(svg);
       eyebrow.append(document.createTextNode(" ҚАЗАҚША STORIES ҚҰРАЛЫ"));
     }
-    const h1 = intro.querySelector("h1");
-    if (h1 && !h1.querySelector("span")) {
-      h1.innerHTML = "Қазақша Stories-ты<br><span>әдемі жасаңыз</span>";
-    } else if (h1) {
-      h1.innerHTML = "Қазақша Stories-ты<br><span>әдемі жасаңыз</span>";
-    }
-    const desc = intro.querySelector(":scope > p");
-    if (desc) {
-      desc.innerHTML =
-        "Қазақ әріптерін толық қолдайтын дайын мәтін стильдері мен қаріп комбинациялары.<br>Мәтінді жазыңыз, стиль таңдаңыз және дайын 9:16 PNG жүктеп алыңыз.";
-    }
-    const row = intro.querySelector(".intro-cta-row");
-    if (row) {
-      row.innerHTML = `
-        <a class="intro-cta qarip-cta-primary" href="/qarip/stories/">Stories жасап көру</a>
-        <a class="qarip-cta-secondary" href="#catalog">Қаріптерді көру</a>
-      `;
-    }
-    let trust = intro.querySelector(".qarip-trust");
-    if (!trust) {
-      trust = document.createElement("p");
-      trust.className = "qarip-trust";
-      row?.after(trust);
-    }
-    const n = fontCount();
-    trust.textContent = n ? `Қазақша қолдау · ${n} қаріп · 9:16 PNG` : "Қазақша қолдау · 9:16 PNG";
     let copy = intro.querySelector(".qarip-hero-copy");
     if (!copy) {
       copy = document.createElement("div");
@@ -155,6 +130,28 @@
       if (child === copy || child.classList.contains("alphabet") || child.classList.contains("qarip-hero-phones")) return;
       copy.append(child);
     });
+    const h1 = copy.querySelector("h1");
+    if (h1) h1.innerHTML = "Қазақша Stories-ты<br><span>әдемі жасаңыз</span>";
+    const desc = copy.querySelector(":scope > p:not(.qarip-trust)");
+    if (desc) {
+      desc.textContent =
+        "Қазақ әріптерін толық қолдайтын дайын стильдер. Мәтін жазып, 9:16 PNG алыңыз.";
+    }
+    const row = copy.querySelector(".intro-cta-row");
+    if (row) {
+      row.innerHTML = `
+        <a class="intro-cta qarip-cta-primary" href="/qarip/stories/">Stories жасап көру</a>
+        <a class="qarip-cta-secondary" href="#catalog">Қаріптерді көру</a>
+      `;
+    }
+    let trust = copy.querySelector(".qarip-trust");
+    if (!trust) {
+      trust = document.createElement("p");
+      trust.className = "qarip-trust";
+      row?.after(trust);
+    }
+    const n = fontCount();
+    trust.textContent = n ? `Қазақша қолдау · ${n} қаріп · 9:16 PNG` : "Қазақша қолдау · 9:16 PNG";
     intro.querySelector(".alphabet")?.setAttribute("hidden", "");
     let phones = intro.querySelector(".qarip-hero-phones");
     if (!phones) {
@@ -183,7 +180,7 @@
       landing = document.createElement("div");
       landing.className = "qarip-landing";
     }
-    if (landing.dataset.ready === "1" && landing.querySelector("#qarip-problems-title")) {
+    if (landing.dataset.ready === "design49" && landing.querySelector("#qarip-problems-title")) {
       if (landing.previousElementSibling !== intro) intro.after(landing);
       if (catalog.previousElementSibling !== landing) landing.after(catalog);
       return;
@@ -201,23 +198,26 @@
       <section class="qarip-how" aria-labelledby="qarip-how-title">
         <h2 id="qarip-how-title">Қалай жұмыс істейді?</h2>
         <ol class="qarip-steps">
-          <li><span>1</span>Мәтінді жазыңыз</li>
-          <li><span>2</span>Стиль таңдаңыз</li>
-          <li><span>3</span>PNG жүктеп алыңыз</li>
+          <li><span>1</span><strong>Мәтінді жазыңыз</strong></li>
+          <li><span>2</span><strong>Стиль таңдаңыз</strong></li>
+          <li><span>3</span><strong>PNG жүктеп алыңыз</strong></li>
         </ol>
-        <p class="qarip-step-micro">Stories-қа салыңыз</p>
+        <p class="qarip-step-micro">→ Stories-қа салыңыз</p>
       </section>
       <section class="qarip-glyphs" aria-labelledby="qarip-glyphs-title">
+        <p class="qarip-section-kicker">Қазақша қолдау</p>
         <h2 id="qarip-glyphs-title">Қазақшаға арналған</h2>
         <p class="qarip-glyph-row" lang="kk">Ә Ғ Қ Ң Ө Ұ Ү Һ І</p>
-        <p>Qarip қазақ әріптерін қолдайтын қаріптерді табуға және тексеруге көмектеседі. Қаріп комбинациялары қазақ кириллицасындағы негізгі әріптермен тексеріледі.</p>
+        <p class="qarip-glyphs-copy">Qarip қазақ әріптерін қолдайтын қаріптерді табуға және тексеруге көмектеседі.</p>
       </section>
       <section class="qarip-styles" aria-labelledby="qarip-styles-title">
-        <h2 id="qarip-styles-title">Дайын стильдер</h2>
-        <div class="qarip-style-grid">
-          ${STYLE_PREVIEWS.map((item) => phoneHTML(item)).join("")}
+        <div class="qarip-styles-head">
+          <h2 id="qarip-styles-title">Дайын стильдер</h2>
+          <a class="qarip-styles-cta" href="/qarip/stories/">Барлық стильді көру →</a>
         </div>
-        <a class="qarip-styles-cta" href="/qarip/stories/">Барлық стильді көру →</a>
+        <div class="qarip-style-stage">
+          ${STYLE_PREVIEWS.map((item, i) => phoneHTML(item, `qarip-style-${i}`)).join("")}
+        </div>
       </section>
       <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
         <div class="qarip-toolcta-copy">
@@ -226,7 +226,7 @@
           <label class="qarip-teaser-label">Үлгі мәтін
             <input class="qarip-teaser-input" maxlength="42" value="Қазақша Stories" aria-label="Үлгі мәтін"/>
           </label>
-          <a class="qarip-cta-primary" href="/qarip/stories/">Stories құралын ашу →</a>
+          <a class="qarip-cta-acid" href="/qarip/stories/">Stories құралын ашу →</a>
         </div>
         <div class="qarip-teaser-phone" aria-hidden="true">
           <strong class="qarip-teaser-hook">Қазақша Stories</strong>
@@ -237,7 +237,7 @@
     `;
     intro.after(landing);
     landing.after(catalog);
-    landing.dataset.ready = "1";
+    landing.dataset.ready = "design49";
     const input = landing.querySelector(".qarip-teaser-input");
     const hook = landing.querySelector(".qarip-teaser-hook");
     if (input && hook && input.dataset.bound !== "1") {
