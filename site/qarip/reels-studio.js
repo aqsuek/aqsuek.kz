@@ -33,7 +33,7 @@
     .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
     .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
     .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
-    .subtitle-stack .sub-mark{top:58%;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
+    .subtitle-stack .sub-mark{top:58%;padding:8px 16px!important;border-radius:999px!important;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:4px}
@@ -410,7 +410,7 @@
     if (layer.bg) {
       el.style.setProperty("background", layer.bg, "important");
       el.style.setProperty("padding", "7px 11px", "important");
-      el.style.setProperty("border-radius", "6px", "important");
+      el.style.setProperty("border-radius", "999px", "important");
       el.style.setProperty("box-shadow", "0 6px 16px #0005", "important");
       el.dataset.hasBg = "1";
     } else if (layer.bg === "") {
@@ -770,18 +770,6 @@
     ]);
   }
 
-  function loadHtml2Canvas() {
-    if (window.html2canvas) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
-      script.onload = resolve;
-      script.onerror = reject;
-      setTimeout(() => reject(new Error("html2canvas")), 12000);
-      document.head.appendChild(script);
-    });
-  }
-
   function cropTransparent(canvas) {
     const ctx = canvas.getContext("2d");
     const { width, height } = canvas;
@@ -813,38 +801,123 @@
     return out;
   }
 
-  function cropToVisibleLayers(canvas, preview, stack) {
-    const frame = preview.getBoundingClientRect();
-    if (!frame.width || !frame.height) return cropTransparent(canvas);
-    const nodes = ["hook", "mark", "extra"]
+  function layerPlainText(el) {
+    return [...el.childNodes]
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.nodeValue)
+      .join("")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function wrapCanvasLines(ctx, text, maxWidth) {
+    const words = String(text || "").split(/\s+/).filter(Boolean);
+    if (!words.length) return [""];
+    const lines = [];
+    let current = words[0];
+    for (let i = 1; i < words.length; i += 1) {
+      const next = `${current} ${words[i]}`;
+      if (ctx.measureText(next).width <= maxWidth) current = next;
+      else {
+        lines.push(current);
+        current = words[i];
+      }
+    }
+    lines.push(current);
+    return lines;
+  }
+
+  function fillRoundRect(ctx, x, y, w, h, radius) {
+    const r = Math.max(0, Math.min(radius, w / 2, h / 2));
+    ctx.beginPath();
+    if (typeof ctx.roundRect === "function") ctx.roundRect(x, y, w, h, r);
+    else {
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    ctx.fill();
+  }
+
+  function liveLayers(stack) {
+    return ["hook", "mark", "extra"]
       .filter(isOn)
-      .map((key) => stack.querySelector(layerSelector(key)))
-      .filter((el) => el && getComputedStyle(el).display !== "none");
-    if (!nodes.length) return cropTransparent(canvas);
-    const scaleX = canvas.width / frame.width;
-    const scaleY = canvas.height / frame.height;
+      .map((key) => ({ key, el: stack.querySelector(layerSelector(key)) }))
+      .filter((item) => item.el && getComputedStyle(item.el).display !== "none");
+  }
+
+  function paintLayer(ctx, item, originX, originY, outScale) {
+    const { el, key } = item;
+    const cs = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    const scale = state[key].scale || 1;
+    const rot = ((state[key].rotation || 0) * Math.PI) / 180;
+    const w = Math.max(2, el.offsetWidth * scale * outScale);
+    const h = Math.max(2, el.offsetHeight * scale * outScale);
+    const cx = (rect.left + rect.width / 2 - originX) * outScale;
+    const cy = (rect.top + rect.height / 2 - originY) * outScale;
+    const fontSize = parseFloat(cs.fontSize) * scale * outScale;
+    const padL = parseFloat(cs.paddingLeft) * scale * outScale || 0;
+    const padR = parseFloat(cs.paddingRight) * scale * outScale || 0;
+    const radius = parseFloat(cs.borderRadius) * scale * outScale || h / 2;
+    const bg = cs.backgroundColor || "rgba(0, 0, 0, 0)";
+    const hasBg = !bg.includes("0)") && bg !== "transparent";
+    const text = layerPlainText(el);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    if (hasBg) {
+      ctx.fillStyle = bg;
+      fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius);
+    }
+    ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`;
+    ctx.fillStyle = cs.color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = cs.letterSpacing;
+    if (!hasBg) {
+      ctx.shadowColor = "rgba(0,0,0,0.55)";
+      ctx.shadowBlur = 10 * outScale * scale;
+      ctx.shadowOffsetY = 2 * outScale * scale;
+    }
+    const maxW = Math.max(12, w - padL - padR);
+    const lines = wrapCanvasLines(ctx, text, maxW);
+    const parsedLh = parseFloat(cs.lineHeight);
+    const lh = (Number.isFinite(parsedLh) ? parsedLh * scale * outScale : fontSize * 1.08);
+    const block = lh * lines.length;
+    let y = -block / 2 + lh / 2;
+    lines.forEach((line) => {
+      ctx.fillText(line, 0, y, maxW);
+      y += lh;
+    });
+    ctx.restore();
+  }
+
+  function renderStackSticker(preview, stack) {
+    const layers = liveLayers(stack);
+    if (!layers.length) throw new Error("layers");
+    const pad = 48;
+    const outScale = 2;
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
-    nodes.forEach((el) => {
-      const rect = el.getBoundingClientRect();
+    layers.forEach((item) => {
+      const rect = item.el.getBoundingClientRect();
       minX = Math.min(minX, rect.left);
       minY = Math.min(minY, rect.top);
       maxX = Math.max(maxX, rect.right);
       maxY = Math.max(maxY, rect.bottom);
     });
-    const pad = 28;
-    const x = Math.max(0, Math.floor((minX - frame.left) * scaleX - pad));
-    const y = Math.max(0, Math.floor((minY - frame.top) * scaleY - pad));
-    const w = Math.min(canvas.width - x, Math.ceil((maxX - minX) * scaleX + pad * 2));
-    const h = Math.min(canvas.height - y, Math.ceil((maxY - minY) * scaleY + pad * 2));
-    if (w < 8 || h < 8) return cropTransparent(canvas);
     const out = document.createElement("canvas");
-    out.width = w;
-    out.height = h;
-    out.getContext("2d").drawImage(canvas, x, y, w, h, 0, 0, w, h);
-    return out;
+    out.width = Math.max(8, Math.ceil((maxX - minX) * outScale + pad * 2));
+    out.height = Math.max(8, Math.ceil((maxY - minY) * outScale + pad * 2));
+    const ctx = out.getContext("2d");
+    layers.forEach((item) => paintLayer(ctx, item, minX - pad / outScale, minY - pad / outScale, outScale));
+    return cropTransparent(out);
   }
 
   async function writePng(blob) {
@@ -860,31 +933,6 @@
     return "saved";
   }
 
-  async function renderStackSticker(preview, stack) {
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    const shot = await withTimeout(
-      window.html2canvas(preview, {
-        scale: 2,
-        backgroundColor: null,
-        logging: false,
-        useCORS: true,
-        onclone(doc) {
-          const clone = doc.querySelector(".phone-preview");
-          if (!clone) return;
-          clone.style.setProperty("background", "transparent", "important");
-          clone.style.setProperty("border-color", "transparent", "important");
-          clone.style.setProperty("box-shadow", "none", "important");
-          clone.querySelectorAll(".reels-handle, .reel-ui, .reel-orbit, .reel-progress, .font-chip").forEach((node) => node.remove());
-          clone.querySelectorAll("[data-layer-off='1']").forEach((node) => node.remove());
-          clone.querySelectorAll("[data-selected]").forEach((node) => node.removeAttribute("data-selected"));
-        },
-      }),
-      15000,
-      "html2canvas"
-    );
-    return cropToVisibleLayers(shot, preview, stack);
-  }
-
   async function copySticker() {
     const preview = document.querySelector(".phone-preview");
     const stack = preview?.querySelector(".subtitle-stack");
@@ -894,8 +942,8 @@
     btn.textContent = "Көшірілуде…";
     preview.classList.add("exporting", "sticker-export");
     try {
-      await loadHtml2Canvas();
-      const canvas = await renderStackSticker(preview, stack);
+      if (document.fonts?.ready) await document.fonts.ready;
+      const canvas = renderStackSticker(preview, stack);
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) throw new Error("blob");
       const result = await writePng(blob);
