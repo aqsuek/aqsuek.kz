@@ -3,21 +3,41 @@
   const PAGE_SIZE = 32;
   const KZ_GLYPHS = ["Ә", "Ғ", "Қ", "Ң", "Ө", "Ұ", "Ү", "Һ"];
   let visibleLimit = PAGE_SIZE;
-  let oflOnly = false;
+  let mode = "all";
+  let style = ALL;
 
-  const style = document.createElement("style");
-  style.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.categories button.license-filter{border:1px solid #286332;color:#286332}.categories button.license-filter[aria-pressed="true"]{background:#286332;color:#fff}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
-  document.head.appendChild(style);
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent =
+    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#181816;white-space:nowrap}.fav-filter.active{background:#181816;color:#d9ff47}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5c5c56;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+  document.head.appendChild(styleSheet);
 
-  function activeCategory() {
-    const btn = document.querySelector(".categories button.active:not(.license-filter)");
-    return (btn && (btn.dataset.category || btn.textContent.trim())) || ALL;
+  function styleName(button) {
+    if (!button) return ALL;
+    if (button.dataset.style) return button.dataset.style;
+    const textNode = [...button.childNodes].find((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+    const raw = (textNode ? textNode.textContent : button.textContent) || "";
+    return raw.replace(/\d+/g, " ").replace(/\s+/g, " ").trim() || ALL;
+  }
+
+  function savedNames() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("qarip-favorites") || "[]"));
+    } catch {
+      return new Set();
+    }
   }
 
   function query() {
     const input = document.querySelector(".search input");
     return ((input && input.value) || "").trim().toLowerCase();
+  }
+
+  function paintActive() {
+    document.querySelectorAll(".categories button").forEach((button) => {
+      const name = styleName(button);
+      button.classList.toggle("active", mode !== "fav" && name === style);
+    });
+    document.querySelector(".fav-filter")?.classList.toggle("active", mode === "fav");
   }
 
   function renderMoreButton(matching) {
@@ -39,6 +59,20 @@
     const shown = Math.min(matching.length, visibleLimit);
     const remaining = matching.length - shown;
     more.textContent = `Тағы ${Math.min(remaining, PAGE_SIZE)} қаріпті ашу · ${shown} / ${matching.length}`;
+  }
+
+  function renderEmpty(matching) {
+    let empty = document.querySelector(".catalog-empty");
+    if (mode === "fav" && matching.length === 0) {
+      if (!empty) {
+        empty = document.createElement("p");
+        empty.className = "catalog-empty";
+        document.querySelector(".font-grid")?.after(empty);
+      }
+      empty.textContent = "Ұнаған қаріп жоқ. Карточкадағы ♡ белгісін басыңыз.";
+      return;
+    }
+    empty?.remove();
   }
 
   function kazakhGlyphsMissing(family) {
@@ -79,29 +113,35 @@
     }
   }
 
-  function ensureOflButton() {
-    const row = document.querySelector(".categories");
-    if (!row || row.querySelector(".license-filter")) return;
+  function ensureFavButton() {
+    document.querySelector(".license-filter")?.remove();
+    const controls = document.querySelector(".controls");
+    if (!controls || controls.querySelector(".fav-filter")) return;
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "license-filter";
+    button.className = "filter-button fav-filter";
     button.setAttribute("aria-pressed", "false");
-    button.innerHTML = 'Ашық · OFL<small>0</small>';
-    const first = row.querySelector("button");
-    if (first?.nextSibling) row.insertBefore(button, first.nextSibling);
-    else row.append(button);
+    button.innerHTML = 'Ұнағандар<small>0</small>';
+    controls.append(button);
+  }
+
+  function updateFavCount() {
+    const small = document.querySelector(".fav-filter small");
+    if (small) small.textContent = String(savedNames().size);
   }
 
   function decorateCatalog(cards) {
     const categoryTotals = new Map();
     const seen = new Set();
-    let oflCount = 0;
     cards.forEach((card) => {
       const name = card.querySelector("h3")?.textContent?.trim();
       if (!name || seen.has(name)) return;
       seen.add(name);
       const category = card.querySelector(".meta > span")?.textContent?.trim();
-      if (category) categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
+      if (category) {
+        card.dataset.style = category;
+        categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
+      }
 
       const license = card.querySelector(".meta > span:last-child");
       if (license && !license.dataset.labelled) {
@@ -114,32 +154,26 @@
           license.classList.add("license-check");
         }
       }
-      if (card.querySelector(".license-open")) oflCount += 1;
       labelGlyphStatus(card);
     });
 
-    ensureOflButton();
-    document.querySelectorAll(".categories button:not(.license-filter)").forEach((button) => {
-      const category = button.dataset.category || button.textContent.trim();
-      button.dataset.category = category;
+    ensureFavButton();
+    document.querySelectorAll(".categories button").forEach((button) => {
+      const category = styleName(button);
+      button.dataset.style = category;
       const total = category === ALL ? seen.size : categoryTotals.get(category) || 0;
-      if (!button.querySelector("small")) {
-        const count = document.createElement("small");
-        count.textContent = total;
+      let count = button.querySelector("small");
+      if (!count) {
+        count = document.createElement("small");
         button.appendChild(count);
       }
+      count.textContent = String(total);
     });
-    const oflSmall = document.querySelector(".license-filter small");
-    if (oflSmall) oflSmall.textContent = String(oflCount);
+    updateFavCount();
   }
 
   function addFavorites(cards) {
-    let saved;
-    try {
-      saved = new Set(JSON.parse(localStorage.getItem("qarip-favorites") || "[]"));
-    } catch {
-      saved = new Set();
-    }
+    const saved = savedNames();
     cards.forEach((card) => {
       const name = card.querySelector("h3")?.textContent?.trim();
       const top = card.querySelector(".card-top");
@@ -147,42 +181,44 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "font-favorite";
-      button.title = "Таңдаулыға сақтау";
-      button.setAttribute("aria-label", `${name} қаріпін таңдаулыға сақтау`);
+      button.title = "Ұнағандарға сақтау";
+      button.setAttribute("aria-label", `${name} қаріпін ұнағандарға сақтау`);
       button.setAttribute("aria-pressed", String(saved.has(name)));
       button.textContent = saved.has(name) ? "♥" : "♡";
-      button.addEventListener("click", () => {
-        if (saved.has(name)) saved.delete(name);
-        else saved.add(name);
-        localStorage.setItem("qarip-favorites", JSON.stringify([...saved]));
-        button.setAttribute("aria-pressed", String(saved.has(name)));
-        button.textContent = saved.has(name) ? "♥" : "♡";
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const next = savedNames();
+        if (next.has(name)) next.delete(name);
+        else next.add(name);
+        localStorage.setItem("qarip-favorites", JSON.stringify([...next]));
+        button.setAttribute("aria-pressed", String(next.has(name)));
+        button.textContent = next.has(name) ? "♥" : "♡";
+        updateFavCount();
+        if (mode === "fav") apply();
       });
       top.append(button);
     });
   }
 
-  function apply(forcedCat, resetLimit = false) {
+  function apply(resetLimit = false) {
     if (resetLimit) visibleLimit = PAGE_SIZE;
-    const cat = forcedCat || activeCategory();
     const q = query();
     const grid = document.querySelector(".font-grid");
     if (!grid) return;
     const cards = grid.querySelectorAll(":scope > .font-card");
+    const fav = savedNames();
     const seen = new Set();
     const matching = [];
     cards.forEach((card) => {
       const name = (card.querySelector("h3")?.textContent || "").trim();
       const maker = (card.querySelector(".card-top p")?.textContent || "").trim();
-      const fontStyle = (
-        card.querySelector(".meta > span")?.textContent || ""
-      ).trim();
+      const fontStyle = card.dataset.style || (card.querySelector(".meta > span")?.textContent || "").trim();
       const duplicate = name !== "" && seen.has(name);
       if (name) seen.add(name);
-      const matchCat = cat === ALL || fontStyle === cat;
+      const matchStyle = mode === "fav" ? fav.has(name) : style === ALL || fontStyle === style;
       const matchQ = !q || `${name} ${maker}`.toLowerCase().includes(q);
-      const matchOfl = !oflOnly || !!card.querySelector(".license-open");
-      if (matchCat && matchQ && matchOfl && !duplicate) matching.push(card);
+      if (matchStyle && matchQ && !duplicate) matching.push(card);
     });
 
     const shownCards = new Set(matching.slice(0, visibleLimit));
@@ -201,33 +237,44 @@
       count.textContent = `${Math.min(matching.length, visibleLimit)} / ${matching.length} қаріп`;
     }
     renderMoreButton(matching);
+    renderEmpty(matching);
+    paintActive();
+    const favBtn = document.querySelector(".fav-filter");
+    if (favBtn) favBtn.setAttribute("aria-pressed", String(mode === "fav"));
   }
 
-  function schedule(cat) {
-    apply(cat, true);
-    requestAnimationFrame(() => apply(cat));
-    setTimeout(() => apply(cat), 40);
-    setTimeout(() => apply(), 120);
+  function selectStyle(name) {
+    mode = name === ALL ? "all" : "style";
+    style = name;
+    apply(true);
+  }
+
+  function selectFav() {
+    mode = "fav";
+    apply(true);
   }
 
   document.addEventListener(
     "click",
     (event) => {
-      const btn = event.target.closest(".categories button");
-      if (!btn) return;
-      if (btn.classList.contains("license-filter")) {
-        oflOnly = !oflOnly;
-        btn.setAttribute("aria-pressed", String(oflOnly));
-        apply(undefined, true);
+      const favBtn = event.target.closest(".fav-filter");
+      if (favBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (mode === "fav") selectStyle(ALL);
+        else selectFav();
         return;
       }
-      schedule(btn.dataset.category || btn.textContent.trim());
+      const btn = event.target.closest(".categories button");
+      if (!btn) return;
+      event.stopPropagation();
+      selectStyle(styleName(btn));
     },
     true
   );
 
   document.addEventListener("input", (event) => {
-    if (event.target.closest(".search input")) apply(undefined, true);
+    if (event.target.closest(".search input")) apply(true);
   });
 
   document.addEventListener("click", (event) => {
@@ -251,7 +298,11 @@
     let timer = 0;
     new MutationObserver(() => {
       clearTimeout(timer);
-      timer = setTimeout(() => apply(), 0);
+      timer = setTimeout(() => {
+        decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+        addFavorites(grid.querySelectorAll(":scope > .font-card"));
+        apply();
+      }, 0);
     }).observe(grid, { childList: true });
   }
 
