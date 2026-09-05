@@ -39,7 +39,7 @@
       btn.type = "button";
       btn.dataset.group = "stories";
       btn.dataset.style = STORIES_GROUP;
-      btn.title = "Рилс, Stories және 9:16 субтитрге арналған әдемі қаріптер";
+      btn.title = "Stories және 9:16 мәтінге арналған әдемі қаріптер";
       btn.innerHTML = 'Stories<small>0</small>';
       const first = cats.querySelector("button");
       if (first) first.after(btn);
@@ -265,6 +265,16 @@
         if (author) makerEl.textContent = author;
         else makerEl.hidden = true;
       }
+      card.querySelector(".card-top .pick")?.setAttribute("hidden", "");
+      card.querySelectorAll(".meta > span").forEach((span, index) => {
+        const raw = (span.textContent || "").replace(/\s+/g, " ").trim();
+        if (raw === "Жүктелген файл" || raw === "Тікелей" || raw === "Жеке жинақ") {
+          span.childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) node.textContent = "";
+          });
+        }
+        if (index > 0) return;
+      });
       const licenseKey = rec?.license || "check";
       card.dataset.license = licenseKey;
       card.dataset.slug = rec?.slug || slugify(name, rec?.download);

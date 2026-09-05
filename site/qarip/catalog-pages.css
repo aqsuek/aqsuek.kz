@@ -250,87 +250,114 @@ html.qarip-stories #reels{display:flex!important}
 html.qarip-stories .intro,
 html.qarip-stories #catalog,
 html.qarip-stories .stories-promo,
+html.qarip-stories .qarip-landing,
 html.qarip-stories .reels-copy{display:none!important}
 .stories-page-hero{
   width:100%;
   margin:0;
-  padding:28px 16px 8px;
+  padding:18px 16px 4px;
   text-align:center;
   color:#f4f1ea;
   background:#151513;
 }
+.stories-page-eyebrow{
+  margin:0 0 8px;
+  font:800 11px/1 Arial,sans-serif;
+  letter-spacing:.14em;
+  color:#d9ff47;
+}
 .stories-page-hero h1{
-  margin:0 0 10px;
-  font:800 clamp(28px,6vw,42px)/1.05 Arial,sans-serif;
+  margin:0 0 8px;
+  font:800 clamp(24px,5.4vw,34px)/1.1 Arial,sans-serif;
   letter-spacing:-.04em;
 }
 .stories-page-hero p{
-  margin:0 auto 8px;
+  margin:0 auto;
   max-width:34em;
-  font:600 15px/1.45 Arial,sans-serif;
+  font:600 14px/1.45 Arial,sans-serif;
   color:#d4d0c6;
 }
-.stories-page-note{opacity:.78;font-size:13px!important}
-.stories-promo{
-  width:min(1120px,calc(100% - 32px));
-  margin:24px auto 28px;
-  padding:28px 24px;
-  border:1px solid #18181622;
-  border-radius:24px;
-  background:#151513;
-  color:#f4f1ea;
+.categories button[data-group="stories"]{letter-spacing:.02em}
+.font-card .pick{display:none!important}
+html.qarip-home .alphabet{display:none!important}
+html.qarip-home .intro.qarip-hero{
+  min-height:0;
+  overflow:visible;
   display:grid;
-  grid-template-columns:minmax(0,1.1fr) minmax(220px,1fr);
-  gap:28px;
+  grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr);
+  gap:28px 40px;
+  align-items:center;
+  padding:36px clamp(16px,5vw,72px) 40px;
+}
+html.qarip-home .intro.qarip-hero .qarip-hero-copy{min-width:0}
+html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{
+  max-width:14ch;
+  margin:12px 0 16px;
+  font-size:clamp(34px,6.4vw,68px);
+  font-weight:800;
+  line-height:.95;
+  letter-spacing:-.06em;
+}
+html.qarip-home .intro.qarip-hero .qarip-hero-copy h1 span{display:block}
+html.qarip-home .intro.qarip-hero .qarip-hero-copy > p{
+  max-width:36em;
+  margin:0 0 18px;
+  font:600 16px/1.45 Arial,sans-serif;
+  color:#3f3f3a;
+}
+html.qarip-home .intro-cta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
   align-items:center;
 }
-.stories-promo h2{
-  margin:0 0 10px;
-  font:800 clamp(24px,4vw,34px)/1.1 Arial,sans-serif;
-  letter-spacing:-.04em;
-}
-.stories-promo p{
-  margin:0 0 18px;
-  max-width:34em;
-  font:600 15px/1.45 Arial,sans-serif;
-  color:#cfcbbf;
-}
-.stories-promo-cta{
+.qarip-cta-primary,
+html.qarip-home .intro-cta{
   display:inline-flex;
   align-items:center;
-  min-height:46px;
-  padding:0 18px;
+  justify-content:center;
+  min-height:48px;
+  padding:0 20px;
   border-radius:999px;
-  background:#d9ff47;
-  color:#171715;
+  background:#181816;
+  color:#d9ff47;
   font:800 14px/1 Arial,sans-serif;
   text-decoration:none;
 }
-.stories-promo-cta:hover{background:#fff}
-.stories-promo-fonts{
+.qarip-cta-primary:hover,
+html.qarip-home .intro-cta:hover{background:#d9ff47;color:#181816}
+.qarip-cta-secondary{
   display:inline-flex;
   align-items:center;
-  min-height:46px;
-  margin-left:10px;
-  padding:0 16px;
+  justify-content:center;
+  min-height:48px;
+  padding:0 18px;
+  border:1px solid #181816;
   border-radius:999px;
-  border:1px solid #ffffff44;
-  color:#d9ff47;
-  font:800 13px/1 Arial,sans-serif;
+  color:#181816;
+  font:800 14px/1 Arial,sans-serif;
   text-decoration:none;
+  background:#fff;
 }
-.stories-promo-fonts:hover{border-color:#d9ff47}
-.categories button[data-group="stories"]{letter-spacing:.02em}
-.stories-promo-phones{
+.qarip-cta-secondary:hover{background:#181816;color:#d9ff47}
+.qarip-trust{
+  margin:14px 0 0;
+  font:700 12px/1.4 Arial,sans-serif;
+  letter-spacing:.02em;
+  color:#5c5c56;
+}
+.qarip-hero-phones{
   display:flex;
   justify-content:flex-end;
-  gap:10px;
+  align-items:flex-end;
+  gap:8px;
+  min-height:280px;
 }
-.stories-mini{
+.qarip-phone{
   width:92px;
   aspect-ratio:9/16;
-  border-radius:14px;
-  padding:18px 8px 10px;
+  border-radius:16px;
+  padding:16px 8px 12px;
   text-decoration:none;
   color:#fff;
   display:flex;
@@ -338,24 +365,234 @@ html.qarip-stories .reels-copy{display:none!important}
   justify-content:center;
   align-items:center;
   gap:8px;
-  box-shadow:0 12px 28px #0006;
-  transform:rotate(-4deg);
+  box-shadow:0 14px 32px #0005;
+  flex:0 0 auto;
 }
-.stories-mini:nth-child(2){transform:rotate(2deg);margin-top:10px}
-.stories-mini:nth-child(3){transform:rotate(5deg)}
-.stories-mini strong{font:700 13px/1.05 "Playfair Display",serif;text-align:center}
-.stories-mini span{
+.qarip-phone strong{
+  font-size:15px;
+  line-height:.95;
+  text-align:center;
+  letter-spacing:-.03em;
+}
+.qarip-phone strong.is-upper{letter-spacing:.04em}
+.qarip-phone span{
+  font:800 11px/1 Arial,sans-serif;
+  background:#d9ff47;
+  color:#171715;
+  border-radius:999px;
+  padding:5px 8px;
+}
+.qarip-phone em{
+  margin-top:auto;
+  font:700 8px/1.1 Arial,sans-serif;
+  opacity:.7;
+  text-align:center;
+  font-style:normal;
+}
+.qarip-phone-0{transform:rotate(-7deg);margin-bottom:18px}
+.qarip-phone-1{transform:rotate(2deg);width:104px}
+.qarip-phone-2{transform:rotate(6deg);margin-bottom:10px}
+.qarip-phone-3{transform:rotate(-3deg);margin-bottom:28px}
+.qarip-landing{
+  width:min(1120px,calc(100% - 32px));
+  margin:0 auto 8px;
+  padding:8px 0 12px;
+}
+.qarip-landing h2{
+  margin:0 0 14px;
+  font:800 clamp(22px,4vw,32px)/1.12 Arial,sans-serif;
+  letter-spacing:-.04em;
+}
+.qarip-problems,
+.qarip-how,
+.qarip-glyphs,
+.qarip-styles,
+.qarip-toolcta{
+  margin:0 0 36px;
+  padding:0;
+}
+.qarip-problem-list{
+  margin:0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:10px;
+}
+.qarip-problem-list li{
+  padding:14px 16px;
+  border:1px solid #18181622;
+  border-radius:16px;
+  font:650 15px/1.4 Arial,sans-serif;
+  background:#fff;
+}
+.qarip-solution{
+  margin:14px 0 0;
+  font:700 16px/1.45 Arial,sans-serif;
+}
+.qarip-steps{
+  margin:0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.qarip-steps li{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-height:92px;
+  padding:16px;
+  border:1px solid #181816;
+  border-radius:18px;
+  font:800 15px/1.25 Arial,sans-serif;
+}
+.qarip-steps span{
+  width:28px;
+  height:28px;
+  border-radius:99px;
+  background:#d9ff47;
+  color:#181816;
+  display:grid;
+  place-items:center;
+  font:800 13px/1 Arial,sans-serif;
+}
+.qarip-step-micro{
+  margin:10px 0 0;
+  font:700 13px/1.3 Arial,sans-serif;
+  color:#5c5c56;
+}
+.qarip-glyphs{text-align:center}
+.qarip-glyph-row{
+  margin:8px 0 14px;
+  font:800 clamp(28px,8vw,64px)/1.1 Georgia,serif;
+  letter-spacing:.04em;
+  overflow-x:auto;
+  white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+}
+.qarip-glyphs p:last-child{
+  margin:0 auto;
+  max-width:34em;
+  font:600 15px/1.45 Arial,sans-serif;
+  color:#3f3f3a;
+}
+.qarip-style-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(92px,1fr));
+  gap:12px;
+  justify-items:center;
+}
+.qarip-style-grid .qarip-phone{width:100%;max-width:120px;transform:none}
+.qarip-styles-cta{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  margin-top:16px;
+  font:800 14px/1 Arial,sans-serif;
+  color:#181816;
+}
+.qarip-toolcta{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(140px,.6fr);
+  gap:24px;
+  align-items:center;
+  padding:24px;
+  border-radius:24px;
+  background:#151513;
+  color:#f4f1ea;
+}
+.qarip-toolcta h2{color:#fff}
+.qarip-toolcta p{margin:0 0 14px;color:#cfcbbf;font:600 15px/1.45 Arial,sans-serif}
+.qarip-teaser-label{
+  display:block;
+  margin:0 0 14px;
+  font:800 12px/1 Arial,sans-serif;
+  letter-spacing:.04em;
+  color:#d4d0c6;
+}
+.qarip-teaser-input{
+  display:block;
+  width:100%;
+  margin-top:8px;
+  min-height:48px;
+  padding:0 12px;
+  border:0;
+  border-bottom:1px solid #ffffff55;
+  background:transparent;
+  color:#fff;
+  font:700 18px/1.3 Arial,sans-serif;
+}
+.qarip-teaser-phone{
+  width:min(140px,100%);
+  aspect-ratio:9/16;
+  margin:0 auto;
+  border-radius:18px;
+  padding:20px 10px;
+  background:#1a1a22;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+}
+.qarip-teaser-hook{
+  font:italic 700 22px/1 "Playfair Display",serif;
+}
+.qarip-teaser-phone span{
   font:800 11px/1 Montserrat,sans-serif;
   background:#d9ff47;
   color:#171715;
   border-radius:999px;
-  padding:4px 7px;
+  padding:5px 8px;
 }
-.stories-mini-a{background:#1a1a22}
-.stories-mini-b{background:#241816}
-.stories-mini-b strong{font-family:Oswald,sans-serif}
-.stories-mini-c{background:#102018}
-.stories-mini-c strong{font-family:Unbounded,sans-serif}
+.qarip-catalog-lead{
+  margin:8px 0 0;
+  max-width:38em;
+  font:600 14px/1.45 Arial,sans-serif;
+  color:#5c5c56;
+}
+.qarip-footer-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  margin:10px 0 0;
+}
+.qarip-footer-nav a{color:inherit;font:800 13px/1 Arial,sans-serif}
+#pricing-slot{display:none}
+@media(max-width:900px){
+  html.qarip-home .intro.qarip-hero{
+    grid-template-columns:1fr;
+    padding:28px 16px 24px;
+    gap:20px;
+  }
+  html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(32px,10vw,44px);margin:10px 0 12px}
+  html.qarip-home .intro-cta-row{position:relative;z-index:2}
+  .qarip-hero-phones{
+    justify-content:flex-start;
+    min-height:0;
+    overflow-x:auto;
+    padding:8px 4px 12px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .qarip-phone-0,.qarip-phone-1,.qarip-phone-2,.qarip-phone-3{
+    transform:none;
+    margin:0;
+    width:86px;
+  }
+  .qarip-landing{width:auto;margin:0 16px 8px}
+  .qarip-steps{grid-template-columns:1fr}
+  .qarip-toolcta{grid-template-columns:1fr;padding:20px 16px}
+  .qarip-cta-primary,
+  .qarip-cta-secondary,
+  html.qarip-home .intro-cta{min-height:48px;width:100%;max-width:420px}
+  .qarip-styles-cta{min-height:44px}
+  .card-bottom a[aria-label$="жүктеу"],
+  .card-bottom a[download],
+  .font-download{min-height:44px}
+  .cat-more{width:44px;height:44px;line-height:44px}
+}
 @media(max-width:900px){
   .stories-promo{
     grid-template-columns:1fr;
@@ -372,3 +609,5 @@ html.qarip-stories .reels-copy{display:none!important}
   }
   html.qarip-stories .reels-controls{width:min(100%,520px);max-width:100%}
 }
+.stories-promo{display:none!important}
+
