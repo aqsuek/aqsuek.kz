@@ -810,21 +810,30 @@
       .trim();
   }
 
-  function wrapCanvasLines(ctx, text, maxWidth) {
-    const words = String(text || "").split(/\s+/).filter(Boolean);
-    if (!words.length) return [""];
+  function liveTextLines(el) {
+    const raw = layerPlainText(el);
+    const node = [...el.childNodes].find((item) => item.nodeType === Node.TEXT_NODE);
+    if (!node || !raw) return [raw];
+    const text = node.nodeValue;
+    const range = document.createRange();
     const lines = [];
-    let current = words[0];
-    for (let i = 1; i < words.length; i += 1) {
-      const next = `${current} ${words[i]}`;
-      if (ctx.measureText(next).width <= maxWidth) current = next;
-      else {
-        lines.push(current);
-        current = words[i];
+    let start = 0;
+    let lastTop = null;
+    for (let i = 0; i < text.length; i += 1) {
+      range.setStart(node, i);
+      range.setEnd(node, Math.min(text.length, i + 1));
+      const box = range.getClientRects()[0];
+      if (!box) continue;
+      if (lastTop !== null && Math.abs(box.top - lastTop) > 3) {
+        const piece = text.slice(start, i).replace(/\s+/g, " ").trim();
+        if (piece) lines.push(piece);
+        start = i;
       }
+      lastTop = box.top;
     }
-    lines.push(current);
-    return lines;
+    const tail = text.slice(start).replace(/\s+/g, " ").trim();
+    if (tail) lines.push(tail);
+    return lines.length ? lines : [raw];
   }
 
   function fillRoundRect(ctx, x, y, w, h, radius) {
@@ -855,42 +864,44 @@
     const rect = el.getBoundingClientRect();
     const scale = state[key].scale || 1;
     const rot = ((state[key].rotation || 0) * Math.PI) / 180;
-    const w = Math.max(2, el.offsetWidth * scale * outScale);
-    const h = Math.max(2, el.offsetHeight * scale * outScale);
     const cx = (rect.left + rect.width / 2 - originX) * outScale;
     const cy = (rect.top + rect.height / 2 - originY) * outScale;
     const fontSize = parseFloat(cs.fontSize) * scale * outScale;
     const padL = parseFloat(cs.paddingLeft) * scale * outScale || 0;
     const padR = parseFloat(cs.paddingRight) * scale * outScale || 0;
-    const radius = parseFloat(cs.borderRadius) * scale * outScale || h / 2;
+    const padT = parseFloat(cs.paddingTop) * scale * outScale || 0;
+    const padB = parseFloat(cs.paddingBottom) * scale * outScale || 0;
+    const radius = parseFloat(cs.borderRadius) * scale * outScale || 0;
     const bg = cs.backgroundColor || "rgba(0, 0, 0, 0)";
     const hasBg = !bg.includes("0)") && bg !== "transparent";
-    const text = layerPlainText(el);
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(rot);
-    if (hasBg) {
-      ctx.fillStyle = bg;
-      fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius);
-    }
     ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`;
     ctx.fillStyle = cs.color;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     if (ctx.letterSpacing !== undefined) ctx.letterSpacing = cs.letterSpacing;
-    if (!hasBg) {
+    const lines = liveTextLines(el);
+    const parsedLh = parseFloat(cs.lineHeight);
+    const lh = Number.isFinite(parsedLh) ? parsedLh * scale * outScale : fontSize * 1.08;
+    const textW = lines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
+    const italicPad = /italic|oblique/.test(cs.fontStyle) ? fontSize * 0.32 : fontSize * 0.06;
+    const w = Math.max(el.offsetWidth * scale * outScale, textW + padL + padR + italicPad * 2, 2);
+    const h = Math.max(el.offsetHeight * scale * outScale, lh * lines.length + padT + padB, 2);
+    if (hasBg) {
+      ctx.fillStyle = bg;
+      fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius || h / 2);
+      ctx.fillStyle = cs.color;
+    } else {
       ctx.shadowColor = "rgba(0,0,0,0.55)";
       ctx.shadowBlur = 10 * outScale * scale;
       ctx.shadowOffsetY = 2 * outScale * scale;
     }
-    const maxW = Math.max(12, w - padL - padR);
-    const lines = wrapCanvasLines(ctx, text, maxW);
-    const parsedLh = parseFloat(cs.lineHeight);
-    const lh = (Number.isFinite(parsedLh) ? parsedLh * scale * outScale : fontSize * 1.08);
     const block = lh * lines.length;
     let y = -block / 2 + lh / 2;
     lines.forEach((line) => {
-      ctx.fillText(line, 0, y, maxW);
+      ctx.fillText(line, 0, y);
       y += lh;
     });
     ctx.restore();
@@ -899,7 +910,7 @@
   function renderStackSticker(preview, stack) {
     const layers = liveLayers(stack);
     if (!layers.length) throw new Error("layers");
-    const pad = 48;
+    const pad = 72;
     const outScale = 2;
     let minX = Infinity;
     let minY = Infinity;
