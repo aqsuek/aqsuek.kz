@@ -44,6 +44,10 @@
     }
     .reels-handle.resize{right:-16px;left:auto}
     .reels-handle.stretch-l{left:-16px;right:auto}
+    .reels-handle.scale{
+      right:-18px;bottom:-18px;top:auto;left:auto;width:22px;height:22px;
+      background:#d9ff47;border-color:#171715;cursor:nwse-resize;transform:none
+    }
     .reels-handle.rotate{left:50%;top:-40px;transform:translateX(-50%)}
     .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
     .reels-handle.delete{left:-18px;top:-18px;width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
@@ -190,8 +194,12 @@
       const box = el.getBoundingClientRect();
       if (box.width < 1 || box.height < 1) return;
       if (box.width > innerW + 0.5) {
-        const layoutW = Math.max(48, el.offsetWidth);
-        state[key].boxW = Math.max(48, layoutW * (innerW / box.width));
+        if (mayScale) {
+          state[key].scale = Math.max(0.25, state[key].scale * (innerW / box.width));
+        } else {
+          const layoutW = Math.max(48, el.offsetWidth);
+          state[key].boxW = Math.max(48, layoutW * (innerW / box.width));
+        }
         paint(stack);
         continue;
       }
@@ -515,10 +523,39 @@
     });
   }
 
-  function bindHandlePointers(element, resize, rotate, del, stack, key, stretchL) {
+  function bindScaleHandle(handle, element, stack, key) {
+    const select = () => selectLayer(stack, key);
+    handle.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      select();
+      const center = layerCenter(element);
+      const startDist = Math.max(12, Math.hypot(event.clientX - center.x, event.clientY - center.y));
+      const startScale = state[key].scale;
+      handle.setPointerCapture(event.pointerId);
+      const move = (moveEvent) => {
+        const dist = Math.hypot(moveEvent.clientX - center.x, moveEvent.clientY - center.y);
+        state[key].scale = Math.max(0.25, Math.min(4, startScale * (dist / startDist)));
+        paint(stack);
+        containLayer(stack, key, true);
+      };
+      const end = () => {
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", end);
+        handle.removeEventListener("pointercancel", end);
+        save();
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", end);
+      handle.addEventListener("pointercancel", end);
+    });
+  }
+
+  function bindHandlePointers(element, resize, rotate, del, stack, key, stretchL, scaleH) {
     const select = () => selectLayer(stack, key);
     bindStretchHandle(resize, element, stack, key);
     if (stretchL) bindStretchHandle(stretchL, element, stack, key);
+    if (scaleH) bindScaleHandle(scaleH, element, stack, key);
     rotate.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -557,26 +594,30 @@
     applyLayerLook(element, key);
     let resize = element.querySelector(":scope > .reels-handle.resize");
     let stretchL = element.querySelector(":scope > .reels-handle.stretch-l");
+    let scaleH = element.querySelector(":scope > .reels-handle.scale");
     let rotate = element.querySelector(":scope > .reels-handle.rotate");
     let del = element.querySelector(":scope > .reels-handle.delete");
-    if (!resize || !stretchL || !rotate || !del || resize.dataset.box !== "1") {
+    if (!resize || !stretchL || !scaleH || !rotate || !del || resize.dataset.box !== "2") {
       element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
       resize = document.createElement("span");
       resize.className = "reels-handle resize";
-      resize.dataset.box = "1";
+      resize.dataset.box = "2";
       resize.setAttribute("aria-label", "Рамканы созу");
       stretchL = document.createElement("span");
       stretchL.className = "reels-handle stretch-l";
-      stretchL.dataset.box = "1";
+      stretchL.dataset.box = "2";
       stretchL.setAttribute("aria-label", "Рамканы созу");
+      scaleH = document.createElement("span");
+      scaleH.className = "reels-handle scale";
+      scaleH.setAttribute("aria-label", "Мәтін өлшемі");
       rotate = document.createElement("span");
       rotate.className = "reels-handle rotate";
       rotate.setAttribute("aria-label", "Бұру");
       del = document.createElement("span");
       del.className = "reels-handle delete";
       del.setAttribute("aria-label", "Өшіру");
-      element.append(resize, stretchL, rotate, del);
-      bindHandlePointers(element, resize, rotate, del, stack, key, stretchL);
+      element.append(resize, stretchL, scaleH, rotate, del);
+      bindHandlePointers(element, resize, rotate, del, stack, key, stretchL, scaleH);
     }
     if (element.dataset.layerReady === "1") return;
     element.dataset.layerReady = "1";
