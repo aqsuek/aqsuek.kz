@@ -26,12 +26,12 @@
     .subtitle-stack .sub-mark{top:57%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(calc(-1.2deg + var(--mark-rotate,0deg))) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:68%;max-width:calc(100% - 48px);color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
-    .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:6px}
-    .reels-handle{display:none;position:absolute;z-index:8;width:20px;height:20px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 8px #0008;touch-action:none}
-    [data-selected="1"]>.reels-handle{display:block}
-    .reels-handle.resize{right:-13px;bottom:-13px;background:#d9ff47;border-color:#171715}
-    .reels-handle.rotate{left:50%;top:-30px;transform:translateX(-50%)}
-    .reels-handle.rotate:after{content:"";position:absolute;width:1px;height:10px;background:#fff;left:50%;top:18px}
+    .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
+    .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
+    [data-selected="1"]>.reels-handle{display:block!important}
+    .reels-handle.resize{right:-18px;bottom:-18px;background:#d9ff47;border-color:#171715}
+    .reels-handle.rotate{left:50%;top:-40px;transform:translateX(-50%)}
+    .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
     .font-chip{display:none!important}
     .reel-progress{z-index:5!important;bottom:20px!important;left:24px!important;right:24px!important}
     .text-add{display:none!important}
@@ -189,49 +189,24 @@
     if (bgNative && layer.bg) bgNative.value = layer.bg;
   }
 
-  function bindLayer(stack, key, selector) {
-    const element = stack.querySelector(selector);
-    if (!element || element.dataset.layerReady === "1") return;
-    element.dataset.layerReady = "1";
-    applyLayerLook(element, key);
-    const resize = document.createElement("span");
-    resize.className = "reels-handle resize";
-    resize.setAttribute("aria-label", "Өлшемін өзгерту");
-    const rotate = document.createElement("span");
-    rotate.className = "reels-handle rotate";
-    rotate.setAttribute("aria-label", "Бұру");
-    element.append(resize, rotate);
+  function layerCenter(element) {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
 
+  function bindHandlePointers(element, resize, rotate, stack, key) {
     const select = () => selectLayer(stack, key);
-    element.addEventListener("pointerdown", (event) => {
-      if (event.target.closest(".reels-handle")) return;
-      event.preventDefault();
-      select();
-      const start = { pointerX: event.clientX, pointerY: event.clientY, x: state[key].x, y: state[key].y };
-      element.setPointerCapture(event.pointerId);
-      const move = (moveEvent) => {
-        state[key].x = Math.max(-108, Math.min(108, start.x + moveEvent.clientX - start.pointerX));
-        state[key].y = Math.max(-180, Math.min(180, start.y + moveEvent.clientY - start.pointerY));
-        paint(stack);
-      };
-      const end = () => {
-        element.removeEventListener("pointermove", move);
-        element.removeEventListener("pointerup", end);
-        element.removeEventListener("pointercancel", end);
-        save();
-      };
-      element.addEventListener("pointermove", move);
-      element.addEventListener("pointerup", end);
-      element.addEventListener("pointercancel", end);
-    });
     resize.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
       select();
-      const start = { x: event.clientX, y: event.clientY, scale: state[key].scale };
+      const center = layerCenter(element);
+      const startDist = Math.max(12, Math.hypot(event.clientX - center.x, event.clientY - center.y));
+      const startScale = state[key].scale;
       resize.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
-        state[key].scale = Math.max(0.55, Math.min(1.8, start.scale + (moveEvent.clientX - start.x + moveEvent.clientY - start.y) / 150));
+        const dist = Math.hypot(moveEvent.clientX - center.x, moveEvent.clientY - center.y);
+        state[key].scale = Math.max(0.25, Math.min(4, startScale * (dist / startDist)));
         paint(stack);
       };
       const end = () => {
@@ -248,10 +223,13 @@
       event.preventDefault();
       event.stopPropagation();
       select();
-      const start = { x: event.clientX, rotation: state[key].rotation };
+      const center = layerCenter(element);
+      const startAng = Math.atan2(event.clientY - center.y, event.clientX - center.x) * (180 / Math.PI);
+      const startRot = state[key].rotation;
       rotate.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
-        state[key].rotation = Math.max(-35, Math.min(35, start.rotation + (moveEvent.clientX - start.x) * 0.55));
+        const ang = Math.atan2(moveEvent.clientY - center.y, moveEvent.clientX - center.x) * (180 / Math.PI);
+        state[key].rotation = startRot + (ang - startAng);
         paint(stack);
       };
       const end = () => {
@@ -263,6 +241,88 @@
       rotate.addEventListener("pointermove", move);
       rotate.addEventListener("pointerup", end);
       rotate.addEventListener("pointercancel", end);
+    });
+  }
+
+  function bindLayer(stack, key, selector) {
+    const element = stack.querySelector(selector);
+    if (!element) return;
+    applyLayerLook(element, key);
+    let resize = element.querySelector(":scope > .reels-handle.resize");
+    let rotate = element.querySelector(":scope > .reels-handle.rotate");
+    if (!resize || !rotate) {
+      element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
+      resize = document.createElement("span");
+      resize.className = "reels-handle resize";
+      resize.setAttribute("aria-label", "Өлшемін өзгерту");
+      rotate = document.createElement("span");
+      rotate.className = "reels-handle rotate";
+      rotate.setAttribute("aria-label", "Бұру");
+      element.append(resize, rotate);
+      bindHandlePointers(element, resize, rotate, stack, key);
+    }
+    if (element.dataset.layerReady === "1") return;
+    element.dataset.layerReady = "1";
+
+    const select = () => selectLayer(stack, key);
+    element.addEventListener("pointerdown", (event) => {
+      if (event.target.closest(".reels-handle")) return;
+      if (element._qaripPinch) return;
+      event.preventDefault();
+      select();
+      const start = { pointerX: event.clientX, pointerY: event.clientY, x: state[key].x, y: state[key].y };
+      element.setPointerCapture(event.pointerId);
+      const move = (moveEvent) => {
+        if (element._qaripPinch) return;
+        state[key].x = Math.max(-160, Math.min(160, start.x + moveEvent.clientX - start.pointerX));
+        state[key].y = Math.max(-240, Math.min(240, start.y + moveEvent.clientY - start.pointerY));
+        paint(stack);
+      };
+      const end = () => {
+        element.removeEventListener("pointermove", move);
+        element.removeEventListener("pointerup", end);
+        element.removeEventListener("pointercancel", end);
+        save();
+      };
+      element.addEventListener("pointermove", move);
+      element.addEventListener("pointerup", end);
+      element.addEventListener("pointercancel", end);
+    });
+    const pinchDist = (a, b) => Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+    const pinchAng = (a, b) => Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * (180 / Math.PI);
+    element.addEventListener(
+      "touchstart",
+      (event) => {
+        if (event.touches.length !== 2) return;
+        event.preventDefault();
+        select();
+        element._qaripPinch = {
+          dist: pinchDist(event.touches[0], event.touches[1]),
+          ang: pinchAng(event.touches[0], event.touches[1]),
+          scale: state[key].scale,
+          rotation: state[key].rotation,
+        };
+      },
+      { passive: false }
+    );
+    element.addEventListener(
+      "touchmove",
+      (event) => {
+        const pinch = element._qaripPinch;
+        if (!pinch || event.touches.length !== 2) return;
+        event.preventDefault();
+        const dist = pinchDist(event.touches[0], event.touches[1]);
+        state[key].scale = Math.max(0.25, Math.min(4, pinch.scale * (dist / Math.max(12, pinch.dist))));
+        state[key].rotation = pinch.rotation + (pinchAng(event.touches[0], event.touches[1]) - pinch.ang);
+        paint(stack);
+      },
+      { passive: false }
+    );
+    element.addEventListener("touchend", (event) => {
+      if (event.touches.length < 2 && element._qaripPinch) {
+        element._qaripPinch = null;
+        save();
+      }
     });
   }
 
@@ -288,7 +348,7 @@
     return input;
   }
 
-  function createExtra(stack, editor) {
+  function createExtra(stack, editor, select = true) {
     let extra = stack.querySelector(".sub-extra");
     if (!extra) {
       extra = document.createElement("span");
@@ -303,7 +363,7 @@
     if (chip) chip.hidden = false;
     bindLayer(stack, "extra", ".sub-extra");
     applyLayerLook(extra, "extra");
-    selectLayer(stack, "extra");
+    if (select) selectLayer(stack, "extra");
     save();
     return extra;
   }
@@ -395,35 +455,61 @@
     return "saved";
   }
 
-  async function copySticker() {
-    const preview = document.querySelector(".phone-preview");
-    const btn = document.querySelector(".reels-sticker");
-    if (!preview || !btn) return;
-    const label = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "Көшірілуде…";
-    preview.classList.add("exporting", "sticker-export");
+  async function renderStackSticker(preview, stack) {
+    const frame = preview.getBoundingClientRect();
+    const pad = Math.round(Math.max(frame.width, frame.height) * 0.6);
+    const host = document.createElement("div");
+    host.style.cssText = `position:fixed;left:-12000px;top:0;width:${Math.round(frame.width + pad * 2)}px;height:${Math.round(frame.height + pad * 2)}px;background:transparent;overflow:visible;pointer-events:none`;
+    const clone = stack.cloneNode(true);
+    clone.querySelectorAll(".reels-handle").forEach((node) => node.remove());
+    clone.querySelectorAll("[data-selected]").forEach((node) => node.removeAttribute("data-selected"));
+    clone.style.position = "absolute";
+    clone.style.left = `${pad}px`;
+    clone.style.top = `${pad}px`;
+    clone.style.width = `${frame.width}px`;
+    clone.style.height = `${frame.height}px`;
+    clone.style.inset = "auto";
+    clone.style.overflow = "visible";
+    clone.style.background = "transparent";
+    clone.style.transform = "none";
+    ["hook", "mark", "extra"].forEach((key) => {
+      ["x", "y", "scale", "rotate"].forEach((prop) => {
+        const name = `--${key}-${prop}`;
+        clone.style.setProperty(name, stack.style.getPropertyValue(name));
+      });
+    });
+    host.appendChild(clone);
+    document.body.appendChild(host);
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     try {
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      await loadHtml2Canvas();
       const shot = await withTimeout(
-        window.html2canvas(preview, {
+        window.html2canvas(host, {
           scale: 2,
           backgroundColor: null,
           logging: false,
           useCORS: true,
-          onclone(doc) {
-            const clone = doc.querySelector(".phone-preview");
-            if (!clone) return;
-            clone.style.background = "transparent";
-            clone.style.borderColor = "transparent";
-            clone.style.boxShadow = "none";
-          },
         }),
         15000,
         "html2canvas"
       );
-      const canvas = cropTransparent(shot);
+      return cropTransparent(shot);
+    } finally {
+      host.remove();
+    }
+  }
+
+  async function copySticker() {
+    const preview = document.querySelector(".phone-preview");
+    const stack = preview?.querySelector(".subtitle-stack");
+    const btn = document.querySelector(".reels-sticker");
+    if (!preview || !stack || !btn) return;
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Көшірілуде…";
+    preview.classList.add("exporting");
+    try {
+      await loadHtml2Canvas();
+      const canvas = await renderStackSticker(preview, stack);
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) throw new Error("blob");
       const result = await writePng(blob);
@@ -436,7 +522,7 @@
       console.warn(error);
       toast("Көшіру шықпады. Қайта көріңіз.");
     } finally {
-      preview.classList.remove("exporting", "sticker-export");
+      preview.classList.remove("exporting");
       btn.disabled = false;
       btn.textContent = label;
     }
@@ -464,7 +550,7 @@
     if (!preview || !stack) return;
     paint(stack);
     if (state.extra.on) {
-      if (!stack.querySelector(".sub-extra")) createExtra(stack, editor);
+      if (!stack.querySelector(".sub-extra")) createExtra(stack, editor, false);
       else {
         extraInput(editor);
         const chip = document.querySelector('.text-layer-picks [data-layer="extra"]');
@@ -483,6 +569,7 @@
       applyLayerLook(stack.querySelector(".sub-mark"), "mark");
       applyLayerLook(stack.querySelector(".sub-extra"), "extra");
       ensureStickerButton();
+      if (!stack.querySelector("[data-selected='1']")) selectLayer(stack, "hook");
       return;
     }
     preview.dataset.toolsReady = "1";

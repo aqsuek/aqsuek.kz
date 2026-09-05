@@ -106,56 +106,32 @@
     }, 3200);
   }
 
-  function wrapStickerLines(ctx, text, maxWidth) {
-    const words = text.split(/\s+/).filter(Boolean);
-    const lines = [];
-    let current = "";
-    const pushLong = (chunk) => {
-      let rest = chunk;
-      while (rest) {
-        let i = rest.length;
-        while (i > 1 && ctx.measureText(rest.slice(0, i)).width > maxWidth) i -= 1;
-        lines.push(rest.slice(0, i));
-        rest = rest.slice(i);
-      }
-    };
-    words.forEach((word) => {
-      const next = current ? `${current} ${word}` : word;
-      if (ctx.measureText(next).width <= maxWidth) {
-        current = next;
-        return;
-      }
-      if (current) lines.push(current);
-      if (ctx.measureText(word).width <= maxWidth) current = word;
-      else {
-        pushLong(word);
-        current = "";
-      }
-    });
-    if (current) lines.push(current);
-    return lines.length ? lines : [text];
-  }
-
   function renderFontSticker(preview) {
     const text = (preview.textContent || "").replace(/\s+/g, " ").trim();
     if (!text) return null;
-    const family = preview.style.fontFamily || "sans-serif";
-    const scale = 2;
-    const fontSize = Math.round((parseFloat(preview.style.fontSize) || 34) * scale);
+    const cs = getComputedStyle(preview);
+    const family = cs.fontFamily || preview.style.fontFamily || "sans-serif";
+    const weight = cs.fontWeight || "700";
+    const fontStyle = cs.fontStyle || "normal";
+    const scale = 3;
+    let fontSize = Math.round((parseFloat(cs.fontSize) || 34) * scale);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    ctx.font = `700 ${fontSize}px ${family}`;
+    const fontFor = (size) => `${fontStyle} ${weight} ${size}px ${family}`;
+    ctx.font = fontFor(fontSize);
     ctx.textBaseline = "alphabetic";
-    const maxWidth = Math.min(1000, Math.max(560, Math.round((window.innerWidth || 390) * scale * 0.9)));
-    const lines = wrapStickerLines(ctx, text, maxWidth);
+    const maxWidth = 1600;
+    let textWidth = ctx.measureText(text).width;
+    if (textWidth > maxWidth) {
+      fontSize = Math.max(36, Math.floor((fontSize * maxWidth) / textWidth));
+      ctx.font = fontFor(fontSize);
+      textWidth = ctx.measureText(text).width;
+    }
     const stroke = Math.max(8, Math.round(fontSize * 0.14));
-    const lineHeight = Math.round(fontSize * 1.18);
     const pad = stroke + 28;
-    const width = Math.ceil(Math.max(...lines.map((line) => ctx.measureText(line).width))) + pad * 2;
-    const height = lineHeight * lines.length + pad * 2;
-    canvas.width = width;
-    canvas.height = height;
-    ctx.font = `700 ${fontSize}px ${family}`;
+    canvas.width = Math.ceil(textWidth) + pad * 2;
+    canvas.height = Math.ceil(fontSize * 1.45) + pad * 2;
+    ctx.font = fontFor(fontSize);
     ctx.textBaseline = "alphabetic";
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
@@ -166,12 +142,10 @@
     ctx.shadowColor = "rgba(0,0,0,.4)";
     ctx.shadowBlur = Math.round(fontSize * 0.12);
     ctx.shadowOffsetY = Math.round(fontSize * 0.05);
-    lines.forEach((line, index) => {
-      const x = pad;
-      const y = pad + fontSize + index * lineHeight;
-      ctx.strokeText(line, x, y);
-      ctx.fillText(line, x, y);
-    });
+    const x = pad;
+    const y = pad + fontSize;
+    ctx.strokeText(text, x, y);
+    ctx.fillText(text, x, y);
     return canvas;
   }
 
@@ -182,11 +156,14 @@
     button.disabled = true;
     button.textContent = "…";
     try {
-      const family = preview.style.fontFamily || "sans-serif";
-      const size = parseFloat(preview.style.fontSize) || 34;
+      const cs = getComputedStyle(preview);
+      const family = cs.fontFamily || preview.style.fontFamily || "sans-serif";
+      const size = parseFloat(cs.fontSize) || 34;
+      const weight = cs.fontWeight || "700";
+      const fontStyle = cs.fontStyle || "normal";
       if (document.fonts?.load) {
         try {
-          await document.fonts.load(`700 ${size}px ${family}`);
+          await document.fonts.load(`${fontStyle} ${weight} ${size}px ${family}`);
         } catch {}
       }
       const canvas = renderFontSticker(preview);
