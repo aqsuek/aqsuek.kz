@@ -11,6 +11,7 @@
     .reels-pick{
       position:relative;overflow:visible;
       background:radial-gradient(circle at 12% 20%,#253d9b55 0,transparent 28%),radial-gradient(circle at 92% 82%,#d9ff4730 0,transparent 23%),#151513;
+      overscroll-behavior:contain;
     }
     .reels-pick:before{content:"";position:absolute;inset:20px;border:1px solid #ffffff12;pointer-events:none}
     .reels-copy{position:relative;z-index:1;text-align:center}
@@ -27,6 +28,8 @@
       background:#101014!important;
       box-shadow:0 18px 40px #0006;
       overflow:hidden!important;
+      touch-action:none;
+      overscroll-behavior:none;
     }
     .phone-preview:before,.phone-preview:after{display:none!important}
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
@@ -497,11 +500,37 @@
     return (x - center.x) * Math.cos(rot) + (y - center.y) * Math.sin(rot);
   }
 
+  function blurEditor() {
+    const active = document.activeElement;
+    if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) active.blur();
+  }
+
+  function lockWindowScroll() {
+    if (lockWindowScroll.on) return;
+    lockWindowScroll.on = true;
+    const block = (event) => {
+      if (event.cancelable) event.preventDefault();
+    };
+    const stop = () => {
+      lockWindowScroll.on = false;
+      window.removeEventListener("touchmove", block, true);
+      window.removeEventListener("pointerup", stop, true);
+      window.removeEventListener("pointercancel", stop, true);
+      window.removeEventListener("touchend", stop, true);
+    };
+    window.addEventListener("touchmove", block, { passive: false, capture: true });
+    window.addEventListener("pointerup", stop, { capture: true });
+    window.addEventListener("pointercancel", stop, { capture: true });
+    window.addEventListener("touchend", stop, { capture: true });
+  }
+
   function bindStretchHandle(handle, element, stack, key) {
     const select = () => selectLayer(stack, key);
     handle.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
+      blurEditor();
+      lockWindowScroll();
       select();
       const center = layerCenter(element);
       const startHalf = Math.max(12, element.getBoundingClientRect().width / 2);
@@ -525,7 +554,7 @@
       handle.addEventListener("pointermove", move);
       handle.addEventListener("pointerup", end);
       handle.addEventListener("pointercancel", end);
-    });
+    }, { passive: false });
   }
 
   function bindScaleHandle(handle, element, stack, key) {
@@ -533,6 +562,8 @@
     handle.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
+      blurEditor();
+      lockWindowScroll();
       select();
       const center = layerCenter(element);
       const startDist = Math.max(12, Math.hypot(event.clientX - center.x, event.clientY - center.y));
@@ -553,7 +584,7 @@
       handle.addEventListener("pointermove", move);
       handle.addEventListener("pointerup", end);
       handle.addEventListener("pointercancel", end);
-    });
+    }, { passive: false });
   }
 
   function bindHandlePointers(element, resize, rotate, del, stack, key, stretchL, scaleH) {
@@ -564,6 +595,8 @@
     rotate.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
+      blurEditor();
+      lockWindowScroll();
       select();
       const center = layerCenter(element);
       const startAng = Math.atan2(event.clientY - center.y, event.clientX - center.x) * (180 / Math.PI);
@@ -585,7 +618,7 @@
       rotate.addEventListener("pointermove", move);
       rotate.addEventListener("pointerup", end);
       rotate.addEventListener("pointercancel", end);
-    });
+    }, { passive: false });
     del.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -632,6 +665,8 @@
       if (event.target.closest(".reels-handle")) return;
       if (element._qaripPinch) return;
       event.preventDefault();
+      blurEditor();
+      lockWindowScroll();
       select();
       const start = { pointerX: event.clientX, pointerY: event.clientY, x: state[key].x, y: state[key].y };
       element.setPointerCapture(event.pointerId);
@@ -653,21 +688,26 @@
       element.addEventListener("pointermove", move);
       element.addEventListener("pointerup", end);
       element.addEventListener("pointercancel", end);
-    });
+    }, { passive: false });
     const pinchDist = (a, b) => Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
     const pinchAng = (a, b) => Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * (180 / Math.PI);
     element.addEventListener(
       "touchstart",
       (event) => {
-        if (event.touches.length !== 2) return;
+        if (event.touches.length === 2) {
+          event.preventDefault();
+          select();
+          element._qaripPinch = {
+            dist: pinchDist(event.touches[0], event.touches[1]),
+            ang: pinchAng(event.touches[0], event.touches[1]),
+            scale: state[key].scale,
+            rotation: state[key].rotation,
+          };
+          return;
+        }
         event.preventDefault();
-        select();
-        element._qaripPinch = {
-          dist: pinchDist(event.touches[0], event.touches[1]),
-          ang: pinchAng(event.touches[0], event.touches[1]),
-          scale: state[key].scale,
-          rotation: state[key].rotation,
-        };
+        blurEditor();
+        lockWindowScroll();
       },
       { passive: false }
     );
@@ -1031,9 +1071,8 @@
     if (!list || !active) return;
     const listBox = list.getBoundingClientRect();
     const itemBox = active.getBoundingClientRect();
-    if (itemBox.top < listBox.top || itemBox.bottom > listBox.bottom) {
-      active.scrollIntoView({ block: "nearest" });
-    }
+    if (itemBox.top < listBox.top) list.scrollTop -= listBox.top - itemBox.top;
+    else if (itemBox.bottom > listBox.bottom) list.scrollTop += itemBox.bottom - listBox.bottom;
   }
 
   function renderFontList(stack) {
