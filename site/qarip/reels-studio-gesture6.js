@@ -31,10 +31,10 @@
     .phone-preview:before,.phone-preview:after{display:none!important}
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
     .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
-    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
-    .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(calc(var(--hook-scale,1) * var(--hook-stretch,1)), var(--hook-scale,1))}
-    .subtitle-stack .sub-mark{top:58%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(calc(var(--mark-scale,1) * var(--mark-stretch,1)), var(--mark-scale,1))}
-    .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(calc(var(--extra-scale,1) * var(--extra-stretch,1)), var(--extra-scale,1))}
+    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
+    .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
+    .subtitle-stack .sub-mark{top:58%;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
+    .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
     .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
@@ -133,7 +133,7 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, stretch: 1, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
+  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, boxW: 0, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
   let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
@@ -143,6 +143,8 @@
       const saved = stored[key] || {};
       const moved = oldPos[key] || {};
       state[key] = { ...emptyLayer(fallbackOn), ...moved, ...saved };
+      state[key].stretch = 1;
+      if (!(state[key].boxW > 0)) state[key].boxW = 0;
       if (!Object.prototype.hasOwnProperty.call(saved, "on") && !Object.prototype.hasOwnProperty.call(moved, "on")) {
         state[key].on = fallbackOn;
       }
@@ -153,14 +155,25 @@
     localStorage.setItem(STORE, JSON.stringify(state));
   }
 
+  function applyBox(el, key) {
+    if (!el) return;
+    const w = Number(state[key].boxW) || 0;
+    if (w > 0) {
+      el.style.setProperty("width", `${Math.round(w)}px`, "important");
+      el.style.setProperty("box-sizing", "border-box", "important");
+    } else {
+      el.style.removeProperty("width");
+    }
+  }
+
   function paint(stack) {
     ["hook", "mark", "extra"].forEach((key) => {
       const layer = state[key];
       stack.style.setProperty(`--${key}-x`, `${layer.x}px`);
       stack.style.setProperty(`--${key}-y`, `${layer.y}px`);
       stack.style.setProperty(`--${key}-scale`, layer.scale);
-      stack.style.setProperty(`--${key}-stretch`, layer.stretch || 1);
       stack.style.setProperty(`--${key}-rotate`, `${layer.rotation}deg`);
+      applyBox(stack.querySelector(layerSelector(key)), key);
     });
   }
 
@@ -176,8 +189,9 @@
     for (let i = 0; i < 5; i += 1) {
       const box = el.getBoundingClientRect();
       if (box.width < 1 || box.height < 1) return;
-      if (mayScale && box.width > innerW + 0.5) {
-        state[key].stretch = Math.max(0.35, (state[key].stretch || 1) * (innerW / box.width));
+      if (box.width > innerW + 0.5) {
+        const layoutW = Math.max(48, el.offsetWidth);
+        state[key].boxW = Math.max(48, layoutW * (innerW / box.width));
         paint(stack);
         continue;
       }
@@ -372,6 +386,7 @@
   function applyLayerLook(el, key) {
     if (!el) return;
     const layer = state[key];
+    applyBox(el, key);
     if (layer.family) el.style.setProperty("font-family", layer.family, "important");
     if (layer.face === "regular") {
       el.style.setProperty("font-weight", "400", "important");
@@ -476,14 +491,17 @@
       event.stopPropagation();
       select();
       const center = layerCenter(element);
-      const start = Math.abs(axisX(center, state[key].rotation, event.clientX, event.clientY)) || 12;
-      const startStretch = state[key].stretch || 1;
+      const startHalf = Math.max(12, element.getBoundingClientRect().width / 2);
+      const startW = Math.max(48, state[key].boxW || element.offsetWidth);
       handle.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
         const now = Math.abs(axisX(center, state[key].rotation, moveEvent.clientX, moveEvent.clientY));
-        state[key].stretch = Math.max(0.35, Math.min(5, startStretch * (now / start)));
+        const preview = stack.closest(".phone-preview");
+        const innerW = (preview?.getBoundingClientRect().width || 720) - 36;
+        const maxW = innerW / Math.max(0.25, state[key].scale || 1);
+        state[key].boxW = Math.max(48, Math.min(maxW, startW * (now / startHalf)));
         paint(stack);
-        containLayer(stack, key, true);
+        containLayer(stack, key, false);
       };
       const end = () => {
         handle.removeEventListener("pointermove", move);
@@ -541,16 +559,16 @@
     let stretchL = element.querySelector(":scope > .reels-handle.stretch-l");
     let rotate = element.querySelector(":scope > .reels-handle.rotate");
     let del = element.querySelector(":scope > .reels-handle.delete");
-    if (!resize || !stretchL || !rotate || !del || resize.dataset.stretch !== "1") {
+    if (!resize || !stretchL || !rotate || !del || resize.dataset.box !== "1") {
       element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
       resize = document.createElement("span");
       resize.className = "reels-handle resize";
-      resize.dataset.stretch = "1";
-      resize.setAttribute("aria-label", "Жанына созу");
+      resize.dataset.box = "1";
+      resize.setAttribute("aria-label", "Рамканы созу");
       stretchL = document.createElement("span");
       stretchL.className = "reels-handle stretch-l";
-      stretchL.dataset.stretch = "1";
-      stretchL.setAttribute("aria-label", "Жанына созу");
+      stretchL.dataset.box = "1";
+      stretchL.setAttribute("aria-label", "Рамканы созу");
       rotate = document.createElement("span");
       rotate.className = "reels-handle rotate";
       rotate.setAttribute("aria-label", "Бұру");
