@@ -16,15 +16,15 @@
     .reels-copy{position:relative;z-index:1;text-align:center}
     .reels-copy h2{letter-spacing:-.055em;line-height:.88}
     .reels-copy h2:after{display:none}
-    .phone-preview{position:relative;box-shadow:0 28px 60px #0009,0 0 0 1px #ffffff18;overflow:visible!important}
+    .phone-preview{position:relative;width:min(340px,84vw)!important;box-shadow:0 28px 60px #0009,0 0 0 1px #ffffff18;overflow:hidden!important}
     .phone-preview:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,#080b1608 26%,#0c0d1266 76%,#090a0f99 100%);pointer-events:none}
     .phone-preview:after{display:none}
     .reel-ui{padding-left:0}
-    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
-    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;margin:0!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
-    .subtitle-stack .sub-hook{top:43%;max-width:calc(100% - 48px);letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
+    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
+    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
+    .subtitle-stack .sub-hook{top:43%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
     .subtitle-stack .sub-mark{top:57%;display:inline-block;padding:8px 13px!important;border-radius:5px;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(calc(-1.2deg + var(--mark-rotate,0deg))) scale(var(--mark-scale,1))}
-    .subtitle-stack .sub-extra{top:68%;max-width:calc(100% - 48px);color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
+    .subtitle-stack .sub-extra{top:68%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:10px}
     .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
@@ -65,43 +65,18 @@
     .reels-controls>.reels-label:nth-of-type(2):before{content:"02 · ТҮС ПАЛИТРАСЫ"}
     .reels-controls>.reels-label:nth-of-type(3):before{content:"03 · МӘТІНІҢІЗ"}
     .reels-controls>.reels-label[data-section="text"]:before{content:"01 · МӘТІНІҢІЗ"}
-    .reels-controls>.reels-label[data-section="style"]:before{content:"02 · СУБТИТР СТИЛІ"}
-    .reels-controls>.reels-label[data-section="palette"]:before{content:"03 · ТҮС ПАЛИТРАСЫ"}
-    .reels-options{margin-top:12px!important;border:0!important;gap:8px!important}
-    .reels-options:not(.reels-colors){
-      display:grid!important;
-      grid-template-columns:none!important;
-      grid-template-rows:repeat(2,minmax(56px,auto));
-      grid-auto-flow:column;
-      grid-auto-columns:calc(25% - 6px);
-      overflow-x:auto;
-      overflow-y:hidden;
-      scroll-snap-type:x mandatory;
-      scrollbar-width:thin;
-      padding-bottom:6px;
-      -webkit-overflow-scrolling:touch;
-      overscroll-behavior-x:contain;
-      touch-action:pan-x;
-      cursor:grab;
-    }
-    .reels-options:not(.reels-colors)::-webkit-scrollbar{height:4px}
-    .reels-options:not(.reels-colors)::-webkit-scrollbar-thumb{background:#ffffff33;border-radius:99px}
-    .reels-options:not(.reels-colors) button{min-height:56px;min-width:0;scroll-snap-align:start;padding:8px 10px!important;border:1px solid #ffffff22!important;border-radius:12px!important;background:#191918!important;text-align:left!important;display:grid!important;grid-template-columns:20px 1fr!important;align-items:center!important}
-    .reels-options:not(.reels-colors) button b{font-size:14px!important;line-height:1.15!important}
-    .reels-options:not(.reels-colors) button:after{display:block;grid-column:2;color:#85857f;font:700 8px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
-    .reels-options:not(.reels-colors) button:nth-child(1):after{content:"ЭДИТОРИАЛ"}
-    .reels-options:not(.reels-colors) button:nth-child(2):after{content:"ПРЕМИУМ"}
-    .reels-options:not(.reels-colors) button:nth-child(3):after{content:"ЖАҢАЛЫҚ"}
-    .reels-options:not(.reels-colors) button:nth-child(4):after{content:"ОҚИҒА"}
-    .reels-options:not(.reels-colors) button:nth-child(5):after{content:"ЖУРНАЛ"}
-    .reels-options:not(.reels-colors) button:nth-child(6):after{content:"ХУК"}
-    .reels-options:not(.reels-colors) button:nth-child(7):after{content:"ҚАЛЫҢ АКЦЕНТ"}
-    .reels-options:not(.reels-colors) button:nth-child(8):after{content:"КЕЗДЕЙСОҚ"}
-    .reels-options:not(.reels-colors) button.selected{background:#d9ff47!important;color:#161615!important;border-color:#d9ff47!important}
-    .reels-options:not(.reels-colors) button.selected:after{color:#4d4d47}
-    .reels-options:not(.reels-colors) button.random{background:transparent!important}
-    .reels-colors{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-    .reels-colors button{min-height:58px;padding:8px 4px!important;border:1px solid #ffffff22!important;border-radius:12px!important;background:#191918!important}
+    .reels-controls>.reels-label[data-section="style"]:before{content:"02 · ҚАРІП"}
+    .reels-controls>.reels-label[data-section="palette"],
+    .reels-options{display:none!important}
+    .reels-font-pick{margin-top:10px}
+    .reels-font-search{width:100%;box-sizing:border-box;min-height:44px;border:1px solid #ffffff22;border-radius:10px;background:#161615;color:#fff;padding:12px 14px;font:700 14px/1 Arial,sans-serif}
+    .reels-font-list{margin-top:8px;max-height:min(32vh,260px);overflow:auto;display:grid;gap:6px;-webkit-overflow-scrolling:touch}
+    .reels-font-item{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;min-height:54px;padding:8px 12px;border:1px solid #ffffff18;border-radius:10px;background:#191918;color:#fff;text-align:left;cursor:pointer}
+    .reels-font-item b{font-size:20px;font-weight:700;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .reels-font-item small{color:#8a8a84;font:700 11px/1 Arial,sans-serif;letter-spacing:.04em}
+    .reels-font-item.active{background:#d9ff47;color:#171715;border-color:#d9ff47}
+    .reels-font-item.active small{color:#4d4d47}
+    .reels-font-empty{color:#8a8a84;margin:0;padding:14px 4px;font:700 13px/1.4 Arial,sans-serif}
     .reels-copy-edit{margin-top:12px!important;display:flex!important;flex-wrap:wrap;gap:8px}
     .reels-copy-edit input{flex:1;min-width:140px;border-radius:10px!important;border-color:#ffffff22!important;background:#161615!important;color:#fff!important;padding:12px!important}
     .reels-copy-edit input.extra-input{flex-basis:100%}
@@ -126,17 +101,15 @@
       .reels-pick:before{inset:10px}
       .reels-controls{box-sizing:border-box}
       .reels-copy h2:after{margin-top:12px}
-      .phone-preview{position:sticky;top:8px;z-index:12;width:min(158px,42vw)!important;background:#12131a;box-shadow:0 16px 40px #000a}
-      .reels-options:not(.reels-colors){grid-auto-columns:calc(50% - 4px)}
-      .reels-options:not(.reels-colors) button b{font-size:13px!important}
+      .phone-preview{position:sticky;top:8px;z-index:12;width:min(320px,88vw)!important;background:#12131a;box-shadow:0 16px 40px #000a}
     }
-    @media(max-width:390px){.reels-controls{padding:14px}.reels-options:not(.reels-colors) button{padding:8px!important;min-height:54px}.reels-options:not(.reels-colors) button b{font-size:12px!important}.reels-colors button b{font-size:9px!important}}
+    @media(max-width:390px){.reels-controls{padding:14px}}
   `;
   const style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "" });
+  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "", family: "" });
   let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
@@ -164,6 +137,45 @@
       stack.style.setProperty(`--${key}-scale`, layer.scale);
       stack.style.setProperty(`--${key}-rotate`, `${layer.rotation}deg`);
     });
+  }
+
+  function containLayer(stack, key, mayScale = true) {
+    const preview = stack?.closest(".phone-preview") || document.querySelector(".phone-preview");
+    const el = stack?.querySelector(layerSelector(key));
+    if (!preview || !el || !isOn(key)) return;
+    const pad = 18;
+    const frame = preview.getBoundingClientRect();
+    const innerW = frame.width - pad * 2;
+    const innerH = frame.height - pad * 2;
+    if (innerW < 24 || innerH < 24) return;
+    for (let i = 0; i < 5; i += 1) {
+      const box = el.getBoundingClientRect();
+      if (box.width < 1 || box.height < 1) return;
+      if (mayScale && (box.width > innerW + 0.5 || box.height > innerH + 0.5)) {
+        const factor = Math.min(innerW / box.width, innerH / box.height);
+        state[key].scale = Math.max(0.25, state[key].scale * factor);
+        paint(stack);
+        continue;
+      }
+      let dx = 0;
+      let dy = 0;
+      const left = box.left - (frame.left + pad);
+      const right = frame.right - pad - box.right;
+      const top = box.top - (frame.top + pad);
+      const bottom = frame.bottom - pad - box.bottom;
+      if (left < 0 && right >= 0) dx = -left;
+      else if (right < 0 && left >= 0) dx = right;
+      if (top < 0 && bottom >= 0) dy = -top;
+      else if (bottom < 0 && top >= 0) dy = bottom;
+      if (!dx && !dy) return;
+      state[key].x += dx;
+      state[key].y += dy;
+      paint(stack);
+    }
+  }
+
+  function containAll(stack) {
+    visibleKeys().forEach((key) => containLayer(stack, key, true));
   }
 
   function isOn(key) {
@@ -253,6 +265,7 @@
   function applyLayerLook(el, key) {
     if (!el) return;
     const layer = state[key];
+    if (layer.family) el.style.setProperty("font-family", layer.family, "important");
     if (layer.color) el.style.setProperty("color", layer.color, "important");
     if (layer.bg) {
       el.style.setProperty("background", layer.bg, "important");
@@ -285,6 +298,7 @@
       btn.classList.toggle("active", btn.dataset.layer === key);
     });
     syncSwatches(key);
+    syncFontActive();
   }
 
   function syncSwatches(key) {
@@ -324,6 +338,7 @@
         const dist = Math.hypot(moveEvent.clientX - center.x, moveEvent.clientY - center.y);
         state[key].scale = Math.max(0.25, Math.min(4, startScale * (dist / startDist)));
         paint(stack);
+        containLayer(stack, key, true);
       };
       const end = () => {
         resize.removeEventListener("pointermove", move);
@@ -347,6 +362,7 @@
         const ang = Math.atan2(moveEvent.clientY - center.y, moveEvent.clientX - center.x) * (180 / Math.PI);
         state[key].rotation = startRot + (ang - startAng);
         paint(stack);
+        containLayer(stack, key, true);
       };
       const end = () => {
         rotate.removeEventListener("pointermove", move);
@@ -399,9 +415,10 @@
       element.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
         if (element._qaripPinch) return;
-        state[key].x = Math.max(-160, Math.min(160, start.x + moveEvent.clientX - start.pointerX));
-        state[key].y = Math.max(-240, Math.min(240, start.y + moveEvent.clientY - start.pointerY));
+        state[key].x = start.x + moveEvent.clientX - start.pointerX;
+        state[key].y = start.y + moveEvent.clientY - start.pointerY;
         paint(stack);
+        containLayer(stack, key, false);
       };
       const end = () => {
         element.removeEventListener("pointermove", move);
@@ -440,6 +457,7 @@
         state[key].scale = Math.max(0.25, Math.min(4, pinch.scale * (dist / Math.max(12, pinch.dist))));
         state[key].rotation = pinch.rotation + (pinchAng(event.touches[0], event.touches[1]) - pinch.ang);
         paint(stack);
+        containLayer(stack, key, true);
       },
       { passive: false }
     );
@@ -463,6 +481,8 @@
       const extra = document.querySelector(".sub-extra");
       state.extra.text = input.value;
       setLayerText(extra, input.value);
+      const stack = document.querySelector(".subtitle-stack");
+      if (stack) containLayer(stack, "extra", true);
       save();
     });
     input.addEventListener("focus", () => {
@@ -670,51 +690,130 @@
     }
   }
 
-  function bindStyleCarousel() {
-    const rail = document.querySelector(".reels-options:not(.reels-colors)");
-    if (!rail || rail.dataset.carouselReady === "1") return;
-    rail.dataset.carouselReady = "1";
-    let drag = null;
-    rail.addEventListener("pointerdown", (event) => {
-      drag = { x: event.clientX, left: rail.scrollLeft, moved: false, id: event.pointerId };
-      rail.setPointerCapture(event.pointerId);
-    });
-    rail.addEventListener("pointermove", (event) => {
-      if (!drag || event.pointerId !== drag.id) return;
-      const dx = event.clientX - drag.x;
-      if (Math.abs(dx) > 8) {
-        drag.moved = true;
-        rail.dataset.dragged = "1";
-      }
-      if (drag.moved) rail.scrollLeft = drag.left - dx;
-    });
-    const end = () => {
-      drag = null;
-      setTimeout(() => {
-        rail.dataset.dragged = "0";
-      }, 0);
-    };
-    rail.addEventListener("pointerup", end);
-    rail.addEventListener("pointercancel", end);
-    rail.addEventListener(
-      "click",
-      (event) => {
-        if (rail.dataset.dragged !== "1") return;
-        event.preventDefault();
-        event.stopPropagation();
-      },
-      true
-    );
+  function escHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[char]));
   }
 
-  function keepStyleInCarousel() {
-    const rail = document.querySelector(".reels-options:not(.reels-colors)");
-    const selected = rail?.querySelector("button.selected");
-    if (!rail || !selected) return;
-    const railBox = rail.getBoundingClientRect();
-    const btnBox = selected.getBoundingClientRect();
-    if (btnBox.left >= railBox.left && btnBox.right <= railBox.right) return;
-    rail.scrollBy({ left: btnBox.left - railBox.left - 8, behavior: "auto" });
+  function catalogFonts() {
+    const seen = new Set();
+    const fonts = [];
+    document.querySelectorAll(".font-card").forEach((card) => {
+      const name = card.querySelector("h3")?.textContent?.trim();
+      const preview = card.querySelector(".font-preview");
+      const family = preview?.style.fontFamily || "";
+      if (!name || !family || seen.has(name)) return;
+      seen.add(name);
+      fonts.push({ name, family });
+    });
+    return fonts;
+  }
+
+  function applyFontToSelected(stack, family, name) {
+    const key = selectedKey(stack);
+    state[key].family = family;
+    state[key].fontName = name;
+    applyLayerLook(stack.querySelector(layerSelector(key)), key);
+    if (document.fonts?.load && family) {
+      document.fonts.load(`700 48px ${family}`).catch(() => {}).finally(() => containLayer(stack, key, true));
+    } else {
+      containLayer(stack, key, true);
+    }
+    save();
+    syncFontActive();
+  }
+
+  function syncFontActive() {
+    const stack = document.querySelector(".subtitle-stack");
+    const pick = document.querySelector(".reels-font-pick");
+    if (!stack || !pick) return;
+    const key = selectedKey(stack);
+    const selectedName = state[key]?.fontName || "";
+    const selectedFamily = state[key]?.family || "";
+    const list = pick.querySelector(".reels-font-list");
+    list?.querySelectorAll(".reels-font-item").forEach((item) => {
+      const family = decodeURIComponent(item.dataset.family || "");
+      const on = selectedName ? item.dataset.name === selectedName : family === selectedFamily;
+      item.classList.toggle("active", on);
+    });
+    const active = list?.querySelector(".reels-font-item.active");
+    if (!list || !active) return;
+    const listBox = list.getBoundingClientRect();
+    const itemBox = active.getBoundingClientRect();
+    if (itemBox.top < listBox.top || itemBox.bottom > listBox.bottom) {
+      active.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  function renderFontList(stack) {
+    const pick = document.querySelector(".reels-font-pick");
+    if (!pick) return;
+    const query = pick.querySelector(".reels-font-search")?.value.trim().toLowerCase() || "";
+    const list = pick.querySelector(".reels-font-list");
+    const fonts = catalogFonts().filter((font) => !query || font.name.toLowerCase().includes(query));
+    if (!list) return;
+    if (!fonts.length) {
+      list.innerHTML = '<p class="reels-font-empty">Қаріп табылмады.</p>';
+      return;
+    }
+    const key = selectedKey(stack || document.querySelector(".subtitle-stack"));
+    const selectedName = state[key]?.fontName || "";
+    const selectedFamily = state[key]?.family || "";
+    list.innerHTML = fonts
+      .map((font) => {
+        const on = selectedName ? font.name === selectedName : font.family === selectedFamily;
+        return `<button type="button" class="reels-font-item${on ? " active" : ""}" data-name="${escHtml(font.name)}" data-family="${encodeURIComponent(font.family)}"><b style="font-family:${escHtml(font.family)}">${escHtml(font.name)}</b><small>Әә Ғғ Ққ</small></button>`;
+      })
+      .join("");
+  }
+
+  function ensureFontPicker(stack) {
+    const controls = document.querySelector(".reels-controls");
+    if (!controls) return;
+    const styleLabel =
+      controls.querySelector('.reels-label[data-section="style"]') ||
+      [...controls.querySelectorAll(":scope > .reels-label")].find((label) => label.dataset.section !== "text" && label.dataset.section !== "palette");
+    let pick = controls.querySelector(".reels-font-pick");
+    if (!pick) {
+      pick = document.createElement("div");
+      pick.className = "reels-font-pick";
+      pick.innerHTML =
+        '<input class="reels-font-search" type="search" placeholder="Қаріп атауын іздеу..." aria-label="Қаріп іздеу"><div class="reels-font-list"></div>';
+      if (styleLabel) styleLabel.after(pick);
+      else controls.append(pick);
+      pick.querySelector(".reels-font-search").addEventListener("input", () => renderFontList(stack));
+      pick.querySelector(".reels-font-list").addEventListener("click", (event) => {
+        const item = event.target.closest(".reels-font-item");
+        if (!item) return;
+        const named = catalogFonts().find((font) => font.name === item.dataset.name);
+        const family = named?.family || decodeURIComponent(item.dataset.family || "");
+        applyFontToSelected(stack, family, item.dataset.name);
+      });
+    }
+    if (controls.dataset.fontPickObserve !== "1") {
+      controls.dataset.fontPickObserve = "1";
+      let restore = 0;
+      new MutationObserver(() => {
+        if (controls.querySelector(".reels-font-pick")) return;
+        clearTimeout(restore);
+        restore = setTimeout(() => ensureFontPicker(stack), 40);
+      }).observe(controls, { childList: true });
+    }
+    renderFontList(stack);
+    const grid = document.querySelector(".font-grid");
+    if (grid && grid.dataset.fontPickWatch !== "1") {
+      grid.dataset.fontPickWatch = "1";
+      let timer = 0;
+      new MutationObserver(() => {
+        clearTimeout(timer);
+        timer = setTimeout(() => renderFontList(stack), 80);
+      }).observe(grid, { childList: true });
+    }
   }
 
   function ensureStickerButton() {
@@ -753,18 +852,31 @@
     const markInput = editor?.querySelector('input[aria-label="Қосымша"]');
     hookInput?.addEventListener("focus", () => selectLayer(stack, "hook"));
     markInput?.addEventListener("focus", () => selectLayer(stack, "mark"));
+    if (hookInput && hookInput.dataset.containReady !== "1") {
+      hookInput.dataset.containReady = "1";
+      hookInput.addEventListener("input", () => requestAnimationFrame(() => containLayer(stack, "hook", true)));
+    }
+    if (markInput && markInput.dataset.containReady !== "1") {
+      markInput.dataset.containReady = "1";
+      markInput.addEventListener("input", () => requestAnimationFrame(() => containLayer(stack, "mark", true)));
+    }
+    containAll(stack);
+    if (preview.dataset.containObserve !== "1") {
+      preview.dataset.containObserve = "1";
+      new ResizeObserver(() => containAll(stack)).observe(preview);
+    }
 
     if (preview.dataset.toolsReady === "1") {
       applyLayerLook(stack.querySelector(".sub-hook"), "hook");
       applyLayerLook(stack.querySelector(".sub-mark"), "mark");
       applyLayerLook(stack.querySelector(".sub-extra"), "extra");
+      containAll(stack);
       syncLayerVisibility(stack, editor);
       ensureStickerButton();
+      ensureFontPicker(stack);
       if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
         selectLayer(stack, visibleKeys()[0] || "hook");
       }
-      bindStyleCarousel();
-      keepStyleInCarousel();
       return;
     }
     preview.dataset.toolsReady = "1";
@@ -857,8 +969,8 @@
       selectLayer(stack, visibleKeys()[0] || "hook");
     }
     ensureStickerButton();
-    bindStyleCarousel();
-    keepStyleInCarousel();
+    ensureFontPicker(stack);
+    syncLayerVisibility(stack, editor);
     if (preview.dataset.observeReady !== "1") {
       preview.dataset.observeReady = "1";
       let timer = 0;
