@@ -32,15 +32,23 @@
     .reels-handle.resize{right:-18px;bottom:-18px;background:#d9ff47;border-color:#171715}
     .reels-handle.rotate{left:50%;top:-40px;transform:translateX(-50%)}
     .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
+    .reels-handle.delete{left:-18px;top:-18px;width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
+    .reels-handle.delete:before{content:"×"}
     .font-chip{display:none!important}
     .reel-progress{z-index:5!important;bottom:20px!important;left:24px!important;right:24px!important}
     .text-add{display:none!important}
     .text-color-tools{display:grid;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #ffffff16}
     .text-add-btn{width:100%;min-height:42px;border:1px dashed #d9ff4788;border-radius:10px;background:#191918;color:#d9ff47;font:800 12px/1 Arial,sans-serif;letter-spacing:.06em;cursor:pointer}
     .text-add-btn:hover{background:#d9ff47;color:#171715}
+    .text-add-btn[hidden]{display:none!important}
     .text-layer-picks{display:flex;flex-wrap:wrap;gap:6px}
-    .text-layer-picks button{min-height:32px;padding:0 10px;border:1px solid #ffffff22;border-radius:8px;background:#191918;color:#fff;font:700 11px/1 Arial,sans-serif;cursor:pointer}
+    .text-layer-picks button{position:relative;min-height:32px;padding:0 26px 0 10px;border:1px solid #ffffff22;border-radius:8px;background:#191918;color:#fff;font:700 11px/1 Arial,sans-serif;cursor:pointer}
     .text-layer-picks button.active{background:#d9ff47;color:#171715;border-color:#d9ff47}
+    .text-layer-picks .layer-x{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:0;border-radius:50%;background:#ffffff18;color:inherit;font:800 13px/18px Arial,sans-serif;padding:0;cursor:pointer}
+    .text-layer-picks button.active .layer-x{background:#17171522}
+    .text-layer-picks button[data-last="1"] .layer-x{display:none}
+    .sub-hook[data-layer-off="1"],.sub-mark[data-layer-off="1"],.sub-extra[data-layer-off="1"]{display:none!important}
+    .subtitle-stack[data-one="1"] .reels-handle.delete{display:none!important}
     .text-tool-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
     .text-tool-row span{width:42px;color:#9b9b94;font:800 9px/1 Arial,sans-serif;letter-spacing:.08em}
     .text-tool-row button{width:26px;height:26px;border:2px solid #fff4;border-radius:50%;padding:0;cursor:pointer}
@@ -94,9 +102,10 @@
     .reels-options:not(.reels-colors) button.random{background:transparent!important}
     .reels-colors{grid-template-columns:repeat(4,minmax(0,1fr))!important}
     .reels-colors button{min-height:58px;padding:8px 4px!important;border:1px solid #ffffff22!important;border-radius:12px!important;background:#191918!important}
-    .reels-copy-edit{margin-top:12px!important;display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
-    .reels-copy-edit input{min-width:0;border-radius:10px!important;border-color:#ffffff22!important;background:#161615!important;color:#fff!important;padding:12px!important}
-    .reels-copy-edit input.extra-input{grid-column:1/-1}
+    .reels-copy-edit{margin-top:12px!important;display:flex!important;flex-wrap:wrap;gap:8px}
+    .reels-copy-edit input{flex:1;min-width:140px;border-radius:10px!important;border-color:#ffffff22!important;background:#161615!important;color:#fff!important;padding:12px!important}
+    .reels-copy-edit input.extra-input{flex-basis:100%}
+    .reels-copy-edit input[data-layer-off="1"]{display:none!important}
     .reels-size{display:none!important}
     .reels-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
     .reels-actions a.reels-act{display:none!important}
@@ -127,13 +136,19 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = () => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on: false, text: "" });
-  let state = { hook: emptyLayer(), mark: emptyLayer(), extra: emptyLayer() };
+  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "" });
+  let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
     const oldPos = JSON.parse(localStorage.getItem("qarip-reels-text-position") || "{}");
     ["hook", "mark", "extra"].forEach((key) => {
-      state[key] = { ...emptyLayer(), ...(oldPos[key] || {}), ...(stored[key] || {}) };
+      const fallbackOn = key !== "extra";
+      const saved = stored[key] || {};
+      const moved = oldPos[key] || {};
+      state[key] = { ...emptyLayer(fallbackOn), ...moved, ...saved };
+      if (!Object.prototype.hasOwnProperty.call(saved, "on") && !Object.prototype.hasOwnProperty.call(moved, "on")) {
+        state[key].on = fallbackOn;
+      }
     });
   } catch {}
 
@@ -149,6 +164,80 @@
       stack.style.setProperty(`--${key}-scale`, layer.scale);
       stack.style.setProperty(`--${key}-rotate`, `${layer.rotation}deg`);
     });
+  }
+
+  function isOn(key) {
+    return state[key].on !== false;
+  }
+
+  function visibleKeys() {
+    return ["hook", "mark", "extra"].filter(isOn);
+  }
+
+  function layerSelector(key) {
+    return key === "hook" ? ".sub-hook" : key === "mark" ? ".sub-mark" : ".sub-extra";
+  }
+
+  function layerInput(editor, key) {
+    if (key === "hook") return editor?.querySelector('input[aria-label="Акцент"]');
+    if (key === "mark") return editor?.querySelector('input[aria-label="Қосымша"]');
+    return editor?.querySelector(".extra-input");
+  }
+
+  function syncLayerVisibility(stack, editor) {
+    stack = stack || document.querySelector(".subtitle-stack");
+    editor = editor || document.querySelector(".reels-copy-edit");
+    const live = visibleKeys();
+    if (stack) stack.dataset.one = live.length === 1 ? "1" : "0";
+    ["hook", "mark", "extra"].forEach((key) => {
+      const on = isOn(key);
+      const el = stack?.querySelector(layerSelector(key));
+      if (el) {
+        if (on) el.removeAttribute("data-layer-off");
+        else el.setAttribute("data-layer-off", "1");
+      }
+      const input = layerInput(editor, key);
+      if (input) {
+        if (on) input.removeAttribute("data-layer-off");
+        else input.setAttribute("data-layer-off", "1");
+      }
+      const chip = document.querySelector(`.text-layer-picks [data-layer="${key}"]`);
+      if (chip) {
+        chip.hidden = !on;
+        if (on && live.length === 1) chip.setAttribute("data-last", "1");
+        else chip.removeAttribute("data-last");
+      }
+    });
+    const addBtn = document.querySelector(".text-add-btn");
+    if (addBtn) addBtn.hidden = live.length >= 3;
+  }
+
+  function removeLayer(stack, editor, key) {
+    if (visibleKeys().length <= 1) {
+      toast("Кемінде бір мәтін қалу керек.");
+      return;
+    }
+    state[key].on = false;
+    syncLayerVisibility(stack, editor);
+    const next = visibleKeys()[0] || "hook";
+    selectLayer(stack, next);
+    save();
+  }
+
+  function addLayer(stack, editor) {
+    const next = ["hook", "mark", "extra"].find((key) => !isOn(key));
+    if (!next) return;
+    if (next === "extra") {
+      createExtra(stack, editor, true);
+      syncLayerVisibility(stack, editor);
+      return;
+    }
+    state[next].on = true;
+    syncLayerVisibility(stack, editor);
+    bindLayer(stack, next, layerSelector(next));
+    selectLayer(stack, next);
+    layerInput(editor, next)?.focus();
+    save();
   }
 
   function setLayerText(el, value) {
@@ -180,15 +269,17 @@
   }
 
   function selectedKey(stack) {
-    const current = stack.querySelector("[data-selected='1']");
+    const current = stack.querySelector("[data-selected='1']:not([data-layer-off])");
     if (current?.classList.contains("sub-mark")) return "mark";
     if (current?.classList.contains("sub-extra")) return "extra";
-    return "hook";
+    if (current?.classList.contains("sub-hook")) return "hook";
+    return visibleKeys()[0] || "hook";
   }
 
   function selectLayer(stack, key) {
+    if (!isOn(key)) return;
     stack.querySelectorAll("[data-selected]").forEach((item) => item.removeAttribute("data-selected"));
-    const el = stack.querySelector(key === "hook" ? ".sub-hook" : key === "mark" ? ".sub-mark" : ".sub-extra");
+    const el = stack.querySelector(layerSelector(key));
     if (el) el.dataset.selected = "1";
     document.querySelectorAll(".text-layer-picks button").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.layer === key);
@@ -219,7 +310,7 @@
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
 
-  function bindHandlePointers(element, resize, rotate, stack, key) {
+  function bindHandlePointers(element, resize, rotate, del, stack, key) {
     const select = () => selectLayer(stack, key);
     resize.addEventListener("pointerdown", (event) => {
       event.preventDefault();
@@ -267,6 +358,11 @@
       rotate.addEventListener("pointerup", end);
       rotate.addEventListener("pointercancel", end);
     });
+    del.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      removeLayer(stack, document.querySelector(".reels-copy-edit"), key);
+    });
   }
 
   function bindLayer(stack, key, selector) {
@@ -275,7 +371,8 @@
     applyLayerLook(element, key);
     let resize = element.querySelector(":scope > .reels-handle.resize");
     let rotate = element.querySelector(":scope > .reels-handle.rotate");
-    if (!resize || !rotate) {
+    let del = element.querySelector(":scope > .reels-handle.delete");
+    if (!resize || !rotate || !del) {
       element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
       resize = document.createElement("span");
       resize.className = "reels-handle resize";
@@ -283,8 +380,11 @@
       rotate = document.createElement("span");
       rotate.className = "reels-handle rotate";
       rotate.setAttribute("aria-label", "Бұру");
-      element.append(resize, rotate);
-      bindHandlePointers(element, resize, rotate, stack, key);
+      del = document.createElement("span");
+      del.className = "reels-handle delete";
+      del.setAttribute("aria-label", "Өшіру");
+      element.append(resize, rotate, del);
+      bindHandlePointers(element, resize, rotate, del, stack, key);
     }
     if (element.dataset.layerReady === "1") return;
     element.dataset.layerReady = "1";
@@ -389,6 +489,7 @@
     bindLayer(stack, "extra", ".sub-extra");
     applyLayerLook(extra, "extra");
     if (select) selectLayer(stack, "extra");
+    syncLayerVisibility(stack, editor);
     save();
     return extra;
   }
@@ -487,6 +588,7 @@
     host.style.cssText = `position:fixed;left:-12000px;top:0;width:${Math.round(frame.width + pad * 2)}px;height:${Math.round(frame.height + pad * 2)}px;background:transparent;overflow:visible;pointer-events:none`;
     const clone = stack.cloneNode(true);
     clone.querySelectorAll(".reels-handle").forEach((node) => node.remove());
+    clone.querySelectorAll("[data-layer-off='1']").forEach((node) => node.remove());
     clone.querySelectorAll("[data-selected]").forEach((node) => node.removeAttribute("data-selected"));
     clone.style.position = "absolute";
     clone.style.left = `${pad}px`;
@@ -630,6 +732,7 @@
       }
     }
     LAYERS.forEach(([key, selector]) => bindLayer(stack, key, selector));
+    syncLayerVisibility(stack, editor);
 
     const hookInput = editor?.querySelector('input[aria-label="Акцент"]');
     const markInput = editor?.querySelector('input[aria-label="Қосымша"]');
@@ -640,8 +743,11 @@
       applyLayerLook(stack.querySelector(".sub-hook"), "hook");
       applyLayerLook(stack.querySelector(".sub-mark"), "mark");
       applyLayerLook(stack.querySelector(".sub-extra"), "extra");
+      syncLayerVisibility(stack, editor);
       ensureStickerButton();
-      if (!stack.querySelector("[data-selected='1']")) selectLayer(stack, "hook");
+      if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
+        selectLayer(stack, visibleKeys()[0] || "hook");
+      }
       bindStyleCarousel();
       keepStyleInCarousel();
       return;
@@ -653,9 +759,9 @@
     tools.innerHTML = `
       <button type="button" class="text-add-btn">+ Мәтін қосу</button>
       <div class="text-layer-picks">
-        <button type="button" class="active" data-layer="hook">Акцент</button>
-        <button type="button" data-layer="mark">Қосымша</button>
-        <button type="button" data-layer="extra" hidden>Жаңа мәтін</button>
+        <button type="button" class="active" data-layer="hook">Акцент<span class="layer-x" aria-label="Өшіру">×</span></button>
+        <button type="button" data-layer="mark">Қосымша<span class="layer-x" aria-label="Өшіру">×</span></button>
+        <button type="button" data-layer="extra" hidden>Жаңа мәтін<span class="layer-x" aria-label="Өшіру">×</span></button>
       </div>
       <div class="text-tool-row" data-row="text">
         <span>ТҮС</span>
@@ -685,12 +791,17 @@
       controls.insertBefore(tools, styleLabel);
     }
 
-    tools.querySelector(".text-add-btn").addEventListener("click", () => createExtra(stack, editor));
+    tools.querySelector(".text-add-btn").addEventListener("click", () => addLayer(stack, editor));
     tools.querySelector(".text-layer-picks").addEventListener("click", (event) => {
       const btn = event.target.closest("button[data-layer]");
       if (!btn || btn.hidden) return;
-      if (btn.dataset.layer === "extra") createExtra(stack, editor);
-      else selectLayer(stack, btn.dataset.layer);
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.target.closest(".layer-x")) {
+        removeLayer(stack, editor, btn.dataset.layer);
+        return;
+      }
+      selectLayer(stack, btn.dataset.layer);
     });
     tools.addEventListener("click", (event) => {
       const off = event.target.closest(".bg-off");
@@ -727,7 +838,9 @@
       save();
     });
 
-    if (!stack.querySelector("[data-selected]")) selectLayer(stack, "hook");
+    if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
+      selectLayer(stack, visibleKeys()[0] || "hook");
+    }
     ensureStickerButton();
     bindStyleCarousel();
     keepStyleInCarousel();
