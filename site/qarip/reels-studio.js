@@ -39,6 +39,12 @@
     .subtitle-stack .sub-mark{top:58%;padding:8px 16px!important;border-radius:999px!important;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
+    .subtitle-stack .sub-hook[data-editing="1"],
+    .subtitle-stack .sub-mark[data-editing="1"],
+    .subtitle-stack .sub-extra[data-editing="1"]{
+      cursor:text!important;user-select:text!important;-webkit-user-select:text!important;
+      touch-action:manipulation!important;caret-color:#d9ff47;min-width:48px;min-height:1em
+    }
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:4px}
     .reels-hud{
       position:absolute;inset:0;z-index:20;pointer-events:none;
@@ -292,7 +298,7 @@
     if (hud.dataset.bound !== "1") bindHud(preview);
     hud.dataset.one = stack.dataset.one || "0";
     const selected = stack.querySelector("[data-selected='1']:not([data-layer-off])");
-    if (!selected || preview.classList.contains("exporting")) {
+    if (!selected || preview.classList.contains("exporting") || selected.dataset.editing === "1") {
       hud.dataset.show = "0";
       return;
     }
@@ -443,18 +449,81 @@
     syncLayerVisibility(stack, editor);
     bindLayer(stack, next, layerSelector(next));
     selectLayer(stack, next);
-    layerInput(editor, next)?.focus();
+    requestAnimationFrame(() => startEdit(stack, next, true));
     save();
   }
 
   function setLayerText(el, value) {
-    if (!el) return;
+    if (!el || el.dataset.editing === "1") return;
     const next = value ?? "";
     let text = [...el.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
     if (!text) {
       text = document.createTextNode(next);
       el.insertBefore(text, el.firstChild);
     } else text.nodeValue = next;
+  }
+
+  function writeInput(input, text, pushReact) {
+    if (!input) return;
+    const desc = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+    if (desc?.set) desc.set.call(input, text);
+    else input.value = text;
+    if (pushReact) input.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function readLayerText(el, key, pushReact) {
+    if (!el) return;
+    const text = (el.innerText || "").replace(/\u00a0/g, " ").replace(/\n+$/g, "");
+    state[key].text = text;
+    writeInput(layerInput(document.querySelector(".reels-copy-edit"), key), text, pushReact);
+    save();
+  }
+
+  function stopEdit(stack, exceptKey) {
+    ["hook", "mark", "extra"].forEach((key) => {
+      if (key === exceptKey) return;
+      const el = stack?.querySelector(layerSelector(key));
+      if (!el || el.dataset.editing !== "1") return;
+      el.removeAttribute("data-editing");
+      el.removeAttribute("contenteditable");
+      readLayerText(el, key, true);
+      const s = stack || document.querySelector(".subtitle-stack");
+      if (s) containLayer(s, key, true);
+    });
+    layoutHud(stack || document.querySelector(".subtitle-stack"));
+  }
+
+  function startEdit(stack, key, selectAll = false) {
+    const el = stack?.querySelector(layerSelector(key));
+    if (!el || !isOn(key)) return;
+    stopEdit(stack, key);
+    selectLayer(stack, key);
+    el.dataset.editing = "1";
+    el.contentEditable = "plaintext-only";
+    if (el.contentEditable !== "plaintext-only") el.contentEditable = "true";
+    el.spellcheck = false;
+    el.setAttribute("enterkeyhint", "done");
+    layoutHud(stack);
+    const placeCaret = () => {
+      el.focus({ preventScroll: true });
+      const sel = window.getSelection();
+      if (selectAll) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return;
+      }
+      if (!sel.rangeCount || !el.contains(sel.anchorNode)) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    };
+    placeCaret();
+    requestAnimationFrame(placeCaret);
   }
 
   function applyLayerLook(el, key) {
@@ -496,6 +565,7 @@
   }
 
   function clearSelect(stack) {
+    stopEdit(stack);
     stack?.querySelectorAll("[data-selected]").forEach((item) => item.removeAttribute("data-selected"));
     document.querySelectorAll(".text-layer-picks button").forEach((btn) => btn.classList.remove("active"));
     layoutHud(stack);
@@ -504,6 +574,7 @@
 
   function selectLayer(stack, key) {
     if (!isOn(key)) return;
+    stopEdit(stack, key);
     stack.querySelectorAll("[data-selected]").forEach((item) => item.removeAttribute("data-selected"));
     const el = stack.querySelector(layerSelector(key));
     if (el) el.dataset.selected = "1";
@@ -733,36 +804,81 @@
     element.addEventListener("pointerdown", (event) => {
       if (event.target.closest(".reels-handle")) return;
       if (element._qaripPinch) return;
-      event.preventDefault();
-      blurEditor();
-      lockWindowScroll();
+      if (element.dataset.editing === "1") return;
+      const already = element.dataset.selected === "1";
+      if (!already) {
+        event.preventDefault();
+        blurEditor();
+        lockWindowScroll();
+      }
       select();
-      const start = { pointerX: event.clientX, pointerY: event.clientY, x: state[key].x, y: state[key].y };
-      element.setPointerCapture(event.pointerId);
+      const start = { pointerX: event.clientX, pointerY: event.clientY, x: state[key].x, y: state[key].y, moved: false };
+      if (!already) {
+        try { element.setPointerCapture(event.pointerId); } catch {}
+      }
       const move = (moveEvent) => {
-        if (element._qaripPinch) return;
-        state[key].x = start.x + moveEvent.clientX - start.pointerX;
-        state[key].y = start.y + moveEvent.clientY - start.pointerY;
-        paint(stack);
-        magnetMove(stack, key);
-        containLayer(stack, key, false);
+        if (element._qaripPinch || element.dataset.editing === "1") return;
+        const dist = Math.hypot(moveEvent.clientX - start.pointerX, moveEvent.clientY - start.pointerY);
+        if (dist > 8) {
+          if (!start.moved) {
+            start.moved = true;
+            event.preventDefault();
+            blurEditor();
+            lockWindowScroll();
+            try { element.setPointerCapture(moveEvent.pointerId); } catch {}
+          }
+          state[key].x = start.x + moveEvent.clientX - start.pointerX;
+          state[key].y = start.y + moveEvent.clientY - start.pointerY;
+          paint(stack);
+          magnetMove(stack, key);
+          containLayer(stack, key, false);
+        }
       };
       const end = () => {
         element.removeEventListener("pointermove", move);
         element.removeEventListener("pointerup", end);
         element.removeEventListener("pointercancel", end);
         clearSnap(stack.closest(".phone-preview"), element);
-        save();
+        if (already && !start.moved) startEdit(stack, key);
+        else save();
       };
       element.addEventListener("pointermove", move);
       element.addEventListener("pointerup", end);
       element.addEventListener("pointercancel", end);
     }, { passive: false });
+    element.addEventListener("input", () => {
+      if (element.dataset.editing !== "1") return;
+      readLayerText(element, key, false);
+      layoutHud(stack);
+      containLayer(stack, key, true);
+    });
+    element.addEventListener("keydown", (event) => {
+      if (element.dataset.editing !== "1") return;
+      if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey)) {
+        event.preventDefault();
+        stopEdit(stack);
+      }
+    });
+    element.addEventListener("paste", (event) => {
+      if (element.dataset.editing !== "1") return;
+      event.preventDefault();
+      const text = (event.clipboardData || window.clipboardData)?.getData("text/plain") || "";
+      document.execCommand("insertText", false, text.replace(/\r\n/g, "\n"));
+    });
+    element.addEventListener("focusout", () => {
+      if (element.dataset.editing !== "1") return;
+      setTimeout(() => {
+        if (element.dataset.editing !== "1") return;
+        if (element.contains(document.activeElement)) return;
+        stopEdit(stack);
+      }, 10);
+    });
     const pinchDist = (a, b) => Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
     const pinchAng = (a, b) => Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * (180 / Math.PI);
     element.addEventListener(
       "touchstart",
       (event) => {
+        if (element.dataset.editing === "1") return;
         if (event.touches.length === 2) {
           event.preventDefault();
           select();
@@ -774,9 +890,11 @@
           };
           return;
         }
-        event.preventDefault();
-        blurEditor();
-        lockWindowScroll();
+        if (element.dataset.selected !== "1") {
+          event.preventDefault();
+          blurEditor();
+          lockWindowScroll();
+        }
       },
       { passive: false }
     );
@@ -814,14 +932,17 @@
     input.addEventListener("input", () => {
       const extra = document.querySelector(".sub-extra");
       state.extra.text = input.value;
-      setLayerText(extra, input.value);
+      if (extra?.dataset.editing !== "1") setLayerText(extra, input.value);
       const stack = document.querySelector(".subtitle-stack");
       if (stack) containLayer(stack, "extra", true);
       save();
     });
     input.addEventListener("focus", () => {
       const stack = document.querySelector(".subtitle-stack");
-      if (stack) selectLayer(stack, "extra");
+      if (stack) {
+        stopEdit(stack);
+        selectLayer(stack, "extra");
+      }
     });
     editor.append(input);
     return input;
@@ -842,7 +963,10 @@
     if (chip) chip.hidden = false;
     bindLayer(stack, "extra", ".sub-extra");
     applyLayerLook(extra, "extra");
-    if (select) selectLayer(stack, "extra");
+    if (select) {
+      selectLayer(stack, "extra");
+      requestAnimationFrame(() => startEdit(stack, "extra", true));
+    }
     syncLayerVisibility(stack, editor);
     save();
     return extra;
@@ -911,36 +1035,41 @@
   }
 
   function layerPlainText(el) {
-    return [...el.childNodes]
-      .filter((node) => node.nodeType === Node.TEXT_NODE)
-      .map((node) => node.nodeValue)
-      .join("")
+    return (el?.innerText || "")
+      .replace(/\u00a0/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n[ \t]+/g, "\n")
       .replace(/\s+/g, " ")
       .trim();
   }
 
   function liveTextLines(el) {
     const raw = layerPlainText(el);
-    const node = [...el.childNodes].find((item) => item.nodeType === Node.TEXT_NODE);
-    if (!node || !raw) return [raw];
-    const text = node.nodeValue;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    if (!nodes.length || !raw) return [raw];
     const range = document.createRange();
     const lines = [];
-    let start = 0;
+    let buf = "";
     let lastTop = null;
-    for (let i = 0; i < text.length; i += 1) {
-      range.setStart(node, i);
-      range.setEnd(node, Math.min(text.length, i + 1));
-      const box = range.getClientRects()[0];
-      if (!box) continue;
-      if (lastTop !== null && Math.abs(box.top - lastTop) > 3) {
-        const piece = text.slice(start, i).replace(/\s+/g, " ").trim();
-        if (piece) lines.push(piece);
-        start = i;
+    nodes.forEach((node) => {
+      const text = node.nodeValue || "";
+      for (let i = 0; i < text.length; i += 1) {
+        range.setStart(node, i);
+        range.setEnd(node, Math.min(text.length, i + 1));
+        const box = range.getClientRects()[0];
+        if (!box) continue;
+        if (lastTop !== null && Math.abs(box.top - lastTop) > 3) {
+          const piece = buf.replace(/\s+/g, " ").trim();
+          if (piece) lines.push(piece);
+          buf = "";
+        }
+        buf += text[i];
+        lastTop = box.top;
       }
-      lastTop = box.top;
-    }
-    const tail = text.slice(start).replace(/\s+/g, " ").trim();
+    });
+    const tail = buf.replace(/\s+/g, " ").trim();
     if (tail) lines.push(tail);
     return lines.length ? lines : [raw];
   }
@@ -1058,6 +1187,7 @@
     const stack = preview?.querySelector(".subtitle-stack");
     const btn = document.querySelector(".reels-sticker");
     if (!preview || !stack || !btn) return;
+    stopEdit(stack);
     btn.disabled = true;
     btn.textContent = "Көшірілуде…";
     preview.classList.add("exporting", "sticker-export");
@@ -1266,8 +1396,14 @@
 
     const hookInput = editor?.querySelector('input[aria-label="Акцент"]');
     const markInput = editor?.querySelector('input[aria-label="Қосымша"]');
-    hookInput?.addEventListener("focus", () => selectLayer(stack, "hook"));
-    markInput?.addEventListener("focus", () => selectLayer(stack, "mark"));
+    hookInput?.addEventListener("focus", () => {
+      stopEdit(stack);
+      selectLayer(stack, "hook");
+    });
+    markInput?.addEventListener("focus", () => {
+      stopEdit(stack);
+      selectLayer(stack, "mark");
+    });
     if (hookInput && hookInput.dataset.containReady !== "1") {
       hookInput.dataset.containReady = "1";
       hookInput.addEventListener("input", () => requestAnimationFrame(() => containLayer(stack, "hook", true)));
@@ -1277,6 +1413,15 @@
       markInput.addEventListener("input", () => requestAnimationFrame(() => containLayer(stack, "mark", true)));
     }
     containAll(stack);
+    if (preview.dataset.editOutside !== "1") {
+      preview.dataset.editOutside = "1";
+      document.addEventListener("pointerdown", (event) => {
+        const editing = document.querySelector(".subtitle-stack [data-editing='1']");
+        if (!editing) return;
+        if (editing.contains(event.target)) return;
+        stopEdit(editing.closest(".subtitle-stack"));
+      }, true);
+    }
     if (preview.dataset.containObserve !== "1") {
       preview.dataset.containObserve = "1";
       new ResizeObserver(() => {
