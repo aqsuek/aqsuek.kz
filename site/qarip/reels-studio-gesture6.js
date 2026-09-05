@@ -40,21 +40,26 @@
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
     .subtitle-stack .sub-hook:active,.subtitle-stack .sub-mark:active,.subtitle-stack .sub-extra:active{cursor:grabbing}
     .subtitle-stack [data-selected="1"]{outline:2px solid #d9ff47;outline-offset:4px}
-    .reels-handle{display:none;position:absolute;z-index:12;width:30px;height:30px;border:2px solid #fff;border-radius:50%;background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto}
-    [data-selected="1"]>.reels-handle{display:block!important}
-    .reels-handle.resize,.reels-handle.stretch-l{
-      top:50%;bottom:auto;width:18px;height:32px;border-radius:9px;background:#d9ff47;border-color:#171715;cursor:ew-resize;transform:translateY(-50%)
+    .reels-hud{
+      position:absolute;inset:0;z-index:20;pointer-events:none;
     }
-    .reels-handle.resize{right:-16px;left:auto}
-    .reels-handle.stretch-l{left:-16px;right:auto}
-    .reels-handle.scale{
-      right:-18px;bottom:-18px;top:auto;left:auto;width:22px;height:22px;
-      background:#d9ff47;border-color:#171715;cursor:nwse-resize;transform:none
+    .reels-hud[data-show="0"]{display:none!important}
+    .reels-hud .reels-handle{
+      display:block!important;position:absolute;z-index:12;margin:0;
+      width:30px;height:30px;border:2px solid #fff;border-radius:50%;
+      background:#171715;box-shadow:0 2px 10px #000a;touch-action:none;pointer-events:auto;transform:none!important
     }
-    .reels-handle.rotate{left:50%;top:-40px;transform:translateX(-50%)}
-    .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
-    .reels-handle.delete{left:-18px;top:-18px;width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
-    .reels-handle.delete:before{content:"×"}
+    .reels-hud .reels-handle.resize,.reels-hud .reels-handle.stretch-l{
+      width:18px;height:32px;border-radius:9px;background:#d9ff47;border-color:#171715;cursor:ew-resize
+    }
+    .reels-hud .reels-handle.scale{
+      width:22px;height:22px;background:#d9ff47;border-color:#171715;cursor:nwse-resize
+    }
+    .reels-hud .reels-handle.rotate:after{content:"";position:absolute;width:2px;height:12px;background:#fff;left:50%;top:28px;transform:translateX(-50%)}
+    .reels-hud .reels-handle.delete{width:26px;height:26px;background:#ff2d7b;border-color:#fff;color:#fff;font:800 16px/26px Arial,sans-serif;text-align:center}
+    .reels-hud .reels-handle.delete:before{content:"×"}
+    .reels-hud[data-one="1"] .reels-handle.delete{display:none!important}
+    .subtitle-stack .reels-handle{display:none!important}
     .reels-guide{position:absolute;z-index:6;background:#d9ff47;pointer-events:none;opacity:0}
     .reels-guide.x{top:0;bottom:0;left:50%;width:1px;transform:translateX(-50%)}
     .reels-guide.y{left:0;right:0;top:50%;height:1px;transform:translateY(-50%)}
@@ -118,7 +123,7 @@
     .reels-sticker-toast{display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#d9ff47;color:#171715;font:800 12px/1.35 Arial,sans-serif}
     .reels-sticker-toast[data-show="1"]{display:block}
     .phone-preview.exporting:before{display:none}
-    .phone-preview.exporting .reels-handle,.phone-preview.exporting .text-add{display:none!important}
+    .phone-preview.exporting .reels-hud,.phone-preview.exporting .text-add{display:none!important}
     .phone-preview.exporting .subtitle-stack [data-selected="1"]{outline:none!important}
     .phone-preview.sticker-export{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
     .phone-preview.sticker-export:before,
@@ -126,7 +131,8 @@
     .phone-preview.sticker-export .reel-ui,
     .phone-preview.sticker-export .reel-progress,
     .phone-preview.sticker-export .font-chip,
-    .phone-preview.sticker-export .reels-guide{display:none!important}
+    .phone-preview.sticker-export .reels-guide,
+    .phone-preview.sticker-export .reels-hud{display:none!important}
     @media(max-width:900px){
       .reels-pick{padding:24px 16px 36px!important}
       .reels-pick:before{inset:10px}
@@ -182,13 +188,14 @@
       stack.style.setProperty(`--${key}-rotate`, `${layer.rotation}deg`);
       applyBox(stack.querySelector(layerSelector(key)), key);
     });
+    layoutHud(stack);
   }
 
   function containLayer(stack, key, mayScale = true) {
     const preview = stack?.closest(".phone-preview") || document.querySelector(".phone-preview");
     const el = stack?.querySelector(layerSelector(key));
     if (!preview || !el || !isOn(key)) return;
-    const pad = 18;
+    const pad = 44;
     const frame = preview.getBoundingClientRect();
     const innerW = frame.width - pad * 2;
     const innerH = frame.height - pad * 2;
@@ -259,6 +266,61 @@
     const y = document.createElement("i");
     y.className = "reels-guide y";
     preview.append(x, y);
+  }
+
+  function ensureHud(preview) {
+    if (!preview) return null;
+    let hud = preview.querySelector(":scope > .reels-hud");
+    if (hud) return hud;
+    hud = document.createElement("div");
+    hud.className = "reels-hud";
+    hud.dataset.show = "0";
+    hud.innerHTML =
+      '<span class="reels-handle stretch-l" aria-label="Рамканы созу"></span>' +
+      '<span class="reels-handle resize" aria-label="Рамканы созу"></span>' +
+      '<span class="reels-handle scale" aria-label="Мәтін өлшемі"></span>' +
+      '<span class="reels-handle rotate" aria-label="Бұру"></span>' +
+      '<span class="reels-handle delete" aria-label="Өшіру"></span>';
+    preview.append(hud);
+    return hud;
+  }
+
+  function layoutHud(stack) {
+    const preview = stack?.closest(".phone-preview") || document.querySelector(".phone-preview");
+    if (!preview || !stack) return;
+    const hud = ensureHud(preview);
+    if (hud.dataset.bound !== "1") bindHud(preview);
+    hud.dataset.one = stack.dataset.one || "0";
+    const selected = stack.querySelector("[data-selected='1']:not([data-layer-off])");
+    if (!selected || preview.classList.contains("exporting")) {
+      hud.dataset.show = "0";
+      return;
+    }
+    hud.dataset.show = "1";
+    const frame = preview.getBoundingClientRect();
+    const box = selected.getBoundingClientRect();
+    const w = frame.width;
+    const h = frame.height;
+    if (w < 8 || h < 8) return;
+    const left = box.left - frame.left;
+    const top = box.top - frame.top;
+    const right = box.right - frame.left;
+    const bottom = box.bottom - frame.top;
+    const cx = (left + right) / 2;
+    const cy = (top + bottom) / 2;
+    const place = (sel, x, y, hw, hh) => {
+      const node = hud.querySelector(sel);
+      if (!node) return;
+      const px = Math.max(hw, Math.min(w - hw, x));
+      const py = Math.max(hh, Math.min(h - hh, y));
+      node.style.left = `${px - hw}px`;
+      node.style.top = `${py - hh}px`;
+    };
+    place(".stretch-l", left, cy, 9, 16);
+    place(".resize", right, cy, 9, 16);
+    place(".scale", right, bottom, 11, 11);
+    place(".rotate", cx, top - 22, 15, 15);
+    place(".delete", left, top, 13, 13);
   }
 
   function setSnap(preview, el, flags) {
@@ -354,6 +416,7 @@
     });
     const addBtn = document.querySelector(".text-add-btn");
     if (addBtn) addBtn.hidden = live.length >= 3;
+    if (stack) layoutHud(stack);
   }
 
   function removeLayer(stack, editor, key) {
@@ -435,6 +498,8 @@
   function clearSelect(stack) {
     stack?.querySelectorAll("[data-selected]").forEach((item) => item.removeAttribute("data-selected"));
     document.querySelectorAll(".text-layer-picks button").forEach((btn) => btn.classList.remove("active"));
+    layoutHud(stack);
+    requestAnimationFrame(() => layoutHud(stack));
   }
 
   function selectLayer(stack, key) {
@@ -448,6 +513,8 @@
     syncSwatches(key);
     syncFace(key);
     syncFontActive();
+    layoutHud(stack);
+    requestAnimationFrame(() => layoutHud(stack));
   }
 
   function inferFace(el, layer) {
@@ -524,14 +591,27 @@
     window.addEventListener("touchend", stop, { capture: true });
   }
 
-  function bindStretchHandle(handle, element, stack, key) {
-    const select = () => selectLayer(stack, key);
+  function liveLayer(stack) {
+    const element = stack?.querySelector("[data-selected='1']:not([data-layer-off])");
+    if (!element) return null;
+    const key = element.classList.contains("sub-mark")
+      ? "mark"
+      : element.classList.contains("sub-extra")
+        ? "extra"
+        : "hook";
+    return { key, element };
+  }
+
+  function bindStretchHandle(handle, stack) {
     handle.addEventListener("pointerdown", (event) => {
+      const live = liveLayer(stack);
+      if (!live) return;
+      const { key, element } = live;
       event.preventDefault();
       event.stopPropagation();
       blurEditor();
       lockWindowScroll();
-      select();
+      selectLayer(stack, key);
       const center = layerCenter(element);
       const startHalf = Math.max(12, element.getBoundingClientRect().width / 2);
       const startW = Math.max(48, state[key].boxW || element.offsetWidth);
@@ -539,7 +619,7 @@
       const move = (moveEvent) => {
         const now = Math.abs(axisX(center, state[key].rotation, moveEvent.clientX, moveEvent.clientY));
         const preview = stack.closest(".phone-preview");
-        const innerW = (preview?.getBoundingClientRect().width || 720) - 36;
+        const innerW = (preview?.getBoundingClientRect().width || 720) - 88;
         const maxW = innerW / Math.max(0.25, state[key].scale || 1);
         state[key].boxW = Math.max(48, Math.min(maxW, startW * (now / startHalf)));
         paint(stack);
@@ -557,14 +637,16 @@
     }, { passive: false });
   }
 
-  function bindScaleHandle(handle, element, stack, key) {
-    const select = () => selectLayer(stack, key);
+  function bindScaleHandle(handle, stack) {
     handle.addEventListener("pointerdown", (event) => {
+      const live = liveLayer(stack);
+      if (!live) return;
+      const { key, element } = live;
       event.preventDefault();
       event.stopPropagation();
       blurEditor();
       lockWindowScroll();
-      select();
+      selectLayer(stack, key);
       const center = layerCenter(element);
       const startDist = Math.max(12, Math.hypot(event.clientX - center.x, event.clientY - center.y));
       const startScale = state[key].scale;
@@ -587,17 +669,28 @@
     }, { passive: false });
   }
 
-  function bindHandlePointers(element, resize, rotate, del, stack, key, stretchL, scaleH) {
-    const select = () => selectLayer(stack, key);
-    bindStretchHandle(resize, element, stack, key);
-    if (stretchL) bindStretchHandle(stretchL, element, stack, key);
-    if (scaleH) bindScaleHandle(scaleH, element, stack, key);
+  function bindHud(preview) {
+    const stack = preview?.querySelector(".subtitle-stack");
+    const hud = ensureHud(preview);
+    if (!stack || !hud || hud.dataset.bound === "1") return;
+    hud.dataset.bound = "1";
+    const resize = hud.querySelector(".resize");
+    const stretchL = hud.querySelector(".stretch-l");
+    const scaleH = hud.querySelector(".scale");
+    const rotate = hud.querySelector(".rotate");
+    const del = hud.querySelector(".delete");
+    bindStretchHandle(resize, stack);
+    bindStretchHandle(stretchL, stack);
+    bindScaleHandle(scaleH, stack);
     rotate.addEventListener("pointerdown", (event) => {
+      const live = liveLayer(stack);
+      if (!live) return;
+      const { key, element } = live;
       event.preventDefault();
       event.stopPropagation();
       blurEditor();
       lockWindowScroll();
-      select();
+      selectLayer(stack, key);
       const center = layerCenter(element);
       const startAng = Math.atan2(event.clientY - center.y, event.clientX - center.x) * (180 / Math.PI);
       const startRot = state[key].rotation;
@@ -620,43 +713,19 @@
       rotate.addEventListener("pointercancel", end);
     }, { passive: false });
     del.addEventListener("pointerdown", (event) => {
+      const live = liveLayer(stack);
       event.preventDefault();
       event.stopPropagation();
-      removeLayer(stack, document.querySelector(".reels-copy-edit"), key);
-    });
+      if (!live) return;
+      removeLayer(stack, document.querySelector(".reels-copy-edit"), live.key);
+    }, { passive: false });
   }
 
   function bindLayer(stack, key, selector) {
     const element = stack.querySelector(selector);
     if (!element) return;
     applyLayerLook(element, key);
-    let resize = element.querySelector(":scope > .reels-handle.resize");
-    let stretchL = element.querySelector(":scope > .reels-handle.stretch-l");
-    let scaleH = element.querySelector(":scope > .reels-handle.scale");
-    let rotate = element.querySelector(":scope > .reels-handle.rotate");
-    let del = element.querySelector(":scope > .reels-handle.delete");
-    if (!resize || !stretchL || !scaleH || !rotate || !del || resize.dataset.box !== "2") {
-      element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
-      resize = document.createElement("span");
-      resize.className = "reels-handle resize";
-      resize.dataset.box = "2";
-      resize.setAttribute("aria-label", "Рамканы созу");
-      stretchL = document.createElement("span");
-      stretchL.className = "reels-handle stretch-l";
-      stretchL.dataset.box = "2";
-      stretchL.setAttribute("aria-label", "Рамканы созу");
-      scaleH = document.createElement("span");
-      scaleH.className = "reels-handle scale";
-      scaleH.setAttribute("aria-label", "Мәтін өлшемі");
-      rotate = document.createElement("span");
-      rotate.className = "reels-handle rotate";
-      rotate.setAttribute("aria-label", "Бұру");
-      del = document.createElement("span");
-      del.className = "reels-handle delete";
-      del.setAttribute("aria-label", "Өшіру");
-      element.append(resize, stretchL, scaleH, rotate, del);
-      bindHandlePointers(element, resize, rotate, del, stack, key, stretchL, scaleH);
-    }
+    element.querySelectorAll(":scope > .reels-handle").forEach((node) => node.remove());
     if (element.dataset.layerReady === "1") return;
     element.dataset.layerReady = "1";
 
@@ -1182,6 +1251,7 @@
     const editor = document.querySelector(".reels-copy-edit");
     if (!preview || !stack) return;
     ensureGuides(preview);
+    bindHud(preview);
     paint(stack);
     if (state.extra.on) {
       if (!stack.querySelector(".sub-extra")) createExtra(stack, editor, false);
@@ -1209,7 +1279,19 @@
     containAll(stack);
     if (preview.dataset.containObserve !== "1") {
       preview.dataset.containObserve = "1";
-      new ResizeObserver(() => containAll(stack)).observe(preview);
+      new ResizeObserver(() => {
+        containAll(stack);
+        layoutHud(stack);
+      }).observe(preview);
+    }
+    if (preview.dataset.hudObserve !== "1") {
+      preview.dataset.hudObserve = "1";
+      new MutationObserver(() => {
+        if (!preview.querySelector(":scope > .reels-hud")) {
+          bindHud(preview);
+          layoutHud(stack);
+        }
+      }).observe(preview, { childList: true });
     }
 
     if (preview.dataset.toolsReady === "1") {
