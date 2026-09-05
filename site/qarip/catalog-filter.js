@@ -5,7 +5,7 @@
 
   const style = document.createElement("style");
   style.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(style);
 
   function activeCategory() {
@@ -78,6 +78,35 @@
     });
   }
 
+  function addFavorites(cards) {
+    let saved;
+    try {
+      saved = new Set(JSON.parse(localStorage.getItem("qarip-favorites") || "[]"));
+    } catch {
+      saved = new Set();
+    }
+    cards.forEach((card) => {
+      const name = card.querySelector("h3")?.textContent?.trim();
+      const top = card.querySelector(".card-top");
+      if (!name || !top || top.querySelector(".font-favorite")) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "font-favorite";
+      button.title = "Таңдаулыға сақтау";
+      button.setAttribute("aria-label", `${name} қаріпін таңдаулыға сақтау`);
+      button.setAttribute("aria-pressed", String(saved.has(name)));
+      button.textContent = saved.has(name) ? "♥" : "♡";
+      button.addEventListener("click", () => {
+        if (saved.has(name)) saved.delete(name);
+        else saved.add(name);
+        localStorage.setItem("qarip-favorites", JSON.stringify([...saved]));
+        button.setAttribute("aria-pressed", String(saved.has(name)));
+        button.textContent = saved.has(name) ? "♥" : "♡";
+      });
+      top.append(button);
+    });
+  }
+
   function apply(forcedCat, resetLimit = false) {
     if (resetLimit) visibleLimit = PAGE_SIZE;
     const cat = forcedCat || activeCategory();
@@ -144,6 +173,7 @@
     if (!grid || grid.dataset.filterObserved === "1") return;
     grid.dataset.filterObserved = "1";
     decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+    addFavorites(grid.querySelectorAll(":scope > .font-card"));
     apply();
     let timer = 0;
     new MutationObserver(() => {
