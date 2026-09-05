@@ -58,6 +58,12 @@
         license.textContent = "Лицензиясын тексеру";
         license.classList.add("license-check");
       }
+
+      const glyphStatus = card.querySelector(".meta > span:nth-child(2)");
+      if (glyphStatus?.textContent.trim() === "Жүктелген файл") {
+        glyphStatus.textContent = "Кодтауды тексеру";
+        glyphStatus.classList.add("license-check");
+      }
     });
 
     document.querySelectorAll(".categories button").forEach((button) => {
