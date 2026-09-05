@@ -64,6 +64,11 @@
     .text-tool-row .bg-off{width:auto;height:26px;border-radius:7px;padding:0 8px;background:#191918;color:#fff;font:800 9px/1 Arial,sans-serif}
     .text-tool-row .bg-off.active{background:#d9ff47;color:#171715}
     .text-tool-row input[type=color]{width:32px;height:28px;padding:0;border:1px solid #ffffff33;border-radius:6px;background:transparent;cursor:pointer}
+    .text-face-row button{width:auto!important;height:32px!important;min-width:72px;border:1px solid #ffffff22!important;border-radius:8px!important;background:#191918;color:#fff;padding:0 12px;font:700 12px/1 Arial,sans-serif}
+    .text-face-row button.active{background:#d9ff47;color:#171715;outline:none}
+    .text-face-row button[data-face="regular"]{font-weight:400}
+    .text-face-row button[data-face="bold"]{font-weight:800}
+    .text-face-row button[data-face="italic"]{font-style:italic;font-weight:600}
     .reels-controls{position:relative;z-index:1;width:min(520px,100%);padding:22px;border:1px solid #ffffff18;border-radius:22px;background:#20201d;box-shadow:0 20px 45px #0004}
     .reels-label{display:flex;align-items:center;gap:10px;margin:0!important;color:#d9ff47!important;font:800 10px/1 Arial,sans-serif!important;letter-spacing:.16em}
     .reels-label:after{content:"";height:1px;flex:1;background:#ffffff20}
@@ -117,7 +122,7 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "", family: "" });
+  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
   let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
@@ -274,6 +279,16 @@
     if (!el) return;
     const layer = state[key];
     if (layer.family) el.style.setProperty("font-family", layer.family, "important");
+    if (layer.face === "regular") {
+      el.style.setProperty("font-weight", "400", "important");
+      el.style.setProperty("font-style", "normal", "important");
+    } else if (layer.face === "bold") {
+      el.style.setProperty("font-weight", "800", "important");
+      el.style.setProperty("font-style", "normal", "important");
+    } else if (layer.face === "italic") {
+      el.style.setProperty("font-weight", "700", "important");
+      el.style.setProperty("font-style", "italic", "important");
+    }
     if (layer.color) el.style.setProperty("color", layer.color, "important");
     if (layer.bg) {
       el.style.setProperty("background", layer.bg, "important");
@@ -306,7 +321,30 @@
       btn.classList.toggle("active", btn.dataset.layer === key);
     });
     syncSwatches(key);
+    syncFace(key);
     syncFontActive();
+  }
+
+  function inferFace(el, layer) {
+    if (layer?.face) return layer.face;
+    if (!el) return "regular";
+    const style = getComputedStyle(el);
+    const italic = style.fontStyle === "italic" || style.fontStyle === "oblique";
+    const bold = parseInt(style.fontWeight, 10) >= 600;
+    if (italic) return "italic";
+    if (bold) return "bold";
+    return "regular";
+  }
+
+  function syncFace(key) {
+    const tools = document.querySelector(".text-color-tools");
+    if (!tools) return;
+    const stack = document.querySelector(".subtitle-stack");
+    const el = stack?.querySelector(layerSelector(key));
+    const face = inferFace(el, state[key]);
+    tools.querySelectorAll("[data-face]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.face === face);
+    });
   }
 
   function syncSwatches(key) {
@@ -728,7 +766,10 @@
     state[key].fontName = name;
     applyLayerLook(stack.querySelector(layerSelector(key)), key);
     if (document.fonts?.load && family) {
-      document.fonts.load(`700 48px ${family}`).catch(() => {}).finally(() => containLayer(stack, key, true));
+      const face = state[key].face;
+      const weight = face === "regular" ? "400" : "700";
+      const style = face === "italic" ? "italic" : "normal";
+      document.fonts.load(`${style} ${weight} 48px ${family}`).catch(() => {}).finally(() => containLayer(stack, key, true));
     } else {
       containLayer(stack, key, true);
     }
@@ -824,6 +865,22 @@
     }
   }
 
+  function ensureFaceRow(stack) {
+    const tools = document.querySelector(".text-color-tools");
+    if (!tools) return;
+    if (!tools.querySelector(".text-face-row")) {
+      const row = document.createElement("div");
+      row.className = "text-tool-row text-face-row";
+      row.dataset.row = "face";
+      row.innerHTML =
+        '<span>СТИЛЬ</span><button type="button" data-face="regular">Қалыпты</button><button type="button" data-face="bold">Қалың</button><button type="button" data-face="italic">Курсив</button>';
+      const textRow = tools.querySelector('[data-row="text"]');
+      if (textRow) textRow.before(row);
+      else tools.append(row);
+    }
+    syncFace(selectedKey(stack));
+  }
+
   function ensureStickerButton() {
     const actions = document.querySelector(".reels-actions");
     if (!actions || actions.querySelector(".reels-sticker")) return;
@@ -882,6 +939,7 @@
       syncLayerVisibility(stack, editor);
       ensureStickerButton();
       ensureFontPicker(stack);
+      ensureFaceRow(stack);
       if (!stack.querySelector("[data-selected='1']:not([data-layer-off])")) {
         selectLayer(stack, visibleKeys()[0] || "hook");
       }
@@ -897,6 +955,12 @@
         <button type="button" class="active" data-layer="hook">Акцент<span class="layer-x" aria-label="Өшіру">×</span></button>
         <button type="button" data-layer="mark">Қосымша<span class="layer-x" aria-label="Өшіру">×</span></button>
         <button type="button" data-layer="extra" hidden>Жаңа мәтін<span class="layer-x" aria-label="Өшіру">×</span></button>
+      </div>
+      <div class="text-tool-row text-face-row" data-row="face">
+        <span>СТИЛЬ</span>
+        <button type="button" data-face="regular">Қалыпты</button>
+        <button type="button" data-face="bold">Қалың</button>
+        <button type="button" data-face="italic">Курсив</button>
       </div>
       <div class="text-tool-row" data-row="text">
         <span>ТҮС</span>
@@ -942,14 +1006,18 @@
       const off = event.target.closest(".bg-off");
       const textBtn = event.target.closest("[data-text-color]");
       const bgBtn = event.target.closest("[data-bg-color]");
-      if (!off && !textBtn && !bgBtn) return;
+      const faceBtn = event.target.closest("[data-face]");
+      if (!off && !textBtn && !bgBtn && !faceBtn) return;
       const key = selectedKey(stack);
-      const el = stack.querySelector(key === "hook" ? ".sub-hook" : key === "mark" ? ".sub-mark" : ".sub-extra");
+      const el = stack.querySelector(layerSelector(key));
       if (off) state[key].bg = "";
       if (textBtn) state[key].color = textBtn.dataset.textColor;
       if (bgBtn) state[key].bg = bgBtn.dataset.bgColor;
+      if (faceBtn) state[key].face = faceBtn.dataset.face;
       applyLayerLook(el, key);
       syncSwatches(key);
+      syncFace(key);
+      if (faceBtn) containLayer(stack, key, true);
       save();
     });
     tools.querySelector("[data-native='text']").addEventListener("input", (event) => {
@@ -978,6 +1046,7 @@
     }
     ensureStickerButton();
     ensureFontPicker(stack);
+    ensureFaceRow(stack);
     syncLayerVisibility(stack, editor);
     if (preview.dataset.observeReady !== "1") {
       preview.dataset.observeReady = "1";
