@@ -8,7 +8,7 @@
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#181816;white-space:nowrap}.fav-filter.active{background:#181816;color:#d9ff47}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5c5c56;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-card[data-filter-hide="1"]{display:none!important}.card-actions{display:flex;align-items:center;gap:8px}.font-sticker{flex:0 0 auto;padding:0 12px;min-height:42px;border:1px solid #181816;border-radius:999px;background:#d9ff47;color:#181816;font:800 11px/1 Arial,sans-serif;letter-spacing:.03em;cursor:pointer}.font-sticker:disabled{opacity:.55}.qarip-sticker-toast{position:fixed;z-index:80;left:50%;bottom:22px;transform:translateX(-50%);display:none;max-width:min(92vw,420px);padding:12px 16px;border-radius:12px;background:#181816;color:#d9ff47;font:700 13px/1.35 Arial,sans-serif;box-shadow:0 12px 40px #0006}.qarip-sticker-toast[data-show="1"]{display:block}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #1c1c1a;background:#d9ff47;color:#181816;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#181816;color:#d9ff47}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #181816;background:transparent;color:#181816;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#181816;color:#d9ff47}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#181816;white-space:nowrap}.fav-filter.active{background:#181816;color:#d9ff47}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5c5c56;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #181816;border-radius:999px;background:#181816;color:#d9ff47;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#d9ff47;color:#181816}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(styleSheet);
 
   function styleName(button) {
@@ -89,6 +89,167 @@
       if (width === 0 || Math.abs(width - tofu) < 0.6 || Math.abs(width - tofu2) < 0.6) missing += 1;
     }
     return missing >= 2;
+  }
+
+  function stickerToast(message) {
+    let el = document.querySelector(".qarip-sticker-toast");
+    if (!el) {
+      el = document.createElement("p");
+      el.className = "qarip-sticker-toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.dataset.show = "1";
+    clearTimeout(stickerToast.timer);
+    stickerToast.timer = setTimeout(() => {
+      el.dataset.show = "0";
+    }, 3200);
+  }
+
+  function wrapStickerLines(ctx, text, maxWidth) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const lines = [];
+    let current = "";
+    const pushLong = (chunk) => {
+      let rest = chunk;
+      while (rest) {
+        let i = rest.length;
+        while (i > 1 && ctx.measureText(rest.slice(0, i)).width > maxWidth) i -= 1;
+        lines.push(rest.slice(0, i));
+        rest = rest.slice(i);
+      }
+    };
+    words.forEach((word) => {
+      const next = current ? `${current} ${word}` : word;
+      if (ctx.measureText(next).width <= maxWidth) {
+        current = next;
+        return;
+      }
+      if (current) lines.push(current);
+      if (ctx.measureText(word).width <= maxWidth) current = word;
+      else {
+        pushLong(word);
+        current = "";
+      }
+    });
+    if (current) lines.push(current);
+    return lines.length ? lines : [text];
+  }
+
+  function renderFontSticker(preview) {
+    const text = (preview.textContent || "").replace(/\s+/g, " ").trim();
+    if (!text) return null;
+    const family = preview.style.fontFamily || "sans-serif";
+    const scale = 2;
+    const fontSize = Math.round((parseFloat(preview.style.fontSize) || 34) * scale);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.font = `700 ${fontSize}px ${family}`;
+    ctx.textBaseline = "alphabetic";
+    const maxWidth = Math.min(1000, Math.max(560, Math.round((window.innerWidth || 390) * scale * 0.9)));
+    const lines = wrapStickerLines(ctx, text, maxWidth);
+    const stroke = Math.max(8, Math.round(fontSize * 0.14));
+    const lineHeight = Math.round(fontSize * 1.18);
+    const pad = stroke + 28;
+    const width = Math.ceil(Math.max(...lines.map((line) => ctx.measureText(line).width))) + pad * 2;
+    const height = lineHeight * lines.length + pad * 2;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.font = `700 ${fontSize}px ${family}`;
+    ctx.textBaseline = "alphabetic";
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.miterLimit = 2;
+    ctx.strokeStyle = "#0b0b0b";
+    ctx.lineWidth = stroke;
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "rgba(0,0,0,.4)";
+    ctx.shadowBlur = Math.round(fontSize * 0.12);
+    ctx.shadowOffsetY = Math.round(fontSize * 0.05);
+    lines.forEach((line, index) => {
+      const x = pad;
+      const y = pad + fontSize + index * lineHeight;
+      ctx.strokeText(line, x, y);
+      ctx.fillText(line, x, y);
+    });
+    return canvas;
+  }
+
+  async function copyCardSticker(card, button) {
+    const preview = card.querySelector(".font-preview");
+    const label = button.textContent;
+    if (!preview) return;
+    button.disabled = true;
+    button.textContent = "…";
+    try {
+      const family = preview.style.fontFamily || "sans-serif";
+      const size = parseFloat(preview.style.fontSize) || 34;
+      if (document.fonts?.load) {
+        try {
+          await document.fonts.load(`700 ${size}px ${family}`);
+        } catch {}
+      }
+      const canvas = renderFontSticker(preview);
+      if (!canvas) {
+        stickerToast("Алдымен жоғарыдағы мәтінді жазыңыз.");
+        return;
+      }
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("blob");
+      let copied = false;
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        copied = true;
+      } catch {}
+      if (!copied) {
+        const link = document.createElement("a");
+        link.download = "qarip-sticker.png";
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 2500);
+      }
+      stickerToast(
+        copied
+          ? "Көшірілді. Instagram Stories-қа қойыңыз."
+          : "Стикер сақталды. Stories-қа фотодан қосыңыз."
+      );
+    } catch (error) {
+      console.warn(error);
+      stickerToast("Көшіру шықпады. Қайта көріңіз.");
+    } finally {
+      button.disabled = false;
+      button.textContent = label;
+    }
+  }
+
+  function addStickers(cards) {
+    cards.forEach((card) => {
+      const bottom = card.querySelector(".card-bottom");
+      if (!bottom || bottom.querySelector(".font-sticker")) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "font-sticker";
+      button.textContent = "Стикер";
+      button.title = "Instagram стикерін көшіру";
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        copyCardSticker(card, button);
+      });
+      const download = bottom.querySelector("a[download]");
+      if (download) {
+        let actions = bottom.querySelector(".card-actions");
+        if (!actions) {
+          actions = document.createElement("div");
+          actions.className = "card-actions";
+          download.replaceWith(actions);
+          actions.append(download);
+        }
+        actions.prepend(button);
+      } else {
+        bottom.append(button);
+      }
+    });
   }
 
   function labelGlyphStatus(card) {
@@ -294,6 +455,7 @@
     grid.dataset.filterObserved = "1";
     decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
     addFavorites(grid.querySelectorAll(":scope > .font-card"));
+    addStickers(grid.querySelectorAll(":scope > .font-card"));
     apply();
     let timer = 0;
     new MutationObserver(() => {
@@ -301,6 +463,7 @@
       timer = setTimeout(() => {
         decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
         addFavorites(grid.querySelectorAll(":scope > .font-card"));
+        addStickers(grid.querySelectorAll(":scope > .font-card"));
         apply();
       }, 0);
     }).observe(grid, { childList: true });
@@ -313,6 +476,7 @@
       delete span.dataset.glyphChecked;
     });
     decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
+    addStickers(grid.querySelectorAll(":scope > .font-card"));
     apply();
   }
 
@@ -328,6 +492,7 @@
       const cards = grid.querySelectorAll(":scope > .font-card");
       decorateCatalog(cards);
       addFavorites(cards);
+      addStickers(cards);
       apply();
       const ready = document.fonts?.ready;
       if (ready && typeof ready.then === "function") ready.then(() => setTimeout(refreshGlyphs, 50));

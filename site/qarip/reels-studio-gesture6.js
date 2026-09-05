@@ -83,9 +83,18 @@
     .reels-size{display:none!important}
     .reels-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
     .reels-actions a.reels-act{display:none!important}
-    .reels-actions .reels-act:first-child{background:#d9ff47;color:#171715;border-color:#d9ff47}
-    .phone-preview.exporting .reels-handle,.phone-preview.exporting .text-add,.phone-preview.exporting .subtitle-stack [data-selected="1"]{outline:none}
-    .phone-preview.exporting .reels-handle{display:none!important}
+    .reels-actions .reels-sticker{grid-column:1/-1;background:#d9ff47!important;color:#171715!important;border-color:#d9ff47!important;min-height:46px}
+    .reels-sticker-toast{display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#d9ff47;color:#171715;font:800 12px/1.35 Arial,sans-serif}
+    .reels-sticker-toast[data-show="1"]{display:block}
+    .phone-preview.exporting:before{display:none}
+    .phone-preview.exporting .reels-handle,.phone-preview.exporting .text-add{display:none!important}
+    .phone-preview.exporting .subtitle-stack [data-selected="1"]{outline:none!important}
+    .phone-preview.sticker-export{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+    .phone-preview.sticker-export:before,
+    .phone-preview.sticker-export .reel-orbit,
+    .phone-preview.sticker-export .reel-ui,
+    .phone-preview.sticker-export .reel-progress,
+    .phone-preview.sticker-export .font-chip{display:none!important}
     @media(max-width:900px){.reels-pick{padding:52px 16px 44px!important}.reels-pick:before{inset:10px}.reels-controls{box-sizing:border-box}.reels-copy h2:after{margin-top:18px}.reels-options:not(.reels-colors) button b{font-size:13px!important}}
     @media(max-width:390px){.reels-controls{padding:14px}.reels-options:not(.reels-colors) button{padding:8px!important;min-height:60px}.reels-options:not(.reels-colors) button b{font-size:12px!important}.reels-colors button b{font-size:9px!important}}
   `;
@@ -306,6 +315,148 @@
     ).join("");
   }
 
+  function toast(message) {
+    const controls = document.querySelector(".reels-controls");
+    if (!controls) return;
+    let el = controls.querySelector(".reels-sticker-toast");
+    if (!el) {
+      el = document.createElement("p");
+      el.className = "reels-sticker-toast";
+      controls.prepend(el);
+    }
+    el.textContent = message;
+    el.dataset.show = "1";
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => {
+      el.dataset.show = "0";
+    }, 3200);
+  }
+
+  function withTimeout(promise, ms, label) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(label || "timeout")), ms)),
+    ]);
+  }
+
+  function loadHtml2Canvas() {
+    if (window.html2canvas) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+      script.onload = resolve;
+      script.onerror = reject;
+      setTimeout(() => reject(new Error("html2canvas")), 12000);
+      document.head.appendChild(script);
+    });
+  }
+
+  function cropTransparent(canvas) {
+    const ctx = canvas.getContext("2d");
+    const { width, height } = canvas;
+    const pixels = ctx.getImageData(0, 0, width, height).data;
+    let minX = width;
+    let minY = height;
+    let maxX = 0;
+    let maxY = 0;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (pixels[(y * width + x) * 4 + 3] > 12) {
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX <= minX || maxY <= minY) return canvas;
+    const pad = 36;
+    const x = Math.max(0, minX - pad);
+    const y = Math.max(0, minY - pad);
+    const w = Math.min(width - x, maxX - minX + pad * 2);
+    const h = Math.min(height - y, maxY - minY + pad * 2);
+    const out = document.createElement("canvas");
+    out.width = w;
+    out.height = h;
+    out.getContext("2d").drawImage(canvas, x, y, w, h, 0, 0, w, h);
+    return out;
+  }
+
+  async function writePng(blob) {
+    try {
+      await withTimeout(navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]), 2500, "clipboard");
+      return "copied";
+    } catch {}
+    const link = document.createElement("a");
+    link.download = "qarip-sticker.png";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 2500);
+    return "saved";
+  }
+
+  async function copySticker() {
+    const preview = document.querySelector(".phone-preview");
+    const btn = document.querySelector(".reels-sticker");
+    if (!preview || !btn) return;
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Көшірілуде…";
+    preview.classList.add("exporting", "sticker-export");
+    try {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      await loadHtml2Canvas();
+      const shot = await withTimeout(
+        window.html2canvas(preview, {
+          scale: 2,
+          backgroundColor: null,
+          logging: false,
+          useCORS: true,
+          onclone(doc) {
+            const clone = doc.querySelector(".phone-preview");
+            if (!clone) return;
+            clone.style.background = "transparent";
+            clone.style.borderColor = "transparent";
+            clone.style.boxShadow = "none";
+          },
+        }),
+        15000,
+        "html2canvas"
+      );
+      const canvas = cropTransparent(shot);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("blob");
+      const result = await writePng(blob);
+      toast(
+        result === "copied"
+          ? "Көшірілді. Instagram Stories-қа қойыңыз."
+          : "Стикер сақталды. Stories-қа фотодан қосыңыз."
+      );
+    } catch (error) {
+      console.warn(error);
+      toast("Көшіру шықпады. Қайта көріңіз.");
+    } finally {
+      preview.classList.remove("exporting", "sticker-export");
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  }
+
+  function ensureStickerButton() {
+    const actions = document.querySelector(".reels-actions");
+    if (!actions || actions.querySelector(".reels-sticker")) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reels-act reels-sticker";
+    button.textContent = "Стикер · Instagram";
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      copySticker();
+    });
+    actions.prepend(button);
+  }
+
   function boot() {
     const preview = document.querySelector(".phone-preview");
     const stack = preview?.querySelector(".subtitle-stack");
@@ -331,6 +482,7 @@
       applyLayerLook(stack.querySelector(".sub-hook"), "hook");
       applyLayerLook(stack.querySelector(".sub-mark"), "mark");
       applyLayerLook(stack.querySelector(".sub-extra"), "extra");
+      ensureStickerButton();
       return;
     }
     preview.dataset.toolsReady = "1";
@@ -415,6 +567,7 @@
     });
 
     if (!stack.querySelector("[data-selected]")) selectLayer(stack, "hook");
+    ensureStickerButton();
     if (preview.dataset.observeReady !== "1") {
       preview.dataset.observeReady = "1";
       let timer = 0;
