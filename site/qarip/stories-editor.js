@@ -4,7 +4,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "leto12";
+  const ASSET_V = "leto13";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -1497,8 +1497,9 @@
     }
   }
 
-  // Defense-in-depth: force-hide legacy homepage chrome via JS as well, in case the
-  // inline critical CSS is ever stale/uncached. Runs immediately and on every DOM change.
+  // Defense-in-depth: physically remove legacy homepage chrome from the DOM (not just
+  // hide it) so it can never flash on screen, even for a frame, regardless of CSS timing.
+  // Runs immediately and re-applies on every DOM change.
   const LEGACY_HIDE_SELECTORS = [
     ".intro",
     "#tester",
@@ -1513,10 +1514,12 @@
   function hideLegacyChrome() {
     LEGACY_HIDE_SELECTORS.forEach((sel) => {
       qsa(sel).forEach((el) => {
-        if (el.style.display !== "none") el.style.setProperty("display", "none", "important");
+        // Fully remove purely decorative legacy nodes instead of just hiding them —
+        // guarantees they can never flash on screen, on any device/network speed.
+        el.remove();
       });
     });
-    // #catalog stays hidden but not display:none removed — some legacy fallbacks read from it.
+    // #catalog is only hidden, not removed — legacy font-list fallback still reads its cards.
     const catalog = qs("#catalog");
     if (catalog && catalog.style.display !== "none") catalog.style.setProperty("display", "none", "important");
   }
