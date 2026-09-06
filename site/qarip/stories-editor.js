@@ -4,7 +4,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "leto11";
+  const ASSET_V = "leto12";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -1497,9 +1497,35 @@
     }
   }
 
+  // Defense-in-depth: force-hide legacy homepage chrome via JS as well, in case the
+  // inline critical CSS is ever stale/uncached. Runs immediately and on every DOM change.
+  const LEGACY_HIDE_SELECTORS = [
+    ".intro",
+    "#tester",
+    "#about",
+    ".qarip-landing",
+    ".stories-promo",
+    ".topbar",
+    ".stories-page-hero",
+    "footer",
+    ".reels-copy",
+  ];
+  function hideLegacyChrome() {
+    LEGACY_HIDE_SELECTORS.forEach((sel) => {
+      qsa(sel).forEach((el) => {
+        if (el.style.display !== "none") el.style.setProperty("display", "none", "important");
+      });
+    });
+    // #catalog stays hidden but not display:none removed — some legacy fallbacks read from it.
+    const catalog = qs("#catalog");
+    if (catalog && catalog.style.display !== "none") catalog.style.setProperty("display", "none", "important");
+  }
+
   function start() {
+    hideLegacyChrome();
     let n = 0;
     const tick = () => {
+      hideLegacyChrome();
       if (qs(".phone-preview") && qs(".reels-controls")) {
         boot();
         return;
@@ -1507,9 +1533,18 @@
       if (++n < 90) requestAnimationFrame(tick);
     };
     tick();
+    if (!start.observed) {
+      start.observed = true;
+      let hideT = 0;
+      new MutationObserver(() => {
+        clearTimeout(hideT);
+        hideT = setTimeout(hideLegacyChrome, 60);
+      }).observe(document.documentElement, { childList: true, subtree: true });
+    }
   }
 
   ensureStyleLink();
+  hideLegacyChrome();
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
   window.addEventListener("load", () => setTimeout(start, 100));
