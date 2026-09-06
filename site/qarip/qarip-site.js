@@ -9,15 +9,16 @@
     "Qarip қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
 
   const STYLE_PREVIEWS = [
-    { name: "Playfair × Montserrat", hook: "әдемі", mark: "Stories", hookFamily: '"Playfair Display", serif', hookStyle: "italic", markFamily: "Montserrat, sans-serif", bg: "#17171c" },
-    { name: "Prata × Gilroy", hook: "Luxury", mark: "editorial", hookFamily: "Prata, serif", hookStyle: "normal", markFamily: "Montserrat, sans-serif", bg: "#241816" },
-    { name: "Oswald × Onest", hook: "ҚАЗАҚША", mark: "2026", hookFamily: "Oswald, sans-serif", hookStyle: "normal", markFamily: "Onest, sans-serif", bg: "#1a2218", upper: true },
-    { name: "Yeseva × Manrope", hook: "Display", mark: "clean", hookFamily: '"Yeseva One", serif', hookStyle: "normal", markFamily: "Manrope, sans-serif", bg: "#1c1824" },
-    { name: "Cormorant × Gotham", hook: "fashion", mark: "look", hookFamily: '"Cormorant Garamond", serif', hookStyle: "italic", markFamily: "Montserrat, sans-serif", bg: "#22181a" },
-    { name: "Russo × Inter", hook: "ENERGY", mark: "vlog", hookFamily: '"Russo One", sans-serif', hookStyle: "normal", markFamily: "Inter, sans-serif", bg: "#18181a", upper: true },
-    { name: "Unbounded × Oswald", hook: "9:16", mark: "PNG", hookFamily: "Unbounded, sans-serif", hookStyle: "normal", markFamily: "Oswald, sans-serif", bg: "#102018" },
+    { name: "Playfair × Montserrat", hook: "әдемі", mark: "Stories", hookFamily: '"Playfair Display", serif', hookStyle: "italic", markFamily: "Montserrat, sans-serif", bg: "#2b2724" },
+    { name: "Prata × Gilroy", hook: "Luxury", mark: "editorial", hookFamily: "Prata, serif", hookStyle: "normal", markFamily: "Montserrat, sans-serif", bg: "#3a2a24" },
+    { name: "Oswald × Onest", hook: "ҚАЗАҚША", mark: "2026", hookFamily: "Oswald, sans-serif", hookStyle: "normal", markFamily: "Onest, sans-serif", bg: "#243028", upper: true },
+    { name: "Yeseva × Manrope", hook: "Display", mark: "clean", hookFamily: '"Yeseva One", serif', hookStyle: "normal", markFamily: "Manrope, sans-serif", bg: "#2a2434" },
+    { name: "Cormorant × Gotham", hook: "fashion", mark: "look", hookFamily: '"Cormorant Garamond", serif', hookStyle: "italic", markFamily: "Montserrat, sans-serif", bg: "#322428" },
+    { name: "Russo × Inter", hook: "ENERGY", mark: "vlog", hookFamily: '"Russo One", sans-serif', hookStyle: "normal", markFamily: "Inter, sans-serif", bg: "#26262a", upper: true },
+    { name: "Unbounded × Oswald", hook: "9:16", mark: "PNG", hookFamily: "Unbounded, sans-serif", hookStyle: "normal", markFamily: "Oswald, sans-serif", bg: "#1e2c24" },
   ];
 
+  const READY = "v2";
   let timer = 0;
 
   function isStoriesPage() {
@@ -43,6 +44,7 @@
   function markPage() {
     document.documentElement.classList.toggle("qarip-stories", isStoriesPage());
     document.documentElement.classList.toggle("qarip-home", !isStoriesPage());
+    document.documentElement.classList.add("qarip-v2");
   }
 
   function fontCount() {
@@ -53,10 +55,9 @@
     return cards ? String(cards) : "";
   }
 
-  function phoneHTML(item, extraClass = "") {
+  function storyHTML(item, extraClass = "") {
     const hookClass = item.upper ? "is-upper" : "";
-    return `<a class="qarip-phone ${extraClass}" href="/qarip/stories/" style="--phone-bg:${item.bg}">
-      <i class="qarip-phone-glow" aria-hidden="true"></i>
+    return `<a class="qarip-story ${extraClass}" href="/qarip/stories/" style="--story-bg:${item.bg}">
       <strong class="${hookClass}" style="font-family:${item.hookFamily};font-style:${item.hookStyle}">${item.hook}</strong>
       <span style="font-family:${item.markFamily}">${item.mark}</span>
       <em>${item.name}</em>
@@ -78,6 +79,7 @@
       }
       if (label === "Онлайн тексеру") {
         link.setAttribute("href", isStoriesPage() ? "/qarip/#tester" : "#tester");
+        link.classList.add("qarip-nav-optional");
         return;
       }
       if (label === "Жоба туралы") {
@@ -86,6 +88,47 @@
     });
     const brand = document.querySelector(".topbar .brand");
     if (brand) brand.setAttribute("href", isStoriesPage() ? "/qarip/" : "#top");
+
+    const topbar = document.querySelector(".topbar");
+    if (!topbar || topbar.dataset.v2Nav === "1") return;
+    topbar.dataset.v2Nav = "1";
+
+    let actions = topbar.querySelector(".qarip-nav-actions");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.className = "qarip-nav-actions";
+      topbar.append(actions);
+    }
+    if (!actions.querySelector(".qarip-nav-search")) {
+      const search = document.createElement("a");
+      search.className = "qarip-nav-search";
+      search.href = isStoriesPage() ? "/qarip/#catalog" : "#catalog";
+      search.setAttribute("aria-label", "Қаріптерді іздеу");
+      search.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`;
+      actions.append(search);
+    }
+    if (!actions.querySelector(".qarip-nav-toggle")) {
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "qarip-nav-toggle";
+      toggle.setAttribute("aria-label", "Мәзір");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = `<span></span><span></span><span></span>`;
+      toggle.addEventListener("click", () => {
+        const open = document.documentElement.classList.toggle("qarip-nav-open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      actions.append(toggle);
+    }
+    topbar.querySelector("nav")?.addEventListener(
+      "click",
+      (event) => {
+        if (!(event.target instanceof Element) || !event.target.closest("a")) return;
+        document.documentElement.classList.remove("qarip-nav-open");
+        actions.querySelector(".qarip-nav-toggle")?.setAttribute("aria-expanded", "false");
+      },
+      { once: false }
+    );
   }
 
   function setMeta(title, desc, canonical) {
@@ -113,13 +156,8 @@
     const intro = document.querySelector(".intro");
     if (!intro) return;
     intro.classList.add("qarip-hero");
-    const eyebrow = intro.querySelector(".eyebrow");
-    if (eyebrow) {
-      const svg = eyebrow.querySelector("svg");
-      eyebrow.replaceChildren();
-      if (svg) eyebrow.append(svg);
-      eyebrow.append(document.createTextNode(" ҚАЗАҚША STORIES ҚҰРАЛЫ"));
-    }
+    intro.classList.remove("qarip-hero-legacy");
+
     let copy = intro.querySelector(".qarip-hero-copy");
     if (!copy) {
       copy = document.createElement("div");
@@ -127,42 +165,78 @@
       intro.prepend(copy);
     }
     [...intro.children].forEach((child) => {
-      if (child === copy || child.classList.contains("alphabet") || child.classList.contains("qarip-hero-phones")) return;
+      if (child === copy || child.classList.contains("alphabet") || child.classList.contains("qarip-hero-visual")) return;
       copy.append(child);
     });
-    const h1 = copy.querySelector("h1");
-    if (h1) h1.innerHTML = "Қазақша Stories-ты<br><span>әдемі жасаңыз</span>";
-    const desc = copy.querySelector(":scope > p:not(.qarip-trust)");
-    if (desc) {
-      desc.textContent =
-        "Қазақ әріптерін толық қолдайтын дайын стильдер. Мәтін жазып, 9:16 PNG алыңыз.";
+
+    const eyebrow = copy.querySelector(".eyebrow");
+    if (eyebrow) {
+      eyebrow.replaceChildren();
+      eyebrow.classList.add("qarip-hero-label");
+      eyebrow.textContent = "ҚАЗАҚША МӘТІН. ӘДЕМІ STORIES. ОҢАЙ.";
     }
+
+    const h1 = copy.querySelector("h1");
+    if (h1) {
+      h1.innerHTML = `Қазақша<br>Stories-ты<br><span class="qarip-accent">әдемі</span> жасаңыз`;
+    }
+
+    const desc = copy.querySelector(":scope > p:not(.qarip-trust):not(.qarip-hero-glyphs):not(.qarip-features)");
+    if (desc && !desc.classList.contains("qarip-hero-desc")) {
+      desc.className = "qarip-hero-desc";
+      desc.textContent = "Мәтінді жазыңыз, стиль таңдаңыз және дайын 9:16 PNG жүктеп алыңыз.";
+    }
+
     const row = copy.querySelector(".intro-cta-row");
     if (row) {
       row.innerHTML = `
-        <a class="intro-cta qarip-cta-primary" href="/qarip/stories/">Stories жасап көру</a>
+        <a class="intro-cta qarip-cta-primary" href="/qarip/stories/">Stories жасап көру →</a>
         <a class="qarip-cta-secondary" href="#catalog">Қаріптерді көру</a>
       `;
     }
-    let trust = copy.querySelector(".qarip-trust");
-    if (!trust) {
-      trust = document.createElement("p");
-      trust.className = "qarip-trust";
-      row?.after(trust);
+
+    copy.querySelector(".qarip-trust")?.remove();
+
+    let glyphs = copy.querySelector(".qarip-hero-glyphs");
+    if (!glyphs) {
+      glyphs = document.createElement("p");
+      glyphs.className = "qarip-hero-glyphs";
+      glyphs.lang = "kk";
+      row?.after(glyphs);
     }
-    const n = fontCount();
-    trust.textContent = n ? `Қазақша қолдау · ${n} қаріп · 9:16 PNG` : "Қазақша қолдау · 9:16 PNG";
+    glyphs.textContent = "Ә Ғ Қ Ң Ө Ұ Ү Һ І";
+
+    let features = copy.querySelector(".qarip-features");
+    if (!features) {
+      features = document.createElement("ul");
+      features.className = "qarip-features";
+      glyphs.after(features);
+    }
+    features.innerHTML = `
+      <li><i aria-hidden="true">⚡</i><span>Тез және оңай</span></li>
+      <li><i aria-hidden="true">♡</i><span>Қазақша қаріптер</span></li>
+      <li><i aria-hidden="true">▣</i><span>Жоғары сапалы PNG</span></li>
+    `;
+
     intro.querySelector(".alphabet")?.setAttribute("hidden", "");
-    let phones = intro.querySelector(".qarip-hero-phones");
-    if (!phones) {
-      phones = document.createElement("div");
-      phones.className = "qarip-hero-phones";
-      phones.setAttribute("aria-hidden", "true");
-      intro.append(phones);
+
+    let visual = intro.querySelector(".qarip-hero-visual");
+    if (!visual) {
+      visual = document.createElement("div");
+      visual.className = "qarip-hero-visual";
+      intro.append(visual);
     }
-    phones.innerHTML = STYLE_PREVIEWS.slice(0, 4)
-      .map((item, i) => phoneHTML(item, `qarip-phone-${i}`))
-      .join("");
+    const heroItems = STYLE_PREVIEWS.slice(0, 3);
+    visual.innerHTML = `
+      <div class="qarip-hero-stack" aria-hidden="true">
+        ${storyHTML(heroItems[1] || heroItems[0], "qarip-story-side qarip-story-left")}
+        ${storyHTML(heroItems[0], "qarip-story-main")}
+        ${storyHTML(heroItems[2] || heroItems[0], "qarip-story-side qarip-story-right")}
+      </div>
+      <div class="qarip-hero-mobile-story">
+        ${storyHTML(heroItems[0], "qarip-story-main")}
+      </div>
+    `;
   }
 
   function ensureLanding() {
@@ -180,72 +254,71 @@
       landing = document.createElement("div");
       landing.className = "qarip-landing";
     }
-    if (landing.dataset.ready === "design49" && landing.querySelector("#qarip-problems-title")) {
+    if (landing.dataset.ready === READY && landing.querySelector("#qarip-how-title")) {
       if (landing.previousElementSibling !== intro) intro.after(landing);
       if (catalog.previousElementSibling !== landing) landing.after(catalog);
       return;
     }
+
+    const n = fontCount();
     landing.innerHTML = `
-      <section class="qarip-problems" aria-labelledby="qarip-problems-title">
-        <h2 id="qarip-problems-title">Қазақша жазғанда қаріп бұзылып кете ме?</h2>
-        <ol class="qarip-problem-list">
-          <li>Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптері дұрыс шықпайды</li>
-          <li>Stories үшін әдемі қаріп комбинациясын табу қиын</li>
-          <li>Әр жолы Photoshop немесе басқа редактор ашуға тура келеді</li>
-        </ol>
-        <p class="qarip-solution">Qarip-та мәтінді жазасыз, стиль таңдайсыз және дайын PNG аласыз.</p>
-      </section>
       <section class="qarip-how" aria-labelledby="qarip-how-title">
-        <h2 id="qarip-how-title">Қалай жұмыс істейді?</h2>
+        <div class="qarip-section-head">
+          <h2 id="qarip-how-title">3 қадамда дайын Stories</h2>
+          <p>Жазыңыз → стиль таңдаңыз → PNG алыңыз.</p>
+        </div>
         <ol class="qarip-steps">
-          <li><span>1</span><strong>Мәтінді жазыңыз</strong></li>
-          <li><span>2</span><strong>Стиль таңдаңыз</strong></li>
-          <li><span>3</span><strong>PNG жүктеп алыңыз</strong></li>
+          <li class="qarip-step">
+            <span class="qarip-step-num">1</span>
+            <strong>Мәтінді жазыңыз</strong>
+            <div class="qarip-step-preview qarip-step-input" aria-hidden="true">
+              <span>Қазақша Stories</span>
+            </div>
+          </li>
+          <li class="qarip-step">
+            <span class="qarip-step-num">2</span>
+            <strong>Стиль таңдаңыз</strong>
+            <div class="qarip-step-preview qarip-step-styles" aria-hidden="true">
+              <i style="font-family:'Playfair Display',serif;font-style:italic">Aa</i>
+              <i style="font-family:Oswald,sans-serif">Aa</i>
+              <i style="font-family:'Cormorant Garamond',serif;font-style:italic">Aa</i>
+            </div>
+          </li>
+          <li class="qarip-step">
+            <span class="qarip-step-num">3</span>
+            <strong>PNG жүктеп алыңыз</strong>
+            <div class="qarip-step-preview qarip-step-download" aria-hidden="true">
+              <span>Жүктеу ↓</span>
+            </div>
+          </li>
         </ol>
-        <p class="qarip-step-micro">→ Stories-қа салыңыз</p>
       </section>
-      <section class="qarip-glyphs" aria-labelledby="qarip-glyphs-title">
-        <p class="qarip-section-kicker">Қазақша қолдау</p>
-        <h2 id="qarip-glyphs-title">Қазақшаға арналған</h2>
-        <p class="qarip-glyph-row" lang="kk">Ә Ғ Қ Ң Ө Ұ Ү Һ І</p>
-        <p class="qarip-glyphs-copy">Qarip қазақ әріптерін қолдайтын қаріптерді табуға және тексеруге көмектеседі.</p>
-      </section>
+
       <section class="qarip-styles" aria-labelledby="qarip-styles-title">
         <div class="qarip-styles-head">
-          <h2 id="qarip-styles-title">Дайын стильдер</h2>
-          <a class="qarip-styles-cta" href="/qarip/stories/">Барлық стильді көру →</a>
+          <div>
+            <h2 id="qarip-styles-title">Дайын стильдер</h2>
+            <p class="qarip-styles-sub">Оңай, жылдам, әдемі.</p>
+          </div>
+          <a class="qarip-styles-cta" href="/qarip/stories/">Барлығын көру →</a>
         </div>
-        <div class="qarip-style-stage">
-          ${STYLE_PREVIEWS.map((item, i) => phoneHTML(item, `qarip-style-${i}`)).join("")}
+        <div class="qarip-style-rail">
+          ${STYLE_PREVIEWS.map((item, i) => storyHTML(item, `qarip-style-${i}`)).join("")}
         </div>
       </section>
+
       <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
         <div class="qarip-toolcta-copy">
-          <h2 id="qarip-toolcta-title">Stories үшін мәтін дайындап көріңіз</h2>
-          <p>Қазақша мәтінді жазыңыз, қаріп комбинациясын таңдаңыз және дайын 9:16 PNG алыңыз.</p>
-          <label class="qarip-teaser-label">Үлгі мәтін
-            <input class="qarip-teaser-input" maxlength="42" value="Қазақша Stories" aria-label="Үлгі мәтін"/>
-          </label>
-          <a class="qarip-cta-acid" href="/qarip/stories/">Stories құралын ашу →</a>
+          <h2 id="qarip-toolcta-title">Өз идеяларыңызды әдемі етіңіз</h2>
+          <p>Қазақша мәтінді жазып, дайын 9:16 PNG алыңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
         </div>
-        <div class="qarip-teaser-phone" aria-hidden="true">
-          <strong class="qarip-teaser-hook">Қазақша Stories</strong>
-          <span>9:16 PNG</span>
-        </div>
+        <a class="qarip-cta-primary" href="/qarip/stories/">Stories жасап көру →</a>
       </section>
       <div id="pricing-slot" hidden></div>
     `;
     intro.after(landing);
     landing.after(catalog);
-    landing.dataset.ready = "design49";
-    const input = landing.querySelector(".qarip-teaser-input");
-    const hook = landing.querySelector(".qarip-teaser-hook");
-    if (input && hook && input.dataset.bound !== "1") {
-      input.dataset.bound = "1";
-      input.addEventListener("input", () => {
-        hook.textContent = input.value.trim() || "Қазақша Stories";
-      });
-    }
+    landing.dataset.ready = READY;
   }
 
   function polishCatalog() {
