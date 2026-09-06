@@ -32,7 +32,7 @@
 
   function paintPreview() {
     const text = (input?.value || "").trim() || Q.PREVIEW_TEXT;
-    const px = Number(size?.value) || 34;
+    const px = Number(size?.value) || 40;
     if (preview) {
       preview.textContent = text;
       preview.style.fontFamily = `"${family}"`;

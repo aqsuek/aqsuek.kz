@@ -19,12 +19,12 @@
     .reels-copy h2:after{display:none}
     .phone-preview{
       position:relative;
-      width:min(720px,96vw)!important;
+      width:min(360px,86vw)!important;
       max-width:100%;
-      aspect-ratio:16/9!important;
+      aspect-ratio:9/16!important;
       height:auto!important;
       border:1px solid #ffffff22!important;
-      border-radius:16px!important;
+      border-radius:24px!important;
       background:#101014!important;
       box-shadow:0 18px 40px #0006;
       overflow:hidden!important;
@@ -109,6 +109,8 @@
     .reels-controls>.reels-label[data-section="style"]:before{content:"02 · ҚАРІП"}
     .reels-controls>.reels-label[data-section="palette"],
     .reels-options{display:none!important}
+    html.qarip-stories .reels-options{display:grid!important}
+    html.qarip-stories .reels-controls>.reels-label[data-section="palette"]{display:flex!important}
     .reels-font-pick{margin-top:10px}
     .reels-font-search{width:100%;box-sizing:border-box;min-height:44px;border:1px solid #ffffff22;border-radius:10px;background:#161615;color:#fff;padding:12px 14px;font:700 14px/1 Arial,sans-serif}
     .reels-font-list{margin-top:8px;max-height:min(32vh,260px);overflow:auto;display:grid;gap:6px;-webkit-overflow-scrolling:touch}
@@ -144,7 +146,7 @@
       .reels-pick:before{inset:10px}
       .reels-controls{box-sizing:border-box}
       .reels-copy h2:after{margin-top:12px}
-      .phone-preview{width:min(100%,96vw)!important;aspect-ratio:16/9!important}
+      .phone-preview{width:min(100%,88vw)!important;aspect-ratio:9/16!important}
     }
     @media(max-width:390px){.reels-controls{padding:14px}}
   `;
@@ -152,7 +154,32 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  const emptyLayer = (on = false) => ({ x: 0, y: 0, scale: 1, boxW: 0, rotation: 0, color: "", bg: null, on, text: "", family: "", face: "" });
+  const emptyLayer = (on = false) => ({
+    x: 0,
+    y: 0,
+    scale: 1,
+    boxW: 0,
+    rotation: 0,
+    color: "",
+    bg: null,
+    bgOpacity: 1,
+    radius: null,
+    letterSpacing: null,
+    on,
+    text: "",
+    family: "",
+    face: "",
+  });
+  function hexToRgba(hex, alpha) {
+    if (!hex || typeof hex !== "string" || hex[0] !== "#") return hex;
+    const h = hex.slice(1);
+    const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+    const r = parseInt(full.slice(0, 2), 16) || 0;
+    const g = parseInt(full.slice(2, 4), 16) || 0;
+    const b = parseInt(full.slice(4, 6), 16) || 0;
+    const a = Number.isFinite(alpha) ? Math.max(0, Math.min(1, alpha)) : 1;
+    return `rgba(${r},${g},${b},${a})`;
+  }
   let state = { hook: emptyLayer(true), mark: emptyLayer(true), extra: emptyLayer(false) };
   try {
     const stored = JSON.parse(localStorage.getItem(STORE) || "{}");
@@ -542,11 +569,18 @@
       el.style.setProperty("font-style", "italic", "important");
     }
     if (layer.color) el.style.setProperty("color", layer.color, "important");
+    if (layer.letterSpacing != null && layer.letterSpacing !== "") {
+      el.style.setProperty("letter-spacing", `${layer.letterSpacing}px`, "important");
+    } else {
+      el.style.removeProperty("letter-spacing");
+    }
     if (layer.bg) {
-      el.style.setProperty("background", layer.bg, "important");
+      const alpha = layer.bgOpacity == null ? 1 : Number(layer.bgOpacity);
+      const radius = layer.radius == null ? 999 : Number(layer.radius);
+      el.style.setProperty("background", hexToRgba(layer.bg, alpha), "important");
       el.style.setProperty("padding", "7px 11px", "important");
-      el.style.setProperty("border-radius", "999px", "important");
-      el.style.setProperty("box-shadow", "0 6px 16px #0005", "important");
+      el.style.setProperty("border-radius", `${radius}px`, "important");
+      el.style.setProperty("box-shadow", alpha > 0.08 ? "0 6px 16px #0005" : "none", "important");
       el.dataset.hasBg = "1";
     } else if (layer.bg === "") {
       el.style.setProperty("background", "transparent", "important");
@@ -610,6 +644,15 @@
     });
   }
 
+  function ensureBgColor(key, el) {
+    if (state[key].bg) return;
+    const bg = el ? getComputedStyle(el).backgroundColor : "";
+    const m = bg && bg.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    state[key].bg = m
+      ? `#${[1, 2, 3].map((i) => Number(m[i]).toString(16).padStart(2, "0")).join("")}`
+      : "#d9ff47";
+  }
+
   function syncSwatches(key) {
     const layer = state[key];
     const tools = document.querySelector(".text-color-tools");
@@ -626,6 +669,12 @@
     const bgNative = tools.querySelector("[data-native='bg']");
     if (textNative && layer.color) textNative.value = layer.color;
     if (bgNative && layer.bg) bgNative.value = layer.bg;
+    const opacityNative = tools.querySelector("[data-native='bgOpacity']");
+    const radiusNative = tools.querySelector("[data-native='radius']");
+    const trackingNative = tools.querySelector("[data-native='tracking']");
+    if (opacityNative) opacityNative.value = layer.bgOpacity == null ? 1 : layer.bgOpacity;
+    if (radiusNative) radiusNative.value = layer.radius == null ? 999 : layer.radius;
+    if (trackingNative) trackingNative.value = layer.letterSpacing == null ? 0 : layer.letterSpacing;
   }
 
   function layerCenter(element) {
@@ -1486,6 +1535,18 @@
         <input type="color" data-native="bg" value="#d9ff47" aria-label="Мәтін фоны">
         <button type="button" class="bg-off">ЖОҚ</button>
       </div>
+      <div class="text-tool-row" data-row="bg-opacity">
+        <span>МӨЛД</span>
+        <input type="range" data-native="bgOpacity" min="0" max="1" step="0.05" value="1" aria-label="Фон мөлдірлігі">
+      </div>
+      <div class="text-tool-row" data-row="bg-radius">
+        <span>ДӨҢГ</span>
+        <input type="range" data-native="radius" min="0" max="60" step="2" value="999" aria-label="Дөңгелектену">
+      </div>
+      <div class="text-tool-row" data-row="tracking">
+        <span>АРАЛ</span>
+        <input type="range" data-native="tracking" min="-4" max="16" step="0.5" value="0" aria-label="Әріп аралығы">
+      </div>
     `;
     editor?.after(tools);
 
@@ -1551,6 +1612,30 @@
         key
       );
       syncSwatches(key);
+      save();
+    });
+    tools.querySelector("[data-native='bgOpacity']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      const el = stack.querySelector(layerSelector(key));
+      ensureBgColor(key, el);
+      state[key].bgOpacity = parseFloat(event.target.value);
+      applyLayerLook(el, key);
+      syncSwatches(key);
+      save();
+    });
+    tools.querySelector("[data-native='radius']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      const el = stack.querySelector(layerSelector(key));
+      ensureBgColor(key, el);
+      state[key].radius = parseFloat(event.target.value);
+      applyLayerLook(el, key);
+      syncSwatches(key);
+      save();
+    });
+    tools.querySelector("[data-native='tracking']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      state[key].letterSpacing = parseFloat(event.target.value);
+      applyLayerLook(stack.querySelector(layerSelector(key)), key);
       save();
     });
 

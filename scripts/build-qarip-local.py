@@ -184,83 +184,35 @@ def patch_unique_strings() -> None:
     INDEX.write_text(html, encoding="utf-8")
 
 
-def detail_html(font: dict) -> str:
-    author = font["author"]
-    author_block = (
-        f'<p class="font-detail-author">{escape(author)}</p>'
-        if author
-        else '<p class="font-detail-author">Автор көрсетілмеген</p>'
-    )
-    similar_links = font.get("similar_html") or ""
-    similar = (
-        f'<section><h2>Ұқсас қаріптер</h2><div class="similar-grid">{similar_links}</div></section>'
-        if similar_links
-        else ""
-    )
-    title = f"{font['name']} қазақша қаріп — жүктеу және онлайн тексеру"
-    return f"""<!DOCTYPE html>
-<html lang="kk">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{escape(title)}</title>
-<meta name="description" content="{escape(font['name'])} қаріпін онлайн тексеріп, жүктеп алыңыз. Қазақ әліпбиін қолдауын қараңыз."/>
-<link rel="canonical" href="https://aqsuek.kz/qarip/font/{escape(font['slug'])}/"/>
-<link rel="stylesheet" href="/qarip/_next/static/css/index.Bx9punr5.css?v=fix31"/>
-<link rel="stylesheet" href="/qarip/catalog-pages.css?v=fix31"/>
-</head>
-<body>
-<header class="topbar">
-  <a class="brand" href="/qarip/"><span class="brand-mark">Ә</span><span>Qarip<span class="brand-dot">.</span></span></a>
-  <nav aria-label="Негізгі мәзір">
-    <a href="/qarip/#catalog">Қаріптер</a>
-    <a href="/qarip/stories/">Stories</a>
-    <a href="/qarip/#about">Жоба туралы</a>
-  </nav>
-</header>
-<main class="font-detail" data-slug="{escape(font['slug'])}" data-name="{escape(font['name'])}" data-family="{escape(font['family'])}" data-preview="{escape(font['preview'])}" data-download="{escape(font['download'])}" data-license="{escape(font['license'])}" data-style="{escape(font['style'])}">
-  <a href="/qarip/#catalog">← Каталог</a>
-  <h1>{escape(font['name'])}</h1>
-  {author_block}
-  <label class="tester-label">Тірі үлгі
-    <input class="detail-preview-input" value="{escape(PREVIEW)}" aria-label="Қаріпті тексеру мәтіні"/>
-  </label>
-  <div class="size-control"><span>A</span><input class="detail-size" type="range" min="20" max="64" value="34"/><strong>34px</strong></div>
-  <p class="font-detail-preview" style="font-family:'{escape(font['family'])}'">{escape(PREVIEW)}</p>
-  <p class="font-detail-letters" style="font-family:'{escape(font['family'])}'">{GLYPHS}</p>
-  <p class="glyph-live">Қазақ әліпбиі: тексерілуде</p>
-  <div class="font-detail-meta">
-    <span>{escape(font['style'])} · {escape(font['category'])}</span>
-    <span class="license-badge">Лицензияны тексеріңіз</span>
-  </div>
-  <p class="license-copy">Лицензия туралы толық ақпарат расталмаған. Коммерциялық қолданбас бұрын құқық иесінің шарттарын тексеріңіз.</p>
-  <div class="font-detail-actions">
-    <a class="font-download" href="{escape(font['download'])}" download>Жүктеу ↓</a>
-    <button type="button" class="font-favorite" aria-pressed="false">♡</button>
-  </div>
-  {similar}
-</main>
-<p class="disclaimer">{escape(DISCLAIMER)}</p>
-<script src="/qarip/qarip-lib.js?v=fix31"></script>
-<script src="/qarip/font-detail.js?v=fix31"></script>
-</body>
-</html>
-"""
+def _load_regen_font_pages():
+    """Load scripts/regen-font-pages.py (hyphenated module name)."""
+    import importlib.util
+
+    path = Path(__file__).resolve().parent / "regen-font-pages.py"
+    spec = importlib.util.spec_from_file_location("regen_font_pages", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def detail_html(font: dict, names: dict[str, str] | None = None) -> str:
+    # SEO + Variant 2 markup lives in scripts/regen-font-pages.py
+    regen = _load_regen_font_pages()
+    name_map = names or {font["slug"]: font["name"]}
+    return regen.detail_html(font, name_map)
 
 
 def write_font_pages(fonts: list[dict]) -> None:
-    if FONT_DIR.exists():
-        shutil.rmtree(FONT_DIR)
+    # Do not rmtree FONT_DIR — only rewrite index.html (preserves any extras).
+    regen = _load_regen_font_pages()
     names = {font["slug"]: font["name"] for font in fonts}
     for font in fonts:
-        payload = dict(font)
-        payload["similar_html"] = "".join(
-            f'<a href="/qarip/font/{escape(slug)}/">{escape(names.get(slug, slug))}</a>'
-            for slug in font.get("similar", [])
-        )
         path = FONT_DIR / font["slug"] / "index.html"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(detail_html(payload), encoding="utf-8")
+        path.write_text(regen.detail_html(font, names), encoding="utf-8")
+    regen.write_sitemap(fonts)
     print(f"wrote {len(fonts)} font pages")
 
 
