@@ -333,7 +333,8 @@ html.qarip-stories .row-head{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
 }
 html.qarip-stories .row-head b{font:800 12px/1 Arial,sans-serif;color:#c9c9d2;letter-spacing:.03em;text-transform:uppercase}
-html.qarip-stories .row-actions{display:flex;align-items:center;gap:6px}
+html.qarip-stories .row-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+html.qarip-stories .row-font,
 html.qarip-stories .row-style{
   border:1px solid var(--leto-line);background:transparent;color:#fff;
   font:700 11px/1 Arial,sans-serif;cursor:pointer;padding:6px 10px;border-radius:999px;
@@ -383,6 +384,12 @@ html.qarip-stories .leto-choice{
   padding:max(24px,8vh) 20px calc(24px + env(safe-area-inset-bottom));
   transition:opacity .2s,visibility .2s;
 }
+html.qarip-stories .leto-choice-back{
+  position:fixed;left:12px;top:max(12px,env(safe-area-inset-top));z-index:91;
+  width:40px;height:40px;border:0;border-radius:50%;
+  background:#ffffff12;color:#fff;display:inline-grid;place-items:center;
+  cursor:pointer;font:800 16px/1 Arial,sans-serif;
+}
 html.qarip-stories .leto-choice.done{opacity:0;visibility:hidden;pointer-events:none}
 html.qarip-stories .leto-choice-head{max-width:420px;margin:0 auto 22px;text-align:center}
 html.qarip-stories .leto-choice-eyebrow{
@@ -417,6 +424,7 @@ html.qarip-stories .leto-toast.show{opacity:1;transform:translateX(-50%) transla
 
 /* Text style sheet: bg pill (radius/opacity/color) + letter-spacing */
 html.qarip-stories .leto-textbar .tb-style{background:var(--leto-pink)!important;color:#fff!important;border-color:transparent!important}
+html.qarip-stories .leto-textbar .tb-font{background:var(--leto-yellow)!important;color:#111!important;border-color:transparent!important}
 html.qarip-stories .leto-style-tag{margin:0 0 14px;color:var(--leto-muted);font:600 12px/1.4 Arial,sans-serif}
 html.qarip-stories .leto-style-tag b{color:#fff}
 html.qarip-stories .leto-style-label{margin:0 0 8px;color:#fff;font:800 11px/1 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
