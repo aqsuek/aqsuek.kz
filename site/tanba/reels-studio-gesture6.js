@@ -33,8 +33,8 @@
     }
     .phone-preview:before,.phone-preview:after{display:none!important}
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
-    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:none!important;pointer-events:none}
-    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
+    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:visible!important;transform:none!important;text-align:center!important;text-shadow:none!important;pointer-events:none}
+    .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:none;margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
     .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
     .subtitle-stack .sub-mark{top:58%;padding:8px 16px!important;border-radius:999px!important;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
     .subtitle-stack .sub-extra{top:74%;color:#fff;font:700 18px/1.1 Arial,sans-serif;transform:translate(calc(-50% + var(--extra-x,0px)),calc(-50% + var(--extra-y,0px))) rotate(var(--extra-rotate,0deg)) scale(var(--extra-scale,1))}
@@ -168,6 +168,7 @@
     radius: null,
     letterSpacing: null,
     textShadow: true,
+    shadowIntensity: 0.55,
     on,
     text: "",
     family: "",
@@ -209,10 +210,27 @@
     const w = Number(state[key].boxW) || 0;
     if (w > 0) {
       el.style.setProperty("width", `${Math.round(w)}px`, "important");
+      el.style.setProperty("max-width", "none", "important");
       el.style.setProperty("box-sizing", "border-box", "important");
     } else {
       el.style.removeProperty("width");
+      el.style.removeProperty("max-width");
     }
+  }
+
+  function shadowIntensityOf(layer) {
+    const n = Number(layer?.shadowIntensity);
+    if (!Number.isFinite(n)) return 0.55;
+    return Math.max(0, Math.min(1, n));
+  }
+
+  function textShadowCss(layer) {
+    if (layer?.textShadow === false) return "none";
+    const i = shadowIntensityOf(layer);
+    if (i <= 0.01) return "none";
+    const y = Math.max(1, Math.round(2 + 4 * i));
+    const blur = Math.max(2, Math.round(6 + 20 * i));
+    return `0 ${y}px ${blur}px rgba(0,0,0,${i.toFixed(3)})`;
   }
 
   function paint(stack) {
@@ -242,12 +260,10 @@
       if (box.width > innerW + 0.5) {
         if (mayScale) {
           state[key].scale = Math.max(0.25, state[key].scale * (innerW / box.width));
-        } else {
-          const layoutW = Math.max(48, el.offsetWidth);
-          state[key].boxW = Math.max(48, layoutW * (innerW / box.width));
+          paint(stack);
+          continue;
         }
-        paint(stack);
-        continue;
+        // Stretch mode: allow frame wider than the phone — don't clamp boxW.
       }
       if (mayScale && box.height > innerH + 0.5) {
         state[key].scale = Math.max(0.25, state[key].scale * (innerH / box.height));
@@ -582,10 +598,10 @@
     } else {
       el.style.removeProperty("letter-spacing");
     }
-    if (layer.textShadow === false) {
+    if (layer.textShadow === false || shadowIntensityOf(layer) <= 0.01) {
       el.style.setProperty("text-shadow", "none", "important");
     } else {
-      el.style.setProperty("text-shadow", "0 4px 18px #000", "important");
+      el.style.setProperty("text-shadow", textShadowCss(layer), "important");
     }
     if (layer.bg) {
       const alpha = layer.bgOpacity == null ? 1 : Number(layer.bgOpacity);
@@ -697,6 +713,8 @@
       shadowBtn.setAttribute("aria-pressed", on ? "true" : "false");
       shadowBtn.textContent = on ? "Қосулы" : "Өшірулі";
     }
+    const shadowIntNative = tools.querySelector("[data-native='shadowIntensity']");
+    if (shadowIntNative) shadowIntNative.value = shadowIntensityOf(layer);
   }
 
   function layerCenter(element) {
@@ -760,10 +778,7 @@
       handle.setPointerCapture(event.pointerId);
       const move = (moveEvent) => {
         const now = Math.abs(axisX(center, state[key].rotation, moveEvent.clientX, moveEvent.clientY));
-        const preview = stack.closest(".phone-preview");
-        const innerW = (preview?.getBoundingClientRect().width || 720) - 88;
-        const maxW = innerW / Math.max(0.25, state[key].scale || 1);
-        state[key].boxW = Math.max(48, Math.min(maxW, startW * (now / startHalf)));
+        state[key].boxW = Math.max(48, startW * (now / startHalf));
         paint(stack);
         containLayer(stack, key, false);
       };
@@ -1199,14 +1214,15 @@
     const w = Math.max(el.offsetWidth * scale * outScale, textW + padL + padR + italicPad * 2, 2);
     const h = Math.max(el.offsetHeight * scale * outScale, lh * lines.length + padT + padB, 2);
     const wantShadow = state[item.key]?.textShadow !== false;
+    const intensity = shadowIntensityOf(state[item.key]);
     if (hasBg) {
       ctx.fillStyle = bg;
       fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius || h / 2);
       ctx.fillStyle = cs.color;
-    } else if (wantShadow) {
-      ctx.shadowColor = "rgba(0,0,0,0.55)";
-      ctx.shadowBlur = 10 * outScale * scale;
-      ctx.shadowOffsetY = 2 * outScale * scale;
+    } else if (wantShadow && intensity > 0.01) {
+      ctx.shadowColor = `rgba(0,0,0,${intensity.toFixed(3)})`;
+      ctx.shadowBlur = (6 + 16 * intensity) * outScale * scale;
+      ctx.shadowOffsetY = (1 + 3 * intensity) * outScale * scale;
     }
     const block = lh * lines.length;
     let y = -block / 2 + lh / 2;
@@ -1580,6 +1596,10 @@
         <span>КӨЛЕҢ</span>
         <button type="button" class="shadow-toggle active" data-shadow-toggle aria-pressed="true">Қосулы</button>
       </div>
+      <div class="text-tool-row" data-row="shadow-intensity">
+        <span>КҮШ</span>
+        <input type="range" data-native="shadowIntensity" min="0" max="1" step="0.05" value="0.55" aria-label="Көлеңке күші">
+      </div>
     `;
     editor?.after(tools);
 
@@ -1622,7 +1642,12 @@
       if (textBtn) state[key].color = textBtn.dataset.textColor;
       if (bgBtn) state[key].bg = bgBtn.dataset.bgColor;
       if (faceBtn) state[key].face = faceBtn.dataset.face;
-      if (shadowBtn) state[key].textShadow = state[key].textShadow === false;
+      if (shadowBtn) {
+        state[key].textShadow = state[key].textShadow === false;
+        if (state[key].textShadow !== false && shadowIntensityOf(state[key]) <= 0.01) {
+          state[key].shadowIntensity = 0.55;
+        }
+      }
       applyLayerLook(el, key);
       syncSwatches(key);
       syncFace(key);
@@ -1671,6 +1696,14 @@
       const key = selectedKey(stack);
       state[key].letterSpacing = parseFloat(event.target.value);
       applyLayerLook(stack.querySelector(layerSelector(key)), key);
+      save();
+    });
+    tools.querySelector("[data-native='shadowIntensity']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      state[key].shadowIntensity = Math.max(0, Math.min(1, parseFloat(event.target.value) || 0));
+      if (state[key].shadowIntensity > 0.01) state[key].textShadow = true;
+      applyLayerLook(stack.querySelector(layerSelector(key)), key);
+      syncSwatches(key);
       save();
     });
 

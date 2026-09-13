@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba5";
+  const ASSET_V = "tanba6";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -870,12 +870,49 @@
 
   function syncShadowUi(body) {
     const root = body || sheetEl("style")?.querySelector(".leto-sheet-body");
-    const btn = root?.querySelector("[data-text-shadow-toggle]");
-    if (!btn) return;
+    if (!root) return;
     const on = currentTextShadow();
-    btn.classList.toggle("active", on);
-    btn.setAttribute("aria-pressed", on ? "true" : "false");
-    btn.textContent = on ? "Қосулы" : "Өшірулі";
+    const btn = root.querySelector("[data-text-shadow-toggle]");
+    if (btn) {
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.textContent = on ? "Қосулы" : "Өшірулі";
+    }
+    const intensity = currentShadowIntensity();
+    const slider = root.querySelector("[data-style-shadow-intensity]");
+    const val = root.querySelector("[data-style-shadow-intensity-val]");
+    const row = root.querySelector(".leto-shadow-intensity");
+    if (slider) slider.value = String(Math.round(intensity * 100));
+    if (val) val.textContent = `${Math.round(intensity * 100)}%`;
+    if (row) row.classList.toggle("is-off", !on);
+  }
+
+  function currentShadowIntensity() {
+    const native = qs('.text-color-tools [data-native="shadowIntensity"]');
+    if (native && native.value !== "") {
+      const n = parseFloat(native.value);
+      if (Number.isFinite(n)) return Math.max(0, Math.min(1, n));
+    }
+    return 0.55;
+  }
+
+  function applyShadowIntensity(value) {
+    const pct = Math.max(0, Math.min(100, Math.round(Number(value))));
+    const n = pct / 100;
+    const native = qs('.text-color-tools [data-native="shadowIntensity"]');
+    if (native) setNative("shadowIntensity", String(n));
+    else {
+      const { el } = selectedLayerInfo();
+      if (el) {
+        if (n <= 0.01) el.style.setProperty("text-shadow", "none", "important");
+        else {
+          const y = Math.max(1, Math.round(2 + 4 * n));
+          const blur = Math.max(2, Math.round(6 + 20 * n));
+          el.style.setProperty("text-shadow", `0 ${y}px ${blur}px rgba(0,0,0,${n.toFixed(3)})`, "important");
+        }
+      }
+    }
+    syncShadowUi();
   }
 
   function toggleTextShadow() {
@@ -885,7 +922,8 @@
       const { el } = selectedLayerInfo();
       if (!el) return;
       const on = currentTextShadow();
-      el.style.setProperty("text-shadow", on ? "none" : "0 4px 18px #000", "important");
+      if (on) el.style.setProperty("text-shadow", "none", "important");
+      else applyShadowIntensity(currentShadowIntensity() * 100 || 55);
     }
     syncShadowUi();
   }
@@ -1008,6 +1046,7 @@
     const cuts = facesOf(rec);
     const track = currentTracking();
     const shadowOn = currentTextShadow();
+    const shadowPct = Math.round(currentShadowIntensity() * 100);
     return `
       <p class="leto-style-label">Мәтін түсі</p>
       <div class="leto-swatches">
@@ -1034,6 +1073,13 @@
       <div class="leto-style-row-head leto-shadow-row">
         <p class="leto-style-label">Көлеңке</p>
         <button type="button" class="leto-style-bgoff${shadowOn ? " active" : ""}" data-text-shadow-toggle aria-pressed="${shadowOn ? "true" : "false"}">${shadowOn ? "Қосулы" : "Өшірулі"}</button>
+      </div>
+      <div class="leto-track leto-shadow-intensity${!shadowOn ? " is-off" : ""}">
+        <p class="leto-style-label">Күш</p>
+        <div class="leto-track-row">
+          <input type="range" min="0" max="100" step="5" value="${shadowPct}" data-style-shadow-intensity aria-label="Көлеңке күші">
+          <span class="leto-style-val" data-style-shadow-intensity-val>${shadowPct}%</span>
+        </div>
       </div>
       <div class="leto-style-row-head">
         <p class="leto-style-label">Мәтін асты</p>
@@ -1406,6 +1452,9 @@
       }
       if (e.target.matches("[data-style-tracking]")) {
         applyTracking(e.target.value);
+      }
+      if (e.target.matches("[data-style-shadow-intensity]")) {
+        applyShadowIntensity(e.target.value);
       }
       if (e.target.matches("[data-style-bg-opacity]")) {
         setNative("bgOpacity", e.target.value);
