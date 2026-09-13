@@ -230,9 +230,16 @@
   function startDownload(href, filename) {
     const link = document.createElement("a");
     link.href = href;
-    if (filename) link.download = filename;
-    else link.setAttribute("download", "");
-    link.rel = "noreferrer";
+    // Same-origin can force a filename; CDN zips rely on Content-Type / URL.
+    try {
+      const abs = new URL(href, location.href);
+      if (abs.origin === location.origin && filename) link.download = filename;
+      else if (abs.origin === location.origin) link.setAttribute("download", "");
+    } catch {
+      if (filename) link.download = filename;
+    }
+    link.rel = "noopener noreferrer";
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     link.remove();

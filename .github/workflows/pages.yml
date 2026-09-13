@@ -22,9 +22,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Build Pages site without heavy font zips
+        run: |
+          rsync -a --delete \
+            --exclude 'tanba/downloads/' \
+            --exclude 'tanba/downloads/**' \
+            site/ _site/
+          # Keep a tiny note so old paths are diagnosable in repo deploy logs
+          mkdir -p _site/tanba/downloads
+          printf '%s\n' \
+            'Font ZIP downloads are served from GitHub raw CDN (tag tanba-fonts-v1).' \
+            'See fonts.json download URLs.' \
+            > _site/tanba/downloads/README.txt
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

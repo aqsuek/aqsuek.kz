@@ -1,5 +1,6 @@
 [build]
   publish = "."
+  command = "rm -rf tanba/downloads && mkdir -p tanba/downloads && printf 'CDN: https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/\\n' > tanba/downloads/README.txt"
 
 [[redirects]]
   from = "/qarip"
@@ -15,3 +16,9 @@
   from = "/tanba"
   to = "/tanba/"
   status = 301
+
+[[redirects]]
+  from = "/tanba/downloads/:file"
+  to = "https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/:file"
+  status = 302
+  force = true
