@@ -1320,18 +1320,57 @@
     }[char]));
   }
 
-  function catalogFonts() {
+  let FONT_INDEX = null;
+  let fontIndexPromise = null;
+  const FONT_ASSET_V = "tanba11";
+
+  function loadFontIndex() {
+    if (fontIndexPromise) return fontIndexPromise;
+    fontIndexPromise = fetch(`/tanba/data/fonts.json?v=${FONT_ASSET_V}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((list) => {
+        const byName = new Map();
+        (Array.isArray(list) ? list : []).forEach((row) => {
+          if (!row?.name) return;
+          const prev = byName.get(row.name);
+          if (!prev || (prev.source === "google" && row.source !== "google")) byName.set(row.name, row);
+        });
+        FONT_INDEX = [...byName.values()].map((row) => ({
+          name: row.name,
+          family: row.family || row.name,
+          url: row.preview || "",
+        }));
+        return FONT_INDEX;
+      })
+      .catch(() => {
+        FONT_INDEX = [];
+        return FONT_INDEX;
+      });
+    return fontIndexPromise;
+  }
+
+  function catalogFontsFromDom() {
     const seen = new Set();
     const fonts = [];
     document.querySelectorAll(".font-card").forEach((card) => {
       const name = card.querySelector("h3")?.textContent?.trim();
       const preview = card.querySelector(".font-preview");
       const family = preview?.style.fontFamily || "";
+      const url = card.dataset.preview || "";
       if (!name || !family || seen.has(name)) return;
       seen.add(name);
-      fonts.push({ name, family });
+      fonts.push({ name, family, url });
     });
     return fonts;
+  }
+
+  function catalogFonts() {
+    if (FONT_INDEX) return FONT_INDEX;
+    loadFontIndex().then(() => {
+      const stack = document.querySelector(".subtitle-stack");
+      if (stack) renderFontList(stack);
+    });
+    return catalogFontsFromDom();
   }
 
   function applyFontToSelected(stack, family, name, faceId) {
@@ -1343,18 +1382,27 @@
     else state[key].face = "regular";
     applyLayerLook(stack.querySelector(layerSelector(key)), key);
     syncFace(key);
-    if (document.fonts?.load && famCss) {
-      const face = state[key].face;
-      const look = FACE_LOOK[face] || ["400", "normal"];
-      document.fonts
-        .load(`${look[1]} ${look[0]} 48px ${famCss}`)
-        .catch(() => {})
-        .finally(() => containLayer(stack, key, true));
-    } else {
+    const rec = (FONT_INDEX || catalogFontsFromDom()).find((font) => font.name === name);
+    const url = rec?.url || "";
+    const finish = () => {
       containLayer(stack, key, true);
-    }
-    save();
-    syncFontActive();
+      save();
+      syncFontActive();
+    };
+    const loadLooks = () => {
+      if (document.fonts?.load && famCss) {
+        const face = state[key].face;
+        const look = FACE_LOOK[face] || ["400", "normal"];
+        document.fonts
+          .load(`${look[1]} ${look[0]} 48px ${famCss}`)
+          .catch(() => {})
+          .finally(finish);
+      } else finish();
+    };
+    if (window.Qarip?.loadFamily && famCss) {
+      const fam = String(family || "").replace(/^["']|["']$/g, "").split(",")[0].trim();
+      window.Qarip.loadFamily(fam, url).finally(loadLooks);
+    } else loadLooks();
   }
 
   function syncFontActive() {
@@ -1385,24 +1433,35 @@
     const list = pick.querySelector(".reels-font-list");
     const fonts = catalogFonts().filter((font) => !query || font.name.toLowerCase().includes(query));
     if (!list) return;
+    if (FONT_INDEX === null && !fonts.length) {
+      list.innerHTML = '<p class="reels-font-empty">Қаріптер жүктелуде…</p>';
+      return;
+    }
     if (!fonts.length) {
-      list.innerHTML = '<p class="reels-font-empty">Қаріптер жүктелуде немесе табылмады.</p>';
+      list.innerHTML = '<p class="reels-font-empty">Қаріп табылмады.</p>';
       return;
     }
     const key = selectedKey(stack || document.querySelector(".subtitle-stack"));
     const selectedName = state[key]?.fontName || "";
     const selectedFamily = state[key]?.family || "";
     list.innerHTML = fonts
+      .slice(0, 100)
       .map((font) => {
         const on = selectedName ? font.name === selectedName : font.family === selectedFamily;
         return `<button type="button" class="reels-font-item${on ? " active" : ""}" data-name="${escHtml(font.name)}" data-family="${encodeURIComponent(font.family)}"><b style="font-family:${escHtml(font.family)}">${escHtml(font.name)}</b><small>Әә Ғғ Ққ</small></button>`;
       })
       .join("");
+    syncFontActive();
   }
 
   function ensureFontPicker(stack) {
+    if (window.__qaripStoriesLeto) {
+      document.querySelector(".reels-font-pick")?.remove();
+      return;
+    }
     const controls = document.querySelector(".reels-controls");
     if (!controls) return;
+    loadFontIndex();
     const styleLabel =
       controls.querySelector('.reels-label[data-section="style"]') ||
       [...controls.querySelectorAll(":scope > .reels-label")].find((label) => label.dataset.section !== "text" && label.dataset.section !== "palette");
@@ -1427,21 +1486,13 @@
       controls.dataset.fontPickObserve = "1";
       let restore = 0;
       new MutationObserver(() => {
+        if (window.__qaripStoriesLeto) return;
         if (controls.querySelector(".reels-font-pick")) return;
         clearTimeout(restore);
         restore = setTimeout(() => ensureFontPicker(stack), 40);
       }).observe(controls, { childList: true });
     }
     renderFontList(stack);
-    const grid = document.querySelector(".font-grid");
-    if (grid && grid.dataset.fontPickWatch !== "1") {
-      grid.dataset.fontPickWatch = "1";
-      let timer = 0;
-      new MutationObserver(() => {
-        clearTimeout(timer);
-        timer = setTimeout(() => renderFontList(stack), 80);
-      }).observe(grid, { childList: true });
-    }
   }
 
   function ensureFaceRow(stack) {

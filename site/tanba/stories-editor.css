@@ -201,10 +201,15 @@ html.qarip-stories .leto-sheet{
   border:1px solid var(--leto-line);border-bottom:0;
   border-radius:22px 22px 0 0;
   box-shadow:0 -20px 50px #000a;
-  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s linear .28s;
   display:flex;flex-direction:column;overflow:hidden;
+  visibility:hidden;pointer-events:none;
 }
-html.qarip-stories .leto-sheet.on{transform:translate(-50%,0)}
+html.qarip-stories .leto-sheet.on{
+  transform:translate(-50%,0);
+  visibility:visible;pointer-events:auto;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s;
+}
 html.qarip-stories .leto-handle{
   width:42px;height:4px;border-radius:99px;background:#ffffff28;
   margin:10px auto 6px;flex:0 0 auto;

@@ -12,7 +12,7 @@
   let allRows = [];
   let catalogByName = new Map();
   let mounting = false;
-  const FONTS_JSON = "/tanba/data/fonts.json?v=tanba10";
+  const FONTS_JSON = "/tanba/data/fonts.json?v=tanba11";
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =

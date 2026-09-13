@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba10";
+  const ASSET_V = "tanba11";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -300,11 +300,13 @@
       const sheet = document.createElement("div");
       sheet.className = "leto-sheet";
       sheet.dataset.sheet = id;
+      sheet.setAttribute("aria-hidden", "true");
+      if ("inert" in sheet) sheet.inert = true;
       sheet.innerHTML = `
         <div class="leto-handle"></div>
         <div class="leto-sheet-head">
           <h3></h3>
-          <button type="button" data-acto="close" aria-label="Жабу">×</button>
+          <button type="button" data-acto="close" aria-label="Жабу" tabindex="-1">×</button>
         </div>
         <div class="leto-sheet-body"></div>
       `;
@@ -312,6 +314,8 @@
     });
 
     bindChrome(app, dock, textbar, scrim);
+    document.querySelector(".reels-font-pick")?.remove();
+    syncSheetA11y();
     return { pick, preview, controls, app, stage };
   }
 
@@ -319,10 +323,23 @@
     return qs(`.leto-sheet[data-sheet="${id}"]`);
   }
 
+  function syncSheetA11y() {
+    qsa(".leto-sheet").forEach((el) => {
+      const on = el.classList.contains("on");
+      el.setAttribute("aria-hidden", on ? "false" : "true");
+      if ("inert" in el) el.inert = !on;
+      el.querySelectorAll("button, input, textarea, select, a").forEach((node) => {
+        if (on) node.removeAttribute("tabindex");
+        else node.setAttribute("tabindex", "-1");
+      });
+    });
+  }
+
   function openSheet(id) {
     activeSheet = id;
     qs(".leto-scrim")?.classList.add("on");
     qsa(".leto-sheet").forEach((el) => el.classList.toggle("on", el.dataset.sheet === id));
+    syncSheetA11y();
     renderSheet(id);
     if (id === "bg") setBgEdit(hasBgPhoto());
     else if (id === "text" || id === "fonts" || id === "style" || id === "pairs") setBgEdit(false);
@@ -336,6 +353,7 @@
     activeSheet = "";
     qs(".leto-scrim")?.classList.remove("on");
     qsa(".leto-sheet").forEach((el) => el.classList.remove("on"));
+    syncSheetA11y();
     unmountTextInputs();
   }
 
@@ -2335,6 +2353,7 @@
   }
 
   function start() {
+    loadFontData();
     hideLegacyChrome();
     ensureChoice();
     markLetoReady();
