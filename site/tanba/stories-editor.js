@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba6";
+  const ASSET_V = "tanba7";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -557,6 +557,21 @@
   }
 
   function recForSelected() {
+    const gesture = window.__qaripGesture?.getSelectedLayer?.();
+    if (gesture?.fontName) {
+      const byName = recByName(gesture.fontName);
+      if (byName) return byName;
+    }
+    if (gesture?.family) {
+      const famFromState = String(gesture.family)
+        .replace(/["']/g, "")
+        .split(",")[0]
+        .trim();
+      const byStateFam = famFromState
+        ? (FONT_DATA || []).find((f) => String(f.family || "").replace(/["']/g, "") === famFromState)
+        : null;
+      if (byStateFam) return byStateFam;
+    }
     const { el } = selectedLayerInfo();
     const fam = String(el ? el.style.fontFamily || getComputedStyle(el).fontFamily : "")
       .replace(/["']/g, "")
@@ -592,6 +607,7 @@
     const custom = rec?.faces?.length > 1;
     const faces = custom ? rec.faces : DEFAULT_FACES;
     syncNativeFaceButtons(faces);
+    window.__qaripGesture?.syncFace?.();
     syncTextbarFace();
   }
 
@@ -639,8 +655,8 @@
           .map((f) => {
             const cuts = f.faces?.length || 0;
             return `<button type="button" data-font-name="${escapeAttr(f.name)}" data-font-family="${encodeURIComponent(f.family)}" ${f.url ? `data-font-url="${escapeAttr(f.url)}"` : ""} ${cuts > 1 ? `data-font-cuts="${cuts}"` : ""}>
-              <span class="fc-glyph" style="font-family:${escapeAttr(f.family)}">Aa</span>
-              <b style="font-family:${escapeAttr(f.family)}">${escapeHtml(f.name)}</b>
+              <span class="fc-glyph" style="font-family:'${escapeAttr(String(f.family || "").replace(/["']/g, ""))}'">Aa</span>
+              <b style="font-family:'${escapeAttr(String(f.family || "").replace(/["']/g, ""))}'">${escapeHtml(f.name)}</b>
               ${cuts > 1 ? `<small class="fc-cuts">${cuts} нұсқа</small>` : ""}
             </button>`;
           })
@@ -965,6 +981,8 @@
   }
 
   function currentFace() {
+    const gestureFace = window.__qaripGesture?.getSelectedLayer?.()?.face;
+    if (gestureFace) return gestureFace;
     const native = qs(".text-color-tools [data-face].active");
     if (native?.dataset.face) return native.dataset.face;
     const { el } = selectedLayerInfo();
@@ -1011,6 +1029,12 @@
     const nativeLayer = qs(`.text-layer-picks [data-layer="${key}"]`);
     if (nativeLayer && !nativeLayer.classList.contains("active")) nativeLayer.click();
     paintFaceGroup();
+    if (window.__qaripGesture?.setFace?.(face)) {
+      syncTextbarFace();
+      pushHistory();
+      save();
+      return;
+    }
     const btn = qs(`.text-color-tools [data-face="${face}"]`);
     if (btn) btn.click();
     else {
@@ -1543,20 +1567,25 @@
     const fam = String(family || rec?.family || "").replace(/["']/g, "").split(",")[0].trim();
     state.lastFontName = name || state.lastFontName;
     const paint = () => {
-      const item = qsa(".reels-font-item").find((el) => el.dataset.name === name);
-      if (item) {
-        item.click();
-      } else {
-        const stack = qs(".subtitle-stack");
-        const selected =
-          stack?.querySelector('[data-selected="1"]') ||
-          stack?.querySelector(".sub-hook");
-        if (selected) {
-          selected.style.setProperty("font-family", `"${fam}"`, "important");
+      const applied = window.__qaripGesture?.applyFont?.(fam, name, faceId || "");
+      if (!applied) {
+        const item = qsa(".reels-font-item").find((el) => el.dataset.name === name);
+        if (item) {
+          item.click();
+        } else {
+          const stack = qs(".subtitle-stack");
+          const selected =
+            stack?.querySelector('[data-selected="1"]') ||
+            stack?.querySelector(".sub-hook");
+          if (selected && fam) {
+            selected.style.setProperty("font-family", `"${fam}"`, "important");
+          }
         }
+        if (faceId) applyFace(faceId);
       }
       paintFaceGroup();
-      if (faceId) applyFace(faceId);
+      pushHistory();
+      save();
     };
     loadFontFaces(rec || { family: fam, preview: src, faces: src && !src.startsWith("google:") ? [{ url: src, weight: "400", style: "normal" }] : [] }).then(paint);
   }

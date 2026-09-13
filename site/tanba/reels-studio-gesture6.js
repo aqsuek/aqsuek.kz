@@ -572,21 +572,31 @@
     requestAnimationFrame(placeCaret);
   }
 
+  function cssFamily(family) {
+    const fam = String(family || "")
+      .replace(/["']/g, "")
+      .split(",")[0]
+      .trim();
+    return fam ? `"${fam}"` : "";
+  }
+
+  const FACE_LOOK = {
+    thin: ["100", "normal"],
+    light: ["300", "normal"],
+    regular: ["400", "normal"],
+    medium: ["500", "normal"],
+    semibold: ["600", "normal"],
+    bold: ["700", "normal"],
+    black: ["900", "normal"],
+    italic: ["400", "italic"],
+  };
+
   function applyLayerLook(el, key) {
     if (!el) return;
     const layer = state[key];
     applyBox(el, key);
-    if (layer.family) el.style.setProperty("font-family", layer.family, "important");
-    const FACE_LOOK = {
-      thin: ["100", "normal"],
-      light: ["300", "normal"],
-      regular: ["400", "normal"],
-      medium: ["500", "normal"],
-      semibold: ["600", "normal"],
-      bold: ["700", "normal"],
-      black: ["900", "normal"],
-      italic: ["400", "italic"],
-    };
+    const famCss = cssFamily(layer.family);
+    if (famCss) el.style.setProperty("font-family", famCss, "important");
     const look = FACE_LOOK[layer.face];
     if (look) {
       el.style.setProperty("font-weight", look[0], "important");
@@ -1324,22 +1334,22 @@
     return fonts;
   }
 
-  function applyFontToSelected(stack, family, name) {
+  function applyFontToSelected(stack, family, name, faceId) {
     const key = selectedKey(stack);
-    state[key].family = family;
-    state[key].fontName = name;
+    const famCss = cssFamily(family);
+    if (famCss) state[key].family = famCss;
+    if (name) state[key].fontName = name;
+    if (faceId) state[key].face = faceId;
+    else state[key].face = "regular";
     applyLayerLook(stack.querySelector(layerSelector(key)), key);
-    if (document.fonts?.load && family) {
+    syncFace(key);
+    if (document.fonts?.load && famCss) {
       const face = state[key].face;
-      const FACE_LOOK = {
-        thin: ["100", "normal"],
-        light: ["300", "normal"],
-        regular: ["400", "normal"],
-        bold: ["700", "normal"],
-        italic: ["400", "italic"],
-      };
       const look = FACE_LOOK[face] || ["400", "normal"];
-      document.fonts.load(`${look[1]} ${look[0]} 48px ${family}`).catch(() => {}).finally(() => containLayer(stack, key, true));
+      document.fonts
+        .load(`${look[1]} ${look[0]} 48px ${famCss}`)
+        .catch(() => {})
+        .finally(() => containLayer(stack, key, true));
     } else {
       containLayer(stack, key, true);
     }
@@ -1727,6 +1737,38 @@
       }).observe(stack, { childList: true });
     }
   }
+
+  window.__qaripGesture = {
+    applyFont(family, name, faceId) {
+      const stack = document.querySelector(".subtitle-stack");
+      if (!stack) return false;
+      applyFontToSelected(stack, family, name, faceId || "");
+      return true;
+    },
+    setFace(faceId) {
+      const stack = document.querySelector(".subtitle-stack");
+      if (!stack || !faceId) return false;
+      const key = selectedKey(stack);
+      state[key].face = faceId;
+      applyLayerLook(stack.querySelector(layerSelector(key)), key);
+      syncFace(key);
+      containLayer(stack, key, true);
+      save();
+      return true;
+    },
+    syncFace() {
+      const stack = document.querySelector(".subtitle-stack");
+      if (!stack) return false;
+      syncFace(selectedKey(stack));
+      return true;
+    },
+    getSelectedLayer() {
+      const stack = document.querySelector(".subtitle-stack");
+      if (!stack) return null;
+      const key = selectedKey(stack);
+      return { key, ...(state[key] || {}) };
+    },
+  };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
