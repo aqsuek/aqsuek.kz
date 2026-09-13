@@ -1322,7 +1322,7 @@
 
   let FONT_INDEX = null;
   let fontIndexPromise = null;
-  const FONT_ASSET_V = "tanba12";
+  const FONT_ASSET_V = "tanba13";
 
   function loadFontIndex() {
     if (fontIndexPromise) return fontIndexPromise;

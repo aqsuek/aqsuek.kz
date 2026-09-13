@@ -1,3 +1,7 @@
 _mirror_server.py
 __pycache__/
 .DS_Store
+
+# Font archives live on tag tanba-fonts-v1 (CDN); do not republish on Pages.
+site/tanba/downloads/*
+!site/tanba/downloads/README.md
