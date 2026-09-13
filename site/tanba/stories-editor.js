@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba12";
+  const ASSET_V = "tanba15";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
