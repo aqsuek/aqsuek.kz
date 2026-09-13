@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba4";
+  const ASSET_V = "tanba5";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -267,8 +267,7 @@
     const dock = document.createElement("div");
     dock.className = "leto-dock";
     dock.innerHTML = `
-      <button type="button" class="leto-dock-btn" data-acto="text">Мәтін</button>
-      <button type="button" class="leto-dock-btn" data-acto="fonts">Қаріп</button>
+      <button type="button" class="leto-dock-btn leto-dock-add" data-acto="text" aria-label="Мәтін қосу">T+</button>
       <button type="button" class="leto-dock-btn" data-acto="bg">Фон</button>
     `;
     document.body.append(dock);
@@ -277,11 +276,10 @@
     const textbar = document.createElement("div");
     textbar.className = "leto-textbar";
     textbar.innerHTML = `
-      <div class="leto-face-group" hidden role="group" aria-label="Қаріп қалыңдығы"></div>
       <button type="button" data-text-tool="size-down">A−</button>
       <button type="button" data-text-tool="size-up">A+</button>
       <button type="button" data-text-tool="font" class="tb-font">Қаріп</button>
-      <button type="button" data-text-tool="style" class="tb-style">Түс</button>
+      <button type="button" data-text-tool="style" class="tb-style">Стиль</button>
     `;
     document.body.append(textbar);
 
@@ -354,11 +352,13 @@
         setBgEdit(false);
         showTextbar();
         openSheet("text");
+        syncDock("text");
       }
       if (act === "fonts") {
         setBgEdit(false);
         fontWeightStep = null;
         openSheet("fonts");
+        syncDock("");
       }
       if (act === "bg") openSheet("bg");
       if (act === "more") openSheet("more");
@@ -437,7 +437,7 @@
       gallery: "Сурет",
       layers: "Қабаттар",
       more: "Тағы",
-      style: "Түс",
+      style: "Стиль",
       layout: "Макет",
     };
     title.textContent = titles[id] || "";
@@ -591,21 +591,6 @@
     const rec = recForSelected();
     const custom = rec?.faces?.length > 1;
     const faces = custom ? rec.faces : DEFAULT_FACES;
-    const group = qs(".leto-face-group");
-    if (group) {
-      if (!custom) {
-        group.hidden = true;
-        group.innerHTML = "";
-      } else {
-        group.hidden = false;
-        group.innerHTML = faces
-          .map((f) => {
-            const cls = f.style === "italic" ? "tb-italic" : Number(f.weight) >= 700 ? "tb-bold" : "";
-            return `<button type="button" data-text-tool="face-${escapeAttr(f.id)}" class="${cls}" title="${escapeAttr(f.label)}" aria-label="${escapeAttr(f.label)}"><span>${escapeHtml(f.label)}</span></button>`;
-          })
-          .join("");
-      }
-    }
     syncNativeFaceButtons(faces);
     syncTextbarFace();
   }
@@ -720,7 +705,7 @@
   function renderBg() {
     const tabs = [
       ["photos", "Фото"],
-      ["colors", "Түс"],
+      ["colors", "Стиль"],
       ["upload", "Өз сурет"],
     ];
     const current = currentBgPhotoCard();
@@ -803,10 +788,8 @@
     if (!active.length) {
       return `<p class="leto-hint">Мәтін қабаттарын табу мүмкін болмады. Бетті жаңартып көріңіз.</p>`;
     }
-    const track = currentTracking();
-    const shadowOn = currentTextShadow();
     return `
-      <p class="leto-hint">Осы жерге жазыңыз — Stories-та бірден көрінеді.</p>
+      <p class="leto-hint">Мәтін жазыңыз. Қаріпті мәтінді басып өзгертесіз.</p>
       <div class="leto-text-list">
         ${active
           .map(
@@ -823,25 +806,11 @@
           )
           .join("")}
       </div>
-      <div class="leto-track">
-        <p class="leto-style-label">Интервал</p>
-        <div class="leto-track-row">
-          <button type="button" data-track-step="-0.5" aria-label="Тығыздау">−</button>
-          <input type="range" min="-4" max="16" step="0.5" value="${track}" data-style-tracking aria-label="Интервал">
-          <button type="button" data-track-step="0.5" aria-label="Кеңейту">+</button>
-          <span class="leto-style-val" data-style-tracking-val>${formatTrack(track)}</span>
-        </div>
-      </div>
-      <div class="leto-style-row-head leto-shadow-row">
-        <p class="leto-style-label">Көлеңке</p>
-        <button type="button" class="leto-style-bgoff${shadowOn ? " active" : ""}" data-text-shadow-toggle aria-pressed="${shadowOn ? "true" : "false"}">${shadowOn ? "Қосулы" : "Өшірулі"}</button>
-      </div>
       ${
         canAdd
-          ? `<button type="button" class="leto-text-add" data-native-add-text>+ Тағы бір жол</button>`
+          ? `<button type="button" class="leto-text-add" data-native-add-text aria-label="Мәтін қосу">T+</button>`
           : ""
       }
-      ${quickMode ? "" : `<button type="button" class="leto-text-sticker" data-more="sticker">Мәтінді стикер етіп көшіру</button>`}
     `;
   }
 
@@ -873,7 +842,7 @@
       const { el } = selectedLayerInfo();
       if (el) el.style.setProperty("letter-spacing", `${n}px`, "important");
     }
-    const body = sheetEl("text")?.querySelector(".leto-sheet-body");
+    const body = sheetEl("style")?.querySelector(".leto-sheet-body");
     const slider = body?.querySelector("[data-style-tracking]");
     const val = body?.querySelector("[data-style-tracking-val]");
     if (slider) slider.value = String(n);
@@ -881,7 +850,7 @@
   }
 
   function syncTrackingUi(body) {
-    const root = body || sheetEl("text")?.querySelector(".leto-sheet-body");
+    const root = body || sheetEl("style")?.querySelector(".leto-sheet-body");
     if (!root) return;
     const n = currentTracking();
     const slider = root.querySelector("[data-style-tracking]");
@@ -900,7 +869,7 @@
   }
 
   function syncShadowUi(body) {
-    const root = body || sheetEl("text")?.querySelector(".leto-sheet-body");
+    const root = body || sheetEl("style")?.querySelector(".leto-sheet-body");
     const btn = root?.querySelector("[data-text-shadow-toggle]");
     if (!btn) return;
     const on = currentTextShadow();
@@ -1036,15 +1005,15 @@
     const hasBg = !!bg && bg !== "transparent" && alpha > 0.03;
     const face = currentFace();
     const rec = recForSelected();
-    const cuts = rec?.faces?.length > 1 ? rec.faces : [];
+    const cuts = facesOf(rec);
+    const track = currentTracking();
+    const shadowOn = currentTextShadow();
     return `
       <p class="leto-style-label">Мәтін түсі</p>
       <div class="leto-swatches">
         ${SOLID.map((c) => `<button type="button" data-style-text-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}
       </div>
-      ${
-        cuts.length
-          ? `<p class="leto-style-label">Қалыңдық</p>
+      <p class="leto-style-label">Жазу</p>
       <div class="leto-face-row" role="group" aria-label="Қаріп қалыңдығы">
         ${cuts
           .map((f) => {
@@ -1052,9 +1021,20 @@
             return `<button type="button" data-face="${escapeAttr(f.id)}" class="${cls} ${face === f.id ? "active" : ""}"><span>${escapeHtml(f.label)}</span></button>`;
           })
           .join("")}
-      </div>`
-          : ""
-      }
+      </div>
+      <div class="leto-track">
+        <p class="leto-style-label">Интервал</p>
+        <div class="leto-track-row">
+          <button type="button" data-track-step="-0.5" aria-label="Тығыздау">−</button>
+          <input type="range" min="-4" max="16" step="0.5" value="${track}" data-style-tracking aria-label="Интервал">
+          <button type="button" data-track-step="0.5" aria-label="Кеңейту">+</button>
+          <span class="leto-style-val" data-style-tracking-val>${formatTrack(track)}</span>
+        </div>
+      </div>
+      <div class="leto-style-row-head leto-shadow-row">
+        <p class="leto-style-label">Көлеңке</p>
+        <button type="button" class="leto-style-bgoff${shadowOn ? " active" : ""}" data-text-shadow-toggle aria-pressed="${shadowOn ? "true" : "false"}">${shadowOn ? "Қосулы" : "Өшірулі"}</button>
+      </div>
       <div class="leto-style-row-head">
         <p class="leto-style-label">Мәтін асты</p>
         <button type="button" class="leto-style-bgoff${!hasBg ? " active" : ""}" data-style-bg-off>Жоқ</button>
@@ -1588,7 +1568,7 @@
       clearTextSelect();
       ensureBgHit(preview);
     } else {
-      syncDock(activeSheet === "bg" ? "bg" : activeSheet === "fonts" ? "fonts" : activeSheet === "text" ? "text" : "");
+      syncDock(activeSheet === "bg" ? "bg" : activeSheet === "text" ? "text" : "");
       removeBgChrome(preview);
     }
   }

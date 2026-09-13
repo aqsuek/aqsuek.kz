@@ -173,6 +173,10 @@ html.qarip-stories .leto-dock-btn{
   background:#2a2a33;color:#fff;cursor:pointer;
   font:800 16px/1 Arial,sans-serif;
 }
+html.qarip-stories .leto-dock-btn.leto-dock-add{
+  flex:0 0 76px;font:800 22px/1 Arial,sans-serif;letter-spacing:-.04em;
+  background:var(--leto-yellow);
+}
 html.qarip-stories .leto-dock-btn:active,
 html.qarip-stories .leto-dock-btn.on{background:var(--leto-yellow);color:#fff}
 html.leto-sticker-mode .leto-dock-btn[data-acto="bg"],
@@ -393,8 +397,9 @@ html.qarip-stories .row-slot input{
 }
 html.qarip-stories .row-slot input:focus{outline:2px solid var(--leto-yellow)}
 html.qarip-stories .leto-text-add{
-  width:100%;min-height:46px;border:1px dashed #0040dc88;border-radius:12px;
-  background:#0f1a36;color:#8eb4ff;font:800 13px/1 Arial,sans-serif;letter-spacing:.03em;cursor:pointer;
+  width:100%;min-height:52px;margin-top:12px;border:0;border-radius:14px;
+  background:var(--leto-yellow);color:#fff;font:800 22px/1 Arial,sans-serif;
+  letter-spacing:-.04em;cursor:pointer;
 }
 
 /* Layers */
