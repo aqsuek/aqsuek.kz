@@ -18,10 +18,28 @@
   const copy = root.querySelector(".license-copy");
   const fav = root.querySelector(".font-favorite");
   const dl = root.querySelector(".font-download");
+  const author = root.querySelector(".font-detail-author");
   const info = Q.licenseInfo(licenseKey);
 
   if (badge) badge.textContent = info.badge || "Лицензияны тексеріңіз";
   if (copy) copy.textContent = info.title;
+
+  // Prefer Tanba path in status bar / copy-link; CDN is resolved only in startDownload.
+  if (dl && download && download.startsWith("/tanba/downloads/")) {
+    dl.setAttribute("href", download);
+  }
+
+  if (author) {
+    const raw = (author.textContent || "").trim();
+    const shown = Q.displayAuthor(raw.replace(/^Автор\s*/i, ""));
+    if (!shown || /көрсетілмеген/i.test(raw)) {
+      author.hidden = true;
+      author.textContent = "";
+    } else {
+      author.hidden = false;
+      author.textContent = `Автор · ${shown}`;
+    }
+  }
 
   function paintFav() {
     if (!fav || !name) return;
@@ -64,10 +82,9 @@
   });
 
   dl?.addEventListener("click", (event) => {
-    const href = dl.getAttribute("href") || download;
+    const href = download || dl.getAttribute("href") || "";
     const filename = (href.split("/").pop() || "").split("?")[0];
     if (Q.handleDownloadClick(event, licenseKey, href, filename)) return;
-    // Fallback: keep user on the font page for archive downloads.
     if (href && /\/tanba\/downloads\//i.test(href)) {
       event.preventDefault();
       Q.startDownload(href, filename);
@@ -76,8 +93,10 @@
 
   input?.addEventListener("input", paintPreview);
   size?.addEventListener("input", paintPreview);
+  document.querySelectorAll('a[href="/tanba/stories/"]').forEach((link) => {
+    link.href = `/tanba/stories/?font=${encodeURIComponent(name)}`;
+  });
   paintFav();
   paintPreview();
-  Q.ensureModal();
   Q.loadFamily(family, previewUrl).finally(paintGlyphs);
 })();

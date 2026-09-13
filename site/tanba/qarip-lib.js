@@ -187,12 +187,21 @@
     }
   }
 
+  function setModalOpen(modal, open) {
+    if (!modal) return;
+    modal.hidden = !open;
+    modal.toggleAttribute("inert", !open);
+    modal.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
   function ensureModal() {
     let modal = document.querySelector(".qarip-license-modal");
     if (modal) return modal;
     modal = document.createElement("div");
     modal.className = "qarip-license-modal";
     modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    modal.setAttribute("inert", "");
     modal.innerHTML = `
       <div class="qarip-license-dialog" role="dialog" aria-modal="true" aria-labelledby="qarip-dl-title">
         <h2 id="qarip-dl-title">Қаріпті жүктеу</h2>
@@ -260,8 +269,7 @@
   }
 
   function hideModal() {
-    const modal = document.querySelector(".qarip-license-modal");
-    if (modal) modal.hidden = true;
+    setModalOpen(document.querySelector(".qarip-license-modal"), false);
   }
 
   async function startDownload(href, filename) {
@@ -300,7 +308,7 @@
     const modal = ensureModal();
     modal.dataset.href = href;
     modal.dataset.filename = filename || archiveFileName(href);
-    modal.hidden = false;
+    setModalOpen(modal, true);
     modal.querySelector(".qarip-dl-go")?.focus();
   }
 
@@ -334,6 +342,7 @@
     toggleFavorite,
     loadFamily,
     startDownload,
+    resolveArchiveUrl,
     showDownloadWarning,
     handleDownloadClick,
     ensureModal,

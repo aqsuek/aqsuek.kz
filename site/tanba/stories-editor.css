@@ -578,3 +578,6 @@ html.qarip-stories .leto-layout-grid button small{color:var(--leto-muted);font:5
   html.qarip-stories .leto-app{max-width:520px;padding-bottom:100px}
   html.qarip-stories .phone-preview{max-width:380px!important}
 }
+
+html.qarip-stories .leto-dock-btn.leto-dock-add{flex:1;min-width:130px;font-size:14px;padding:12px}
+html.qarip-stories .leto-text-add{font-size:14px}

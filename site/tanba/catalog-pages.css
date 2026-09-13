@@ -114,7 +114,8 @@
   scrollbar-width:none;
   -ms-overflow-style:none;
   -webkit-overflow-scrolling:touch;
-  mask-image:linear-gradient(90deg,#000 84%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);
+  mask-image:linear-gradient(90deg,#000 78%,transparent);
 }
 .cat-carousel .categories::-webkit-scrollbar{display:none}
 .cat-carousel .categories button{
@@ -573,6 +574,13 @@ html.qarip-home .intro-cta:hover{
 .qarip-cta-secondary:active,
 html.qarip-home .intro-cta:active{transform:scale(.98)}
 
+/* Page clip — hero watermark must not create sideways scroll */
+html.qarip-home,
+html.qarip-home body{
+  overflow-x:clip;
+  max-width:100%;
+}
+
 /* Hero */
 html.qarip-home .intro.qarip-hero{
   position:relative;
@@ -580,9 +588,9 @@ html.qarip-home .intro.qarip-hero{
   grid-template-columns:1fr;
   gap:36px 40px;
   align-items:center;
-  min-height:min(84vh,780px);
+  min-height:min(72vh,680px);
   padding:44px clamp(20px,5vw,72px) 52px;
-  overflow:visible;
+  overflow:hidden;
   background:
     radial-gradient(circle at 86% 16%,#0040dc22 0,transparent 34%),
     radial-gradient(circle at 12% 82%,#f0684820 0,transparent 30%),
@@ -591,10 +599,11 @@ html.qarip-home .intro.qarip-hero{
 html.qarip-home .intro.qarip-hero::after{
   content:"";
   position:absolute;
-  right:-40px;
+  right:clamp(-12px,-2vw,0px);
   top:8%;
-  width:min(280px,36vw);
-  height:min(280px,36vw);
+  width:min(240px,42vw);
+  height:min(240px,42vw);
+  max-width:38%;
   background:url("/tanba/assets/tanba-mark.png") center/contain no-repeat;
   opacity:.08;
   pointer-events:none;
@@ -841,7 +850,10 @@ html.qarip-stories footer p{max-width:52em;line-height:1.55;font-size:12px}
   html.qarip-v2 .qarip-nav-start{display:none}
 
   html.qarip-home .intro.qarip-hero{
-    grid-template-columns:1fr;min-height:0;padding:28px 16px 36px;gap:26px;
+    grid-template-columns:1fr;min-height:0;padding:28px 16px 32px;gap:22px;
+  }
+  html.qarip-home .intro.qarip-hero::after{
+    width:min(160px,46vw);height:min(160px,46vw);right:0;opacity:.06;
   }
   html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(34px,10vw,46px);max-width:12ch}
   html.qarip-home .intro-cta-row{flex-direction:column;align-items:stretch;width:100%;max-width:100%}
@@ -1218,4 +1230,24 @@ html.qarip-home #catalog .catalog-empty{
   html.qarip-home #catalog .workspace-heading{align-items:flex-start;flex-direction:column}
   html.qarip-home #catalog .font-grid{grid-template-columns:1fr}
   html.qarip-home #catalog .font-card{min-height:240px}
+}
+
+/* Audit: readable mobile navigation and tangible output examples. */
+html.qarip-home .intro.qarip-hero .hero-word{white-space:nowrap}
+html.qarip-home .intro.qarip-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:40px;align-items:center}
+html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(34px,4.2vw,58px);max-width:none}
+html.qarip-home .qarip-hero-visual{display:grid!important;gap:16px;max-width:280px;justify-self:center;width:100%;position:relative}
+.hero-story-example{aspect-ratio:9/16;background:#153e36;color:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}
+.hero-story-example strong{font:700 32px/1.1 Georgia,serif}
+.hero-story-example small,.hero-sticker-example small{font:700 10px/1.4 Arial,sans-serif;letter-spacing:.1em}
+.hero-story-example span{font-size:14px}
+.hero-sticker-example{padding:16px;border:1px dashed #8c94a8;border-radius:16px;text-align:center;display:grid;gap:10px}
+.hero-sticker-example b{font:italic 700 30px/1.2 Georgia,serif;color:#153e36}
+.catalog-empty button{min-height:44px;padding:10px 16px;border:1px solid #0040dc;border-radius:12px;background:#fff;color:#0040dc;cursor:pointer}
+@media(max-width:900px){
+ html.qarip-v2 .topbar nav{display:none!important}
+ html.qarip-v2.qarip-nav-open .topbar nav{display:flex!important;flex-direction:column;align-items:stretch;gap:0;width:100%}
+ html.qarip-v2 .topbar nav a{display:flex;align-items:center;min-height:44px;padding:0 12px;box-sizing:border-box;text-decoration:none}
+ html.qarip-home .intro.qarip-hero{grid-template-columns:1fr;gap:28px}
+ html.qarip-home .qarip-hero-visual{max-width:240px}
 }

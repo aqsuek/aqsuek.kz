@@ -12,7 +12,7 @@
   let allRows = [];
   let catalogByName = new Map();
   let mounting = false;
-  const FONTS_JSON = "/tanba/data/fonts.json?v=tanba15";
+  const FONTS_JSON = "/tanba/data/fonts.json?v=tanba17";
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =
@@ -181,16 +181,28 @@
 
   function renderEmpty(matching) {
     let empty = document.querySelector(".catalog-empty");
-    if (mode === "fav" && matching.length === 0) {
-      if (!empty) {
-        empty = document.createElement("p");
-        empty.className = "catalog-empty";
-        document.querySelector(".font-grid")?.after(empty);
-      }
-      empty.textContent = "Ұнаған қаріп жоқ. Карточкадағы ♡ белгісін басыңыз.";
-      return;
+    if (matching.length) { empty?.remove(); return; }
+    if (!empty) {
+      empty = document.createElement("div");
+      empty.className = "catalog-empty";
+      empty.setAttribute("role", "status");
+      document.querySelector(".font-grid")?.after(empty);
     }
-    empty?.remove();
+    empty.replaceChildren();
+    const message = document.createElement("p");
+    message.textContent = mode === "fav" && !query()
+      ? "Ұнаған қаріп жоқ. Карточкадағы ♡ белгісін басыңыз."
+      : "Қаріп табылмады. Басқа атауды көріңіз немесе сүзгілерді тазалаңыз.";
+    const reset = document.createElement("button");
+    reset.type = "button";
+    reset.textContent = "Іздеу мен сүзгілерді тазалау";
+    reset.onclick = () => {
+      const search = document.querySelector(".search input");
+      if (search) search.value = "";
+      mode = "all"; style = ALL; licenseMode = "all";
+      apply(true); search?.focus();
+    };
+    empty.append(message, reset);
   }
 
   function kazakhGlyphsMissing(family) {
@@ -345,7 +357,7 @@
       if (rec?.download) {
         card.dataset.download = rec.download;
         const dl = card.querySelector(".card-bottom a[download], .card-bottom a[aria-label$='жүктеу']");
-        if (dl && rec.download.startsWith("/")) dl.setAttribute("href", rec.download);
+        if (dl) dl.setAttribute("href", Q?.resolveArchiveUrl(rec.download) || rec.download);
       }
       const license = card.querySelector(".meta > span:last-child");
       if (license) {
@@ -422,6 +434,7 @@
     addFavorites(cards);
     stripStickers(cards);
     observeVisibleFonts(cards);
+    paintTester();
   }
 
   function mountVisible(matching) {
@@ -512,8 +525,21 @@
     }
   });
 
+  function paintTester() {
+    const tester = document.querySelector("#tester");
+    if (!tester) return;
+    const text = tester.querySelector('input:not([type="range"])')?.value || window.Qarip?.PREVIEW_TEXT || "";
+    const size = Number(tester.querySelector('input[type="range"]')?.value) || 34;
+    const label = tester.querySelector(".size-control strong");
+    if (label) label.textContent = `${size}px`;
+    document.querySelectorAll(".font-grid .font-preview").forEach(el => {
+      if (el.textContent !== text) el.textContent = text;
+      el.style.fontSize = `${size}px`;
+    });
+  }
   document.addEventListener("input", (event) => {
     if (event.target.closest(".search input")) apply(true);
+    if (event.target.closest("#tester")) paintTester();
   });
 
   document.addEventListener("click", (event) => {
@@ -602,7 +628,7 @@
     const style = row.style || "";
     const author = window.Qarip?.displayAuthor(row.author || row.maker) || "";
     const preview = row.preview || "";
-    const download = row.download || "";
+    const download = window.Qarip?.resolveArchiveUrl(row.download || "") || row.download || "";
     const slug = row.slug || slugify(name, download);
     const source = row.source === "google" ? "google" : "local";
     const sample = window.Qarip?.PREVIEW_TEXT || "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І";
@@ -672,7 +698,6 @@
     polishFooter();
     bindPreviewDefault();
     window.QaripSite?.apply?.();
-    window.Qarip?.ensureModal?.();
     window.addEventListener("resize", () => requestAnimationFrame(syncCatOverflow));
     let timer = 0;
     new MutationObserver(() => {

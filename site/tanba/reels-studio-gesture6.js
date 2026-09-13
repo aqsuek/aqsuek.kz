@@ -2,8 +2,8 @@
   const STORE = "qarip-reels-layers";
   const COLORS = ["#ffffff", "#d9ff47", "#ff2d7b", "#64b5ff", "#ff9f1c", "#171715"];
   const LAYERS = [
-    ["hook", ".sub-hook", "Акцент"],
-    ["mark", ".sub-mark", "Қосымша"],
+    ["hook", ".sub-hook", "Негізгі"],
+    ["mark", ".sub-mark", "Екінші"],
     ["extra", ".sub-extra", "Жаңа мәтін"],
   ];
 
@@ -437,8 +437,8 @@
   }
 
   function layerInput(editor, key) {
-    if (key === "hook") return editor?.querySelector('input[aria-label="Акцент"]');
-    if (key === "mark") return editor?.querySelector('input[aria-label="Қосымша"]');
+    if (key === "hook") return editor?.querySelector('input[aria-label="Негізгі"]');
+    if (key === "mark") return editor?.querySelector('input[aria-label="Екінші"]');
     return editor?.querySelector(".extra-input");
   }
 
@@ -525,6 +525,7 @@
     if (!el) return;
     const text = (el.innerText || "").replace(/\u00a0/g, " ").replace(/\n+$/g, "");
     state[key].text = text;
+    state[key].textEdited = true;
     writeInput(layerInput(document.querySelector(".reels-copy-edit"), key), text, pushReact);
     save();
   }
@@ -1219,7 +1220,7 @@
     ctx.fillStyle = cs.color;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = cs.letterSpacing;
+    if (ctx.letterSpacing !== undefined) ctx.letterSpacing = `${(parseFloat(cs.letterSpacing) || 0) * scale * outScale}px`;
     const lines = liveTextLines(el);
     const parsedLh = parseFloat(cs.lineHeight);
     const lh = Number.isFinite(parsedLh) ? parsedLh * scale * outScale : fontSize * 1.08;
@@ -1326,7 +1327,7 @@
 
   let FONT_INDEX = null;
   let fontIndexPromise = null;
-  const FONT_ASSET_V = "tanba15";
+  const FONT_ASSET_V = "tanba17";
 
   function loadFontIndex() {
     if (fontIndexPromise) return fontIndexPromise;
@@ -1540,6 +1541,14 @@
     const stack = preview?.querySelector(".subtitle-stack");
     const editor = document.querySelector(".reels-copy-edit");
     if (!preview || !stack) return;
+    if (!stack.dataset.textRestored) {
+      stack.dataset.textRestored = "1";
+      ["hook", "mark"].forEach(key => {
+        if (!state[key].textEdited && !state[key].text) return;
+        setLayerText(stack.querySelector(layerSelector(key)), state[key].text);
+        writeInput(layerInput(editor, key), state[key].text, false);
+      });
+    }
     ensureGuides(preview);
     bindHud(preview);
     paint(stack);
@@ -1554,8 +1563,8 @@
     LAYERS.forEach(([key, selector]) => bindLayer(stack, key, selector));
     syncLayerVisibility(stack, editor);
 
-    const hookInput = editor?.querySelector('input[aria-label="Акцент"]');
-    const markInput = editor?.querySelector('input[aria-label="Қосымша"]');
+    const hookInput = editor?.querySelector('input[aria-label="Негізгі"]');
+    const markInput = editor?.querySelector('input[aria-label="Екінші"]');
     hookInput?.addEventListener("focus", () => {
       stopEdit(stack);
       selectLayer(stack, "hook");
@@ -1792,6 +1801,23 @@
       }).observe(stack, { childList: true });
     }
   }
+
+  document.addEventListener("input", (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    const key = input.matches('input[aria-label="Негізгі"]') ? "hook"
+      : input.matches('input[aria-label="Екінші"]') ? "mark"
+      : input.matches(".extra-input") ? "extra" : null;
+    if (!key || !input.closest(".reels-copy-edit, .row-slot")) return;
+    const stack = document.querySelector(".subtitle-stack");
+    const el = stack?.querySelector(layerSelector(key));
+    if (!el) return;
+    state[key].text = input.value;
+    state[key].textEdited = true;
+    setLayerText(el, input.value);
+    containLayer(stack, key, true);
+    save();
+  });
 
   window.__qaripGesture = {
     applyFont(family, name, faceId) {

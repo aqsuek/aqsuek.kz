@@ -8,7 +8,7 @@
   const DISCLAIMER =
     "Таңба қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
 
-  const READY = "v2g";
+  const READY = "v2h";
   let timer = 0;
 
   function isStoriesPage() {
@@ -67,7 +67,10 @@
       }
     });
     const brand = document.querySelector(".topbar .brand");
-    if (brand) brand.setAttribute("href", isStoriesPage() ? "/tanba/" : "#top");
+    if (brand) {
+      brand.setAttribute("href", isStoriesPage() ? "/tanba/" : "#top");
+      brand.setAttribute("aria-label", "Таңба — басты бет");
+    }
 
     const topbar = document.querySelector(".topbar");
     if (!topbar) return;
@@ -168,7 +171,7 @@
 
     const h1 = copy.querySelector("h1");
     if (h1) {
-      h1.innerHTML = `Қазақша Stories-ты<br><span class="qarip-accent">әдемі</span> жасаңыз`;
+      h1.innerHTML = `Қазақша <span class="hero-word">Stories-ты</span><br><span class="qarip-accent">әдемі</span> жасаңыз`;
     }
 
     let desc = copy.querySelector(".qarip-hero-desc");
@@ -213,7 +216,13 @@
     `;
 
     intro.querySelector(".alphabet")?.setAttribute("hidden", "");
-    intro.querySelector(".qarip-hero-visual")?.remove();
+    if (!intro.querySelector(".qarip-hero-visual")) {
+      const visual = document.createElement("aside");
+      visual.className = "qarip-hero-visual";
+      visual.setAttribute("aria-label", "Дайын нәтиже үлгілері");
+      visual.innerHTML = `<div class="hero-story-example"><small>STORIES ҮЛГІСІ</small><strong>Бүгін —<br>сіздің күніңіз</strong><span>Әдемі сәттерді бөлісіңіз</span></div><div class="hero-sticker-example"><small>МӨЛДІР СТИКЕР ҮЛГІСІ</small><b>Жақсы күн!</b></div>`;
+      intro.append(visual);
+    }
   }
 
   function ensureLanding() {
@@ -232,8 +241,8 @@
       landing.className = "qarip-landing";
     }
     if (landing.dataset.ready === READY && landing.querySelector("#qarip-how-title") && !landing.querySelector(".qarip-styles")) {
-      if (landing.previousElementSibling !== intro) intro.after(landing);
-      if (catalog.previousElementSibling !== landing) landing.after(catalog);
+      if (catalog.previousElementSibling !== intro) intro.after(catalog);
+      if (landing.previousElementSibling !== catalog) catalog.after(landing);
       return;
     }
 
@@ -274,8 +283,8 @@
       </section>
       <div id="pricing-slot" hidden></div>
     `;
-    intro.after(landing);
-    landing.after(catalog);
+    intro.after(catalog);
+    catalog.after(landing);
     landing.dataset.ready = READY;
   }
 
@@ -328,13 +337,13 @@
     if (!document.querySelector('link[data-stories-editor-css]')) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "/tanba/stories-editor.css?v=tanba15";
+      link.href = "/tanba/stories-editor.css?v=tanba17";
       link.dataset.storiesEditorCss = "1";
       document.head.appendChild(link);
     }
     if (!document.querySelector('script[data-stories-editor]')) {
       const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba15";
+      script.src = "/tanba/stories-editor.js?v=tanba17";
       script.defer = true;
       script.dataset.storiesEditor = "1";
       document.body.appendChild(script);
@@ -346,10 +355,21 @@
     if (aboutH) aboutH.textContent = "Жоба туралы";
     const aboutP = document.querySelector("#about p");
     if (aboutP) aboutP.textContent = DISCLAIMER;
-    const footerP = document.querySelector("footer p");
-    if (footerP) footerP.textContent = DISCLAIMER;
     const footer = document.querySelector("footer");
     if (!footer) return;
+
+    footer.querySelectorAll("p").forEach((p) => {
+      if ((p.textContent || "").includes("әліпбиін қолдауын")) p.remove();
+    });
+
+    let slogan = footer.querySelector(".qarip-footer-slogan");
+    if (!slogan) {
+      slogan = document.createElement("p");
+      slogan.className = "qarip-footer-slogan";
+      footer.append(slogan);
+    }
+    slogan.textContent = "Жақсы Stories — жарқын күндерге! ♡";
+
     if (!footer.querySelector(".qarip-footer-nav")) {
       const nav = document.createElement("nav");
       nav.className = "qarip-footer-nav";
@@ -359,15 +379,8 @@
         <a href="/tanba/stories/">Stories</a>
         <a href="${isStoriesPage() ? "/tanba/#about" : "#about"}">Жоба туралы</a>
       `;
-      footerP?.after(nav);
+      slogan.after(nav);
     }
-    let slogan = footer.querySelector(".qarip-footer-slogan");
-    if (!slogan) {
-      slogan = document.createElement("p");
-      slogan.className = "qarip-footer-slogan";
-      footer.append(slogan);
-    }
-    slogan.textContent = "Жақсы Stories — жарқын күндерге! ♡";
   }
 
   function isHomePolished() {

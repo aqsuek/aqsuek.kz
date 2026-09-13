@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba15";
+  const ASSET_V = "tanba17";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -106,13 +106,13 @@
     { id: "paper", label: "Paper", css: "linear-gradient(180deg,#f7f6f2,#e8e2d6)" },
   ];
   const PHOTOS = [
-    { id: "minimal", label: "Minimal", src: `/tanba/assets/story-bg/minimal.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
-    { id: "coffee", label: "Coffee", src: `/tanba/assets/story-bg/coffee.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
-    { id: "beauty", label: "Beauty", src: `/tanba/assets/story-bg/beauty.jpg?v=${ASSET_V}`, tags: ["гүл"] },
-    { id: "travel", label: "Travel", src: `/tanba/assets/story-bg/travel.jpg?v=${ASSET_V}`, tags: ["жаз"] },
-    { id: "lifestyle", label: "Lifestyle", src: `/tanba/assets/story-bg/lifestyle.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
-    { id: "nature", label: "Nature", src: `/tanba/assets/story-bg/nature.jpg?v=${ASSET_V}`, tags: ["жаз"] },
-    { id: "business", label: "Business", src: `/tanba/assets/story-bg/business.jpg?v=${ASSET_V}`, tags: ["бренд"] },
+    { id: "minimal", label: "Қарапайым", src: `/tanba/assets/story-bg/minimal.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
+    { id: "coffee", label: "Кофе", src: `/tanba/assets/story-bg/coffee.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
+    { id: "beauty", label: "Сұлулық", src: `/tanba/assets/story-bg/beauty.jpg?v=${ASSET_V}`, tags: ["гүл"] },
+    { id: "travel", label: "Саяхат", src: `/tanba/assets/story-bg/travel.jpg?v=${ASSET_V}`, tags: ["жаз"] },
+    { id: "lifestyle", label: "Күнделікті", src: `/tanba/assets/story-bg/lifestyle.jpg?v=${ASSET_V}`, tags: ["эстетика"] },
+    { id: "nature", label: "Табиғат", src: `/tanba/assets/story-bg/nature.jpg?v=${ASSET_V}`, tags: ["жаз"] },
+    { id: "business", label: "Іскерлік", src: `/tanba/assets/story-bg/business.jpg?v=${ASSET_V}`, tags: ["бренд"] },
   ];
   const PAIR_META = [
     { name: "Playfair × Montserrat", group: "Luxury", sampleA: "Balance", sampleB: "қазақша стиль" },
@@ -168,6 +168,9 @@
   let bgTab = "photos";
   let bgEdit = false;
   let fontWeightStep = null;
+  function faceLabel(label) {
+    return ({ Thin: "Өте жұқа", Light: "Жұқа", Regular: "Қалыпты", Medium: "Орташа", Semibold: "Жартылай қалың", Bold: "Қалың", Black: "Өте қалың", Italic: "Курсив" })[label] || label;
+  }
   const DEFAULT_FACES = [
     { id: "regular", label: "Қалыпты", weight: "400", style: "normal" },
     { id: "bold", label: "Қалың", weight: "700", style: "normal" },
@@ -251,7 +254,7 @@
           <button type="button" class="leto-icon" data-acto="undo" aria-label="Болдырмау">${ICO.undo}</button>
           <button type="button" class="leto-icon" data-acto="redo" aria-label="Қайталау">${ICO.redo}</button>
         </div>
-        <button type="button" class="leto-export" data-acto="export" aria-label="Жүктеу">Жүктеу</button>
+        <button type="button" class="leto-export" data-acto="export" aria-label="PNG сақтау">PNG сақтау</button>
       </div>
       <div class="leto-stage"></div>
     `;
@@ -274,7 +277,7 @@
     const dock = document.createElement("div");
     dock.className = "leto-dock";
     dock.innerHTML = `
-      <button type="button" class="leto-dock-btn leto-dock-add" data-acto="text" aria-label="Мәтін қосу">T+</button>
+      <button type="button" class="leto-dock-btn leto-dock-add" data-acto="text" aria-label="Мәтін қосу">Мәтін қосу</button>
       <button type="button" class="leto-dock-btn" data-acto="bg">Фон</button>
     `;
     document.body.append(dock);
@@ -627,7 +630,7 @@
     const row = qs(".text-color-tools .text-face-row");
     if (!row) return;
     row.innerHTML = `<span>СТИЛЬ</span>${faces
-      .map((f) => `<button type="button" data-face="${escapeAttr(f.id)}">${escapeHtml(f.label)}</button>`)
+      .map((f) => `<button type="button" data-face="${escapeAttr(f.id)}">${escapeHtml(faceLabel(f.label))}</button>`)
       .join("")}`;
   }
 
@@ -654,7 +657,7 @@
               const url = f.url || rec.preview || "";
               return `<button type="button" data-font-cut="${escapeAttr(f.id)}" data-font-name="${escapeAttr(rec.name)}" data-font-family="${encodeURIComponent(rec.family)}" ${url ? `data-font-url="${escapeAttr(url)}"` : ""}>
                 <span class="wc-glyph" style="font-family:'${escapeAttr(fam)}';font-weight:${escapeAttr(String(f.weight || 400))};font-style:${escapeAttr(f.style || "normal")}">Әә</span>
-                <b>${escapeHtml(f.label)}</b>
+                <b>${escapeHtml(faceLabel(f.label))}</b>
               </button>`;
             })
             .join("")}
@@ -667,7 +670,7 @@
         if (activeSheet === "fonts") renderSheet("fonts");
       });
       return `
-      <p class="leto-style-tag">Қаріпті басыңыз. Кейбіреуінде Thin / Bold бар.</p>
+      <p class="leto-style-tag">Қаріпті басыңыз. Қалыңдығы бар қаріпті ашып, нұсқасын таңдаңыз.</p>
       <p class="leto-hint">Қаріптер жүктелуде…</p>
     `;
     }
@@ -676,7 +679,7 @@
       fonts = fonts.filter((f) => f.name.toLowerCase().includes(q));
     }
     return `
-      <p class="leto-style-tag">Қаріпті басыңыз. Кейбіреуінде Thin / Bold бар.</p>
+      <p class="leto-style-tag">Қаріпті басыңыз. Қалыңдығы бар қаріпті ашып, нұсқасын таңдаңыз.</p>
       <input class="leto-search" data-font-search type="search" placeholder="Қаріп іздеу..." value="${fontQuery.replace(/"/g, "&quot;")}">
       <div class="leto-font-grid">
         ${fonts
@@ -819,8 +822,8 @@
     const editor = qs(".reels-copy-edit");
     return {
       editor,
-      hook: editor?.querySelector('input[aria-label="Акцент"]') || null,
-      mark: editor?.querySelector('input[aria-label="Қосымша"]') || null,
+      hook: editor?.querySelector('input[aria-label="Негізгі"]') || null,
+      mark: editor?.querySelector('input[aria-label="Екінші"]') || null,
       extra: editor?.querySelector(".extra-input") || null,
     };
   }
@@ -853,7 +856,7 @@
       </div>
       ${
         canAdd
-          ? `<button type="button" class="leto-text-add" data-native-add-text aria-label="Мәтін қосу">T+</button>`
+          ? `<button type="button" class="leto-text-add" data-native-add-text aria-label="Мәтін қосу">Мәтін қосу</button>`
           : ""
       }
     `;
@@ -1110,7 +1113,7 @@
         ${cuts
           .map((f) => {
             const cls = f.style === "italic" ? "tb-italic" : Number(f.weight) >= 700 ? "tb-bold" : "";
-            return `<button type="button" data-face="${escapeAttr(f.id)}" class="${cls} ${face === f.id ? "active" : ""}"><span>${escapeHtml(f.label)}</span></button>`;
+            return `<button type="button" data-face="${escapeAttr(f.id)}" class="${cls} ${face === f.id ? "active" : ""}"><span>${escapeHtml(faceLabel(f.label))}</span></button>`;
           })
           .join("")}
       </div>
@@ -2080,11 +2083,15 @@
         await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2000))]);
       }
       const html2canvas = await ensureHtml2Canvas();
-      const scale = window.innerWidth < 720 ? 2 : 2.25;
+      const scale = 1080 / preview.getBoundingClientRect().width;
       const canvas = await html2canvas(preview, { scale, useCORS: true, backgroundColor: null, logging: false });
       const a = document.createElement("a");
       a.download = force ? "qarip-story-transparent.png" : "qarip-story.png";
-      a.href = canvas.toDataURL("image/png");
+      const output = document.createElement("canvas");
+      output.width = 1080;
+      output.height = 1920;
+      output.getContext("2d").drawImage(canvas, 0, 0, 1080, 1920);
+      a.href = output.toDataURL("image/png");
       a.click();
       letoToast("PNG жүктелді");
     } catch (err) {
@@ -2154,9 +2161,26 @@
       btn.setAttribute("aria-label", "Мәтінді қаріппен көшіру");
       btn.classList.add("is-sticker");
     } else {
-      btn.textContent = "Жүктеу";
-      btn.setAttribute("aria-label", "Жүктеу");
+      btn.textContent = "PNG сақтау";
+      btn.setAttribute("aria-label", "PNG сақтау");
       btn.classList.remove("is-sticker");
+    }
+  }
+
+  const choiceInert = new Map();
+  function setChoiceModal(open) {
+    const choice = qs(".leto-choice");
+    if (!choice) return;
+    if (open) {
+      [...document.body.children].forEach(el => {
+        if (el === choice || /^(SCRIPT|STYLE)$/.test(el.tagName)) return;
+        if (!choiceInert.has(el)) choiceInert.set(el, el.hasAttribute("inert"));
+        el.setAttribute("inert", "");
+      });
+      choice.querySelector('[data-choice="editor"]')?.focus();
+    } else {
+      choiceInert.forEach((wasInert, el) => { el.toggleAttribute("inert", wasInert); });
+      choiceInert.clear();
     }
   }
 
@@ -2168,14 +2192,34 @@
     choice.classList.remove("done");
     choice.removeAttribute("hidden");
     choice.setAttribute("aria-hidden", "false");
+    setChoiceModal(true);
     quickMode = false;
     document.documentElement.classList.remove("leto-sticker-mode");
     updateExportButtonForMode();
     return true;
   }
 
+  let entryFontApplied = false;
+  async function applyEntryFont() {
+    if (entryFontApplied) return;
+    const name = new URLSearchParams(location.search).get("font");
+    if (!name) return;
+    try {
+      const response = await fetch(`/tanba/data/fonts.json?v=${ASSET_V}`);
+      if (!response.ok) return;
+      const rows = await response.json();
+      const rec = rows.find(row => row.name === name);
+      if (!rec || !window.__qaripGesture) return;
+      await window.Qarip?.loadFamily(rec.family || rec.name, rec.preview || "");
+      entryFontApplied = window.__qaripGesture.applyFont(rec.family || rec.name, rec.name, "regular");
+      if (entryFontApplied) letoToast(`${rec.name} қарпі қолданылды`);
+    } catch { letoToast("Қаріп жүктелмеді. Қаріп мәзірінен қайта таңдаңыз."); }
+  }
+
   function enterChoice(mode) {
     const choice = qs(".leto-choice");
+    setChoiceModal(false);
+    applyEntryFont();
     quickMode = mode === "sticker";
     document.documentElement.classList.toggle("leto-sticker-mode", quickMode);
     updateExportButtonForMode();
@@ -2184,6 +2228,7 @@
       choice.setAttribute("hidden", "");
       choice.setAttribute("aria-hidden", "true");
     }
+    if (!quickMode) qs(".leto-export")?.focus();
     if (quickMode) {
       state.bg = { ...state.bg, type: "transparent", value: "" };
       applyBackground();
@@ -2199,7 +2244,7 @@
       <div class="leto-choice-head">
         <p class="leto-choice-eyebrow">ТАҢБА STORIES</p>
         <h1>Не істейміз?</h1>
-        <p class="leto-choice-sub">Толық Stories жасайсың ба, әлде мәтінді қаріппен көшіріп аласың ба?</p>
+        <p class="leto-choice-sub">Stories жасаңыз немесе мәтінді қаріппен көшіріп алыңыз.</p>
       </div>
       <div class="leto-choice-cards">
         <button type="button" class="leto-choice-card" data-choice="editor">
@@ -2214,7 +2259,7 @@
           <span class="cc-ico">🏷️</span>
           <span class="cc-body">
             <b>Мәтінді қаріппен көшіру</b>
-            <small>Қаріп таңда, мәтін жаз, мөлдір стикер етіп көшіріп ал</small>
+            <small>Қаріп таңдап, мәтінді мөлдір стикер етіп көшіріңіз</small>
           </span>
           <span class="cc-arrow">→</span>
         </button>
@@ -2237,6 +2282,7 @@
     choice.innerHTML = renderChoiceHome();
     document.body.append(choice);
     bindChoice(choice);
+    setChoiceModal(true);
     markLetoReady();
     return choice;
   }
@@ -2244,6 +2290,24 @@
   function bindChoice(choice) {
     if (!choice || choice.dataset.bound === "1") return;
     choice.dataset.bound = "1";
+    new MutationObserver(() => {
+      if (choice.hidden || choice.classList.contains("done")) return;
+      [...document.body.children].forEach(el => {
+        if (el === choice || /^(SCRIPT|STYLE)$/.test(el.tagName)) return;
+        if (!choiceInert.has(el)) choiceInert.set(el, el.hasAttribute("inert"));
+        el.setAttribute("inert", "");
+      });
+    }).observe(document.body, { childList: true });
+    choice.addEventListener("keydown", event => {
+      if (event.key !== "Tab") return;
+      const buttons = [...choice.querySelectorAll("button")];
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
+    });
     choice.addEventListener(
       "click",
       (e) => {
