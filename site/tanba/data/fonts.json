@@ -8,7 +8,7 @@
     "category": "Display",
     "family": "Local Afolkalips",
     "download": "/tanba/downloads/afolkalips.zip",
-    "preview": "/tanba/fonts/user/afolkalips.ttf",
+    "preview": "/tanba/fonts/preview/afolkalips.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -27,7 +27,7 @@
     "category": "Display",
     "family": "Local Bebas Neue",
     "download": "/tanba/downloads/bebas-neue.zip",
-    "preview": "/tanba/fonts/user/bebas-neue.otf",
+    "preview": "/tanba/fonts/preview/bebas-neue.woff2",
     "license": "open",
     "local": true,
     "similar": [
@@ -44,28 +44,28 @@
         "label": "Thin",
         "weight": "100",
         "style": "normal",
-        "url": "/tanba/fonts/user/bebas-neue-thin.otf"
+        "url": "/tanba/fonts/preview/bebas-neue-thin.woff2"
       },
       {
         "id": "light",
         "label": "Light",
         "weight": "300",
         "style": "normal",
-        "url": "/tanba/fonts/user/bebas-neue-light.otf"
+        "url": "/tanba/fonts/preview/bebas-neue-light.woff2"
       },
       {
         "id": "regular",
         "label": "Regular",
         "weight": "400",
         "style": "normal",
-        "url": "/tanba/fonts/user/bebas-neue.otf"
+        "url": "/tanba/fonts/preview/bebas-neue.woff2"
       },
       {
         "id": "bold",
         "label": "Bold",
         "weight": "700",
         "style": "normal",
-        "url": "/tanba/fonts/user/bebas-neue-bold.otf"
+        "url": "/tanba/fonts/preview/bebas-neue-bold.woff2"
       }
     ]
   },
@@ -78,7 +78,7 @@
     "category": "Display",
     "family": "Local Clickuper",
     "download": "/tanba/downloads/clickuper.zip",
-    "preview": "/tanba/fonts/user/clickuper.ttf",
+    "preview": "/tanba/fonts/preview/clickuper.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -97,7 +97,7 @@
     "category": "Display",
     "family": "Local Dela Gothic One",
     "download": "/tanba/downloads/dela-gothic-one.zip",
-    "preview": "/tanba/fonts/user/dela-gothic-one.ttf",
+    "preview": "/tanba/fonts/preview/dela-gothic-one.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -118,7 +118,7 @@
     "category": "Serif",
     "family": "Local Kobzar KS",
     "download": "/tanba/downloads/kobzar-ks.zip",
-    "preview": "/tanba/fonts/user/kobzar-ks.ttf",
+    "preview": "/tanba/fonts/preview/kobzar-ks.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -137,7 +137,7 @@
     "category": "Display",
     "family": "Local KZ Facon",
     "download": "/tanba/downloads/kz-facon.zip",
-    "preview": "/tanba/fonts/user/kz-facon.ttf",
+    "preview": "/tanba/fonts/preview/kz-facon.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -156,7 +156,7 @@
     "category": "Display",
     "family": "Local KZ Fighting Words",
     "download": "/tanba/downloads/kz-fighting-words.zip",
-    "preview": "/tanba/fonts/user/kz-fighting-words.ttf",
+    "preview": "/tanba/fonts/preview/kz-fighting-words.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -175,7 +175,7 @@
     "category": "Display",
     "family": "Local KZ Gropled",
     "download": "/tanba/downloads/kz-gropled.zip",
-    "preview": "/tanba/fonts/user/kz-gropled.ttf",
+    "preview": "/tanba/fonts/preview/kz-gropled.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -194,7 +194,7 @@
     "category": "Sans Serif",
     "family": "Local Samsung Sharp Sans",
     "download": "/tanba/downloads/kz-samsung-sharp-sans.zip",
-    "preview": "/tanba/fonts/user/kz-samsung-sharp-sans.ttf",
+    "preview": "/tanba/fonts/preview/kz-samsung-sharp-sans.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -213,7 +213,7 @@
     "category": "Handwritten",
     "family": "Local Sign Painter",
     "download": "/tanba/downloads/kz-sign-painter.zip",
-    "preview": "/tanba/fonts/user/kz-sign-painter.ttf",
+    "preview": "/tanba/fonts/preview/kz-sign-painter.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -232,7 +232,7 @@
     "category": "Monospace",
     "family": "Local Digital Strip",
     "download": "/tanba/downloads/kz-digital-strip.zip",
-    "preview": "/tanba/fonts/user/kz-digital-strip.ttf",
+    "preview": "/tanba/fonts/preview/kz-digital-strip.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -251,7 +251,7 @@
     "category": "Monospace",
     "family": "Local Nitti Cameo",
     "download": "/tanba/downloads/nitti-typewriter-cameo.zip",
-    "preview": "/tanba/fonts/user/nitti-cameo.ttf",
+    "preview": "/tanba/fonts/preview/nitti-cameo.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -270,7 +270,7 @@
     "category": "Monospace",
     "family": "Local Nitti Corrected",
     "download": "/tanba/downloads/nitti-typewriter-corrected.zip",
-    "preview": "/tanba/fonts/user/nitti-corrected.ttf",
+    "preview": "/tanba/fonts/preview/nitti-corrected.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -289,7 +289,7 @@
     "category": "Monospace",
     "family": "Local Nitti Normal",
     "download": "/tanba/downloads/nitti-typewriter-normal.zip",
-    "preview": "/tanba/fonts/user/nitti-normal.ttf",
+    "preview": "/tanba/fonts/preview/nitti-normal.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -308,7 +308,7 @@
     "category": "Monospace",
     "family": "Local Nitti Open",
     "download": "/tanba/downloads/nitti-typewriter-open.zip",
-    "preview": "/tanba/fonts/user/nitti-open.ttf",
+    "preview": "/tanba/fonts/preview/nitti-open.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -327,7 +327,7 @@
     "category": "Monospace",
     "family": "Local Nitti Underlined",
     "download": "/tanba/downloads/nitti-typewriter-underlined.zip",
-    "preview": "/tanba/fonts/user/nitti-underlined.ttf",
+    "preview": "/tanba/fonts/preview/nitti-underlined.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -346,7 +346,7 @@
     "category": "Display",
     "family": "Local Octyabrskaya",
     "download": "/tanba/downloads/octyabrskaya.zip",
-    "preview": "/tanba/fonts/user/octyabrskaya.ttf",
+    "preview": "/tanba/fonts/preview/octyabrskaya.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -365,7 +365,7 @@
     "category": "Handwritten",
     "family": "Local Valisca",
     "download": "/tanba/downloads/valisca.zip",
-    "preview": "/tanba/fonts/user/valisca.ttf",
+    "preview": "/tanba/fonts/preview/valisca.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -384,7 +384,7 @@
     "category": "Serif",
     "family": "Local Gimbal Egyptian",
     "download": "/tanba/downloads/gimbal-egyptian.zip",
-    "preview": "/tanba/fonts/user/gimbal-egyptian.otf",
+    "preview": "/tanba/fonts/preview/gimbal-egyptian.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -403,7 +403,7 @@
     "category": "Display",
     "family": "Local KZ Unbounded",
     "download": "/tanba/downloads/kz-unbounded.zip",
-    "preview": "/tanba/fonts/user/kz-unbounded.ttf",
+    "preview": "/tanba/fonts/preview/kz-unbounded.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -424,7 +424,7 @@
     "category": "Sans Serif",
     "family": "Local Modern H",
     "download": "/tanba/downloads/modern-h.zip",
-    "preview": "/tanba/fonts/user/modern-h.ttf",
+    "preview": "/tanba/fonts/preview/modern-h.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -443,7 +443,7 @@
     "category": "Display",
     "family": "Local Nauryz RedKeds",
     "download": "/tanba/downloads/nauryz-redkeds.zip",
-    "preview": "/tanba/fonts/user/nauryz-redkeds.ttf",
+    "preview": "/tanba/fonts/preview/nauryz-redkeds.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -462,7 +462,7 @@
     "category": "Display",
     "family": "Local ST Africa",
     "download": "/tanba/downloads/st-africa.zip",
-    "preview": "/tanba/fonts/user/st-africa.otf",
+    "preview": "/tanba/fonts/preview/st-africa.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -481,7 +481,7 @@
     "category": "Sans Serif",
     "family": "Local Titillium Web",
     "download": "/tanba/downloads/titillium-web.zip",
-    "preview": "/tanba/fonts/user/titillium-web.ttf",
+    "preview": "/tanba/fonts/preview/titillium-web.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -500,7 +500,7 @@
     "category": "Sans Serif",
     "family": "Local VAG Rounded Next",
     "download": "/tanba/downloads/vag-rounded-next.zip",
-    "preview": "/tanba/fonts/user/vag-rounded-next.ttf",
+    "preview": "/tanba/fonts/preview/vag-rounded-next.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -521,7 +521,7 @@
     "category": "Display",
     "family": "Local Aesthet Nova",
     "download": "/tanba/downloads/aesthet-nova.zip",
-    "preview": "/tanba/fonts/user/aesthet-nova.ttf",
+    "preview": "/tanba/fonts/preview/aesthet-nova.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -540,7 +540,7 @@
     "category": "Serif",
     "family": "Local Ante",
     "download": "/tanba/downloads/ante.zip",
-    "preview": "/tanba/fonts/user/ante.ttf",
+    "preview": "/tanba/fonts/preview/ante.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -559,7 +559,7 @@
     "category": "Sans Serif",
     "family": "Local Atyp Variable",
     "download": "/tanba/downloads/atyp-variable.zip",
-    "preview": "/tanba/fonts/user/atyp-variable.ttf",
+    "preview": "/tanba/fonts/preview/atyp-variable.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -578,7 +578,7 @@
     "category": "Serif",
     "family": "Local Baker Signet",
     "download": "/tanba/downloads/baker-signet-bt.zip",
-    "preview": "/tanba/fonts/user/baker-signet.ttf",
+    "preview": "/tanba/fonts/preview/baker-signet.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -597,7 +597,7 @@
     "category": "Serif",
     "family": "Local Bitter",
     "download": "/tanba/downloads/bitter.zip",
-    "preview": "/tanba/fonts/user/bitter-local.ttf",
+    "preview": "/tanba/fonts/preview/bitter-local.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -616,7 +616,7 @@
     "category": "Display",
     "family": "Local Blackye",
     "download": "/tanba/downloads/blackye.zip",
-    "preview": "/tanba/fonts/user/blackye.otf",
+    "preview": "/tanba/fonts/preview/blackye.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -635,7 +635,7 @@
     "category": "Serif",
     "family": "Local Edit Serif",
     "download": "/tanba/downloads/edit-serif-cyrillic.zip",
-    "preview": "/tanba/fonts/user/edit-serif-cyrillic.ttf",
+    "preview": "/tanba/fonts/preview/edit-serif-cyrillic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -654,7 +654,7 @@
     "category": "Display",
     "family": "Local Engravers Gothic",
     "download": "/tanba/downloads/engravers-gothic.zip",
-    "preview": "/tanba/fonts/user/engravers-gothic.otf",
+    "preview": "/tanba/fonts/preview/engravers-gothic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -673,7 +673,7 @@
     "category": "Sans Serif",
     "family": "Local Euclid Flex",
     "download": "/tanba/downloads/euclid-flex.zip",
-    "preview": "/tanba/fonts/user/euclid-flex.otf",
+    "preview": "/tanba/fonts/preview/euclid-flex.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -694,7 +694,7 @@
     "category": "Sans Serif",
     "family": "Local Eurostile",
     "download": "/tanba/downloads/eurostile.zip",
-    "preview": "/tanba/fonts/user/eurostile.otf",
+    "preview": "/tanba/fonts/preview/eurostile.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -713,7 +713,7 @@
     "category": "Display",
     "family": "Local EVEY",
     "download": "/tanba/downloads/evey.rar",
-    "preview": "/tanba/fonts/user/evey.otf",
+    "preview": "/tanba/fonts/preview/evey.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -732,7 +732,7 @@
     "category": "Serif",
     "family": "Local Marli",
     "download": "/tanba/downloads/marli.zip",
-    "preview": "/tanba/fonts/user/marli.otf",
+    "preview": "/tanba/fonts/preview/marli.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -751,7 +751,7 @@
     "category": "Sans Serif",
     "family": "Local Giorgio Sans",
     "download": "/tanba/downloads/giorgio-sans.zip",
-    "preview": "/tanba/fonts/user/giorgio-sans.otf",
+    "preview": "/tanba/fonts/preview/giorgio-sans.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -772,7 +772,7 @@
     "category": "Sans Serif",
     "family": "Local Gilroy",
     "download": "/tanba/downloads/gilroy.zip",
-    "preview": "/tanba/fonts/user/gilroy.ttf",
+    "preview": "/tanba/fonts/preview/gilroy.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -793,7 +793,7 @@
     "category": "Serif",
     "family": "Local Heuristica",
     "download": "/tanba/downloads/heuristica.zip",
-    "preview": "/tanba/fonts/user/heuristica.otf",
+    "preview": "/tanba/fonts/preview/heuristica.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -812,7 +812,7 @@
     "category": "Display",
     "family": "Local KZ Arc",
     "download": "/tanba/downloads/kz-arc.zip",
-    "preview": "/tanba/fonts/user/kz-arc.ttf",
+    "preview": "/tanba/fonts/preview/kz-arc.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -831,7 +831,7 @@
     "category": "Serif",
     "family": "Local KZ Arturito Slab",
     "download": "/tanba/downloads/kz-arturito-slab.zip",
-    "preview": "/tanba/fonts/user/kz-arturito-slab.ttf",
+    "preview": "/tanba/fonts/preview/kz-arturito-slab.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -850,7 +850,7 @@
     "category": "Handwritten",
     "family": "Local KZ Balmoral",
     "download": "/tanba/downloads/kz-balmoral.zip",
-    "preview": "/tanba/fonts/user/kz-balmoral.ttf",
+    "preview": "/tanba/fonts/preview/kz-balmoral.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -869,7 +869,7 @@
     "category": "Handwritten",
     "family": "Local KZ Buxton Sketch",
     "download": "/tanba/downloads/kz-buxton-sketch.zip",
-    "preview": "/tanba/fonts/user/kz-buxton-sketch.ttf",
+    "preview": "/tanba/fonts/preview/kz-buxton-sketch.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -888,7 +888,7 @@
     "category": "Display",
     "family": "Local KZ Dodo",
     "download": "/tanba/downloads/kz-dodo.zip",
-    "preview": "/tanba/fonts/user/kz-dodo.ttf",
+    "preview": "/tanba/fonts/preview/kz-dodo.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -907,7 +907,7 @@
     "category": "Display",
     "family": "Local KZ Domain Display",
     "download": "/tanba/downloads/kz-domain-display.zip",
-    "preview": "/tanba/fonts/user/kz-domain-display.ttf",
+    "preview": "/tanba/fonts/preview/kz-domain-display.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -926,7 +926,7 @@
     "category": "Display",
     "family": "Local KZ Downtown",
     "download": "/tanba/downloads/kz-downtown.zip",
-    "preview": "/tanba/fonts/user/kz-downtown.ttf",
+    "preview": "/tanba/fonts/preview/kz-downtown.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -945,7 +945,7 @@
     "category": "Handwritten",
     "family": "Local KZ Handvetica Neue",
     "download": "/tanba/downloads/kz-handvetica-neue.zip",
-    "preview": "/tanba/fonts/user/kz-handvetica-neue.ttf",
+    "preview": "/tanba/fonts/preview/kz-handvetica-neue.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -964,7 +964,7 @@
     "category": "Display",
     "family": "Local KZ Kurut",
     "download": "/tanba/downloads/kz-kurut.zip",
-    "preview": "/tanba/fonts/user/kz-kurut.ttf",
+    "preview": "/tanba/fonts/preview/kz-kurut.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -983,7 +983,7 @@
     "category": "Monospace",
     "family": "Local KZ LED",
     "download": "/tanba/downloads/kz-led.zip",
-    "preview": "/tanba/fonts/user/kz-led.ttf",
+    "preview": "/tanba/fonts/preview/kz-led.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1002,7 +1002,7 @@
     "category": "Display",
     "family": "Local KZ Rapier",
     "download": "/tanba/downloads/kz-rapier-let.zip",
-    "preview": "/tanba/fonts/user/kz-rapier-let.ttf",
+    "preview": "/tanba/fonts/preview/kz-rapier-let.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1021,7 +1021,7 @@
     "category": "Handwritten",
     "family": "Local KZ Rosa Marena",
     "download": "/tanba/downloads/kz-rosa-marena.zip",
-    "preview": "/tanba/fonts/user/kz-rosa-marena.ttf",
+    "preview": "/tanba/fonts/preview/kz-rosa-marena.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1040,7 +1040,7 @@
     "category": "Display",
     "family": "Local KZ Zallman Caps",
     "download": "/tanba/downloads/kz-zallman-caps.zip",
-    "preview": "/tanba/fonts/user/kz-zallman-caps.ttf",
+    "preview": "/tanba/fonts/preview/kz-zallman-caps.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1059,7 +1059,7 @@
     "category": "Sans Serif",
     "family": "Local KZ Agency Gothic",
     "download": "/tanba/downloads/kz-agency-gothic.zip",
-    "preview": "/tanba/fonts/user/kz-agency-gothic.otf",
+    "preview": "/tanba/fonts/preview/kz-agency-gothic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1080,7 +1080,7 @@
     "category": "Display",
     "family": "Local KZ Arkhip",
     "download": "/tanba/downloads/kz-arkhip.zip",
-    "preview": "/tanba/fonts/user/kz-arkhip.ttf",
+    "preview": "/tanba/fonts/preview/kz-arkhip.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1099,7 +1099,7 @@
     "category": "Handwritten",
     "family": "Local KZ Carolina",
     "download": "/tanba/downloads/kz-carolina.zip",
-    "preview": "/tanba/fonts/user/kz-carolina.ttf",
+    "preview": "/tanba/fonts/preview/kz-carolina.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1118,7 +1118,7 @@
     "category": "Handwritten",
     "family": "Local KZ Maler",
     "download": "/tanba/downloads/kz-maler.zip",
-    "preview": "/tanba/fonts/user/kz-maler.ttf",
+    "preview": "/tanba/fonts/preview/kz-maler.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1137,7 +1137,7 @@
     "category": "Display",
     "family": "Local KZ PF Monumenta Pro",
     "download": "/tanba/downloads/kz-pf-monumenta-pro.zip",
-    "preview": "/tanba/fonts/user/kz-pf-monumenta-pro.ttf",
+    "preview": "/tanba/fonts/preview/kz-pf-monumenta-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1156,7 +1156,7 @@
     "category": "Display",
     "family": "Local KZ Plakat Titul",
     "download": "/tanba/downloads/kz-plakat-titul.zip",
-    "preview": "/tanba/fonts/user/kz-plakat-titul.ttf",
+    "preview": "/tanba/fonts/preview/kz-plakat-titul.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1175,7 +1175,7 @@
     "category": "Sans Serif",
     "family": "Local KZ Sans Forgetica",
     "download": "/tanba/downloads/kz-sans-forgetica.zip",
-    "preview": "/tanba/fonts/user/kz-sans-forgetica.ttf",
+    "preview": "/tanba/fonts/preview/kz-sans-forgetica.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1194,7 +1194,7 @@
     "category": "Handwritten",
     "family": "Local KZ Toms",
     "download": "/tanba/downloads/kz-toms-handwritten.zip",
-    "preview": "/tanba/fonts/user/kz-toms-handwritten.ttf",
+    "preview": "/tanba/fonts/preview/kz-toms-handwritten.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1213,7 +1213,7 @@
     "category": "Sans Serif",
     "family": "Local Libel Suit",
     "download": "/tanba/downloads/libel-suit.zip",
-    "preview": "/tanba/fonts/user/libel-suit.ttf",
+    "preview": "/tanba/fonts/preview/libel-suit.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1232,7 +1232,7 @@
     "category": "Serif",
     "family": "Local Literal",
     "download": "/tanba/downloads/literal-personal-use.zip",
-    "preview": "/tanba/fonts/user/literal.otf",
+    "preview": "/tanba/fonts/preview/literal.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1251,7 +1251,7 @@
     "category": "Handwritten",
     "family": "Local Miama",
     "download": "/tanba/downloads/miama.zip",
-    "preview": "/tanba/fonts/user/miama.otf",
+    "preview": "/tanba/fonts/preview/miama.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1270,7 +1270,7 @@
     "category": "Sans Serif",
     "family": "Local Monolog",
     "download": "/tanba/downloads/monolog-fonts.zip",
-    "preview": "/tanba/fonts/user/monolog.otf",
+    "preview": "/tanba/fonts/preview/monolog.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1289,7 +1289,7 @@
     "category": "Sans Serif",
     "family": "Local Montserrat",
     "download": "/tanba/downloads/montserrat.zip",
-    "preview": "/tanba/fonts/user/montserrat-local.ttf",
+    "preview": "/tanba/fonts/preview/montserrat-local.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1310,7 +1310,7 @@
     "category": "Sans Serif",
     "family": "Local Neue Frutiger",
     "download": "/tanba/downloads/neue-frutiger-world.zip",
-    "preview": "/tanba/fonts/user/neue-frutiger-world.otf",
+    "preview": "/tanba/fonts/preview/neue-frutiger-world.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1331,7 +1331,7 @@
     "category": "Display",
     "family": "Local Neuropol X",
     "download": "/tanba/downloads/neuropol-x.zip",
-    "preview": "/tanba/fonts/user/neuropol-x.ttf",
+    "preview": "/tanba/fonts/preview/neuropol-x.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1350,7 +1350,7 @@
     "category": "Handwritten",
     "family": "Local Pangolin",
     "download": "/tanba/downloads/pangolin.zip",
-    "preview": "/tanba/fonts/user/pangolin-local.ttf",
+    "preview": "/tanba/fonts/preview/pangolin-local.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1369,7 +1369,7 @@
     "category": "Sans Serif",
     "family": "Local Plumb Kaz",
     "download": "/tanba/downloads/plumb-kaz.zip",
-    "preview": "/tanba/fonts/user/plumb-kaz.ttf",
+    "preview": "/tanba/fonts/preview/plumb-kaz.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1388,7 +1388,7 @@
     "category": "Sans Serif",
     "family": "Local Samsung One",
     "download": "/tanba/downloads/samsung-one-400.zip",
-    "preview": "/tanba/fonts/user/samsung-one-400.ttf",
+    "preview": "/tanba/fonts/preview/samsung-one-400.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1407,7 +1407,7 @@
     "category": "Sans Serif",
     "family": "Local Samsung One",
     "download": "/tanba/downloads/samsung-one-700.zip",
-    "preview": "/tanba/fonts/user/samsung-one-400.ttf",
+    "preview": "/tanba/fonts/preview/samsung-one-400.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1428,7 +1428,7 @@
     "category": "Sans Serif",
     "family": "Local SF Font",
     "download": "/tanba/downloads/sf-font.zip",
-    "preview": "/tanba/fonts/user/sf-font.otf",
+    "preview": "/tanba/fonts/preview/sf-font.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1449,7 +1449,7 @@
     "category": "Display",
     "family": "Local Spectrashell",
     "download": "/tanba/downloads/spectrashell.zip",
-    "preview": "/tanba/fonts/user/spectrashell.ttf",
+    "preview": "/tanba/fonts/preview/spectrashell.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1468,7 +1468,7 @@
     "category": "Handwritten",
     "family": "Local Xiomara",
     "download": "/tanba/downloads/xiomara.zip",
-    "preview": "/tanba/fonts/user/xiomara.ttf",
+    "preview": "/tanba/fonts/preview/xiomara.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1487,7 +1487,7 @@
     "category": "Serif",
     "family": "Local Alice Archive",
     "download": "/tanba/downloads/alice.zip",
-    "preview": "/tanba/fonts/user/alice.ttf",
+    "preview": "/tanba/fonts/preview/alice.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1506,7 +1506,7 @@
     "category": "Sans Serif",
     "family": "Local Arial Black KZ",
     "download": "/tanba/downloads/arial-black-kz.zip",
-    "preview": "/tanba/fonts/user/arial-black-kz.ttf",
+    "preview": "/tanba/fonts/preview/arial-black-kz.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1527,7 +1527,7 @@
     "category": "Display",
     "family": "Local AT Argyn",
     "download": "/tanba/downloads/at-argyn.zip",
-    "preview": "/tanba/fonts/user/at-argyn.ttf",
+    "preview": "/tanba/fonts/preview/at-argyn.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1546,7 +1546,7 @@
     "category": "Handwritten",
     "family": "Local Bickham Bold",
     "download": "/tanba/downloads/bickham-script-pro-bold.zip",
-    "preview": "/tanba/fonts/user/bickham-script-bold.otf",
+    "preview": "/tanba/fonts/preview/bickham-script-bold.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1565,7 +1565,7 @@
     "category": "Handwritten",
     "family": "Local Bickham Regular",
     "download": "/tanba/downloads/bickham-script-pro-regular.zip",
-    "preview": "/tanba/fonts/user/bickham-script-regular.otf",
+    "preview": "/tanba/fonts/preview/bickham-script-regular.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1584,7 +1584,7 @@
     "category": "Handwritten",
     "family": "Local Bickham Semibold",
     "download": "/tanba/downloads/bickham-script-pro-semibold.zip",
-    "preview": "/tanba/fonts/user/bickham-script-semibold.otf",
+    "preview": "/tanba/fonts/preview/bickham-script-semibold.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1603,7 +1603,7 @@
     "category": "Sans Serif",
     "family": "Local Cera Round",
     "download": "/tanba/downloads/ceraroundpro.zip",
-    "preview": "/tanba/fonts/user/ceraroundpro.otf",
+    "preview": "/tanba/fonts/preview/ceraroundpro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1624,7 +1624,7 @@
     "category": "Serif",
     "family": "Local EM Optimisti",
     "download": "/tanba/downloads/em-optimisti.zip",
-    "preview": "/tanba/fonts/user/em-optimisti.otf",
+    "preview": "/tanba/fonts/preview/em-optimisti.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1643,7 +1643,7 @@
     "category": "Display",
     "family": "Local Federico",
     "download": "/tanba/downloads/federico.zip",
-    "preview": "/tanba/fonts/user/federico.otf",
+    "preview": "/tanba/fonts/preview/federico.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1662,7 +1662,7 @@
     "category": "Sans Serif",
     "family": "Local Formular",
     "download": "/tanba/downloads/formular.zip",
-    "preview": "/tanba/fonts/user/formular.otf",
+    "preview": "/tanba/fonts/preview/formular.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1683,7 +1683,7 @@
     "category": "Display",
     "family": "Local Ghostlight",
     "download": "/tanba/downloads/ghostlight.zip",
-    "preview": "/tanba/fonts/user/ghostlight.ttf",
+    "preview": "/tanba/fonts/preview/ghostlight.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1702,7 +1702,7 @@
     "category": "Sans Serif",
     "family": "Local Gotham",
     "download": "/tanba/downloads/gotham.zip",
-    "preview": "/tanba/fonts/user/gotham.ttf",
+    "preview": "/tanba/fonts/preview/gotham.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1723,7 +1723,7 @@
     "category": "Display",
     "family": "Local Gymkhana",
     "download": "/tanba/downloads/gymkhana.zip",
-    "preview": "/tanba/fonts/user/gymkhana.ttf",
+    "preview": "/tanba/fonts/preview/gymkhana.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1742,7 +1742,7 @@
     "category": "Sans Serif",
     "family": "Local Helvetica Neue W1G",
     "download": "/tanba/downloads/helveticaneuew1g.zip",
-    "preview": "/tanba/fonts/user/helveticaneuew1g.otf",
+    "preview": "/tanba/fonts/preview/helveticaneuew1g.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1763,7 +1763,7 @@
     "category": "Display",
     "family": "Local High Voltage",
     "download": "/tanba/downloads/high-voltage-rough.zip",
-    "preview": "/tanba/fonts/user/high-voltage-rough.ttf",
+    "preview": "/tanba/fonts/preview/high-voltage-rough.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1782,7 +1782,7 @@
     "category": "Sans Serif",
     "family": "Local Igra Sans",
     "download": "/tanba/downloads/igrasans.zip",
-    "preview": "/tanba/fonts/user/igrasans.otf",
+    "preview": "/tanba/fonts/preview/igrasans.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1803,7 +1803,7 @@
     "category": "Display",
     "family": "Local KZ Barberry",
     "download": "/tanba/downloads/kz-barberry-letters.zip",
-    "preview": "/tanba/fonts/user/kz-barberry-letters.otf",
+    "preview": "/tanba/fonts/preview/kz-barberry-letters.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1822,7 +1822,7 @@
     "category": "Display",
     "family": "Local KZ Champions",
     "download": "/tanba/downloads/kz-champions.zip",
-    "preview": "/tanba/fonts/user/kz-champions.otf",
+    "preview": "/tanba/fonts/preview/kz-champions.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1841,7 +1841,7 @@
     "category": "Display",
     "family": "Local KZ Copperplate",
     "download": "/tanba/downloads/kz-copperplate.zip",
-    "preview": "/tanba/fonts/user/kz-copperplate.ttf",
+    "preview": "/tanba/fonts/preview/kz-copperplate.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1860,7 +1860,7 @@
     "category": "Handwritten",
     "family": "Local KZ Dusha",
     "download": "/tanba/downloads/kz-dusha.zip",
-    "preview": "/tanba/fonts/user/kz-dusha.ttf",
+    "preview": "/tanba/fonts/preview/kz-dusha.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1879,7 +1879,7 @@
     "category": "Handwritten",
     "family": "Local KZ Margarita",
     "download": "/tanba/downloads/kz-margarita-script.zip",
-    "preview": "/tanba/fonts/user/kz-margarita-script.ttf",
+    "preview": "/tanba/fonts/preview/kz-margarita-script.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1898,7 +1898,7 @@
     "category": "Handwritten",
     "family": "Local KZ You",
     "download": "/tanba/downloads/kz-you-2013.zip",
-    "preview": "/tanba/fonts/user/kz-you-2013.ttf",
+    "preview": "/tanba/fonts/preview/kz-you-2013.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1917,7 +1917,7 @@
     "category": "Sans Serif",
     "family": "Local KZ Block Pro",
     "download": "/tanba/downloads/kzblockprocondensed.zip",
-    "preview": "/tanba/fonts/user/kzblockprocondensed.ttf",
+    "preview": "/tanba/fonts/preview/kzblockprocondensed.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1938,7 +1938,7 @@
     "category": "Display",
     "family": "Local KZ Bolyar",
     "download": "/tanba/downloads/kz-bolyar-ornate.zip",
-    "preview": "/tanba/fonts/user/kz-bolyar-ornate.otf",
+    "preview": "/tanba/fonts/preview/kz-bolyar-ornate.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1957,7 +1957,7 @@
     "category": "Display",
     "family": "Local KZ Bradobrei",
     "download": "/tanba/downloads/kz-bradobrei.zip",
-    "preview": "/tanba/fonts/user/kz-bradobrei.ttf",
+    "preview": "/tanba/fonts/preview/kz-bradobrei.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1976,7 +1976,7 @@
     "category": "Display",
     "family": "Local KZ Furore",
     "download": "/tanba/downloads/kz-furore.zip",
-    "preview": "/tanba/fonts/user/kz-furore.otf",
+    "preview": "/tanba/fonts/preview/kz-furore.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -1997,7 +1997,7 @@
     "category": "Sans Serif",
     "family": "Local KZ London",
     "download": "/tanba/downloads/kz-london.zip",
-    "preview": "/tanba/fonts/user/kz-london.otf",
+    "preview": "/tanba/fonts/preview/kz-london.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2016,7 +2016,7 @@
     "category": "Handwritten",
     "family": "Local KZ Champion Script",
     "download": "/tanba/downloads/kz-pf-champion-script.zip",
-    "preview": "/tanba/fonts/user/kz-pf-champion-script.ttf",
+    "preview": "/tanba/fonts/preview/kz-pf-champion-script.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2035,7 +2035,7 @@
     "category": "Display",
     "family": "Local KZ Piedra",
     "download": "/tanba/downloads/kz-piedra.zip",
-    "preview": "/tanba/fonts/user/kz-piedra.ttf",
+    "preview": "/tanba/fonts/preview/kz-piedra.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2054,7 +2054,7 @@
     "category": "Handwritten",
     "family": "Local La Casa",
     "download": "/tanba/downloads/la-casa.rar",
-    "preview": "/tanba/fonts/user/la-casa.ttf",
+    "preview": "/tanba/fonts/preview/la-casa.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2073,7 +2073,7 @@
     "category": "Sans Serif",
     "family": "Local Logistica",
     "download": "/tanba/downloads/logistica.zip",
-    "preview": "/tanba/fonts/user/logistica.otf",
+    "preview": "/tanba/fonts/preview/logistica.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2092,7 +2092,7 @@
     "category": "Sans Serif",
     "family": "Local Opinion Pro",
     "download": "/tanba/downloads/opinion-pro.zip",
-    "preview": "/tanba/fonts/user/opinion-pro.otf",
+    "preview": "/tanba/fonts/preview/opinion-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2111,7 +2111,7 @@
     "category": "Sans Serif",
     "family": "Local Proxima Nova",
     "download": "/tanba/downloads/proximanova.zip",
-    "preview": "/tanba/fonts/user/proximanova.ttf",
+    "preview": "/tanba/fonts/preview/proximanova.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2132,7 +2132,7 @@
     "category": "Display",
     "family": "Local Really No 2",
     "download": "/tanba/downloads/really-no-2.zip",
-    "preview": "/tanba/fonts/user/really-no-2.ttf",
+    "preview": "/tanba/fonts/preview/really-no-2.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2151,7 +2151,7 @@
     "category": "Display",
     "family": "Local Shnobel",
     "download": "/tanba/downloads/shnobel.zip",
-    "preview": "/tanba/fonts/user/shnobel.otf",
+    "preview": "/tanba/fonts/preview/shnobel.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2170,7 +2170,7 @@
     "category": "Sans Serif",
     "family": "Local Smarty Cond",
     "download": "/tanba/downloads/smartycond.zip",
-    "preview": "/tanba/fonts/user/smartycond.otf",
+    "preview": "/tanba/fonts/preview/smartycond.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2189,7 +2189,7 @@
     "category": "Display",
     "family": "Local Sports World",
     "download": "/tanba/downloads/sportsworld.zip",
-    "preview": "/tanba/fonts/user/sportsworld.ttf",
+    "preview": "/tanba/fonts/preview/sportsworld.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2208,7 +2208,7 @@
     "category": "Display",
     "family": "Local Starseed Pro",
     "download": "/tanba/downloads/starseedpro.zip",
-    "preview": "/tanba/fonts/user/starseedpro.ttf",
+    "preview": "/tanba/fonts/preview/starseedpro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2227,7 +2227,7 @@
     "category": "Display",
     "family": "Local Supermolot",
     "download": "/tanba/downloads/supermolot.zip",
-    "preview": "/tanba/fonts/user/supermolot.otf",
+    "preview": "/tanba/fonts/preview/supermolot.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2248,7 +2248,7 @@
     "category": "Display",
     "family": "Local TEAM",
     "download": "/tanba/downloads/team.zip",
-    "preview": "/tanba/fonts/user/team.otf",
+    "preview": "/tanba/fonts/preview/team.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2267,7 +2267,7 @@
     "category": "Handwritten",
     "family": "Local TM Vinograd",
     "download": "/tanba/downloads/tm-vinograd.zip",
-    "preview": "/tanba/fonts/user/tm-vinograd.ttf",
+    "preview": "/tanba/fonts/preview/tm-vinograd.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2286,7 +2286,7 @@
     "category": "Display",
     "family": "Local TypeFetish",
     "download": "/tanba/downloads/typefetish.zip",
-    "preview": "/tanba/fonts/user/typefetish.ttf",
+    "preview": "/tanba/fonts/preview/typefetish.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2305,7 +2305,7 @@
     "category": "Handwritten",
     "family": "Local Ventura Script",
     "download": "/tanba/downloads/ventura-script.zip",
-    "preview": "/tanba/fonts/user/ventura-script.ttf",
+    "preview": "/tanba/fonts/preview/ventura-script.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2324,7 +2324,7 @@
     "category": "Serif",
     "family": "Local Vollkorn Archive",
     "download": "/tanba/downloads/vollkorn-4-012.zip",
-    "preview": "/tanba/fonts/user/vollkorn-4-012.ttf",
+    "preview": "/tanba/fonts/preview/vollkorn-4-012.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2343,7 +2343,7 @@
     "category": "Sans Serif",
     "family": "Local Wayfinding Sans",
     "download": "/tanba/downloads/wayfindingsanspro.zip",
-    "preview": "/tanba/fonts/user/wayfindingsanspro.ttf",
+    "preview": "/tanba/fonts/preview/wayfindingsanspro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2364,7 +2364,7 @@
     "category": "Display",
     "family": "Batch4 akzentica-4f",
     "download": "/tanba/downloads/akzentica-4f.zip",
-    "preview": "/tanba/fonts/user/akzentica-4f.ttf",
+    "preview": "/tanba/fonts/preview/akzentica-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2383,7 +2383,7 @@
     "category": "Display",
     "family": "Batch4 allioideae",
     "download": "/tanba/downloads/allioideae.zip",
-    "preview": "/tanba/fonts/user/allioideae.otf",
+    "preview": "/tanba/fonts/preview/allioideae.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2402,7 +2402,7 @@
     "category": "Sans Serif",
     "family": "Batch4 anfisa-grotesk",
     "download": "/tanba/downloads/anfisa-grotesk.zip",
-    "preview": "/tanba/fonts/user/anfisa-grotesk.ttf",
+    "preview": "/tanba/fonts/preview/anfisa-grotesk.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2421,7 +2421,7 @@
     "category": "Display",
     "family": "Batch4 archive-6",
     "download": "/tanba/downloads/archive-6.zip",
-    "preview": "/tanba/fonts/user/archive-6.otf",
+    "preview": "/tanba/fonts/preview/archive-6.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2440,7 +2440,7 @@
     "category": "Display",
     "family": "Batch4 attentica-4f-ultralight",
     "download": "/tanba/downloads/attentica-4f-ultralight.zip",
-    "preview": "/tanba/fonts/user/attentica-4f-ultralight.otf",
+    "preview": "/tanba/fonts/preview/attentica-4f-ultralight.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2459,7 +2459,7 @@
     "category": "Display",
     "family": "Batch4 bayadera-4f",
     "download": "/tanba/downloads/bayadera-4f.zip",
-    "preview": "/tanba/fonts/user/bayadera-4f.ttf",
+    "preview": "/tanba/fonts/preview/bayadera-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2478,7 +2478,7 @@
     "category": "Display",
     "family": "Batch4 bellopro",
     "download": "/tanba/downloads/bellopro.zip",
-    "preview": "/tanba/fonts/user/bellopro.otf",
+    "preview": "/tanba/fonts/preview/bellopro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2497,7 +2497,7 @@
     "category": "Display",
     "family": "Batch4 black-rose",
     "download": "/tanba/downloads/black-rose.zip",
-    "preview": "/tanba/fonts/user/black-rose.ttf",
+    "preview": "/tanba/fonts/preview/black-rose.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2516,7 +2516,7 @@
     "category": "Display",
     "family": "Batch4 blondefraktur",
     "download": "/tanba/downloads/blondefraktur.zip",
-    "preview": "/tanba/fonts/user/blondefraktur.otf",
+    "preview": "/tanba/fonts/preview/blondefraktur.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2535,7 +2535,7 @@
     "category": "Display",
     "family": "Batch4 bravo",
     "download": "/tanba/downloads/bravo.zip",
-    "preview": "/tanba/fonts/user/bravo.ttf",
+    "preview": "/tanba/fonts/preview/bravo.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2554,7 +2554,7 @@
     "category": "Serif",
     "family": "Batch4 brioni-pro",
     "download": "/tanba/downloads/brioni-pro.zip",
-    "preview": "/tanba/fonts/user/brioni-pro.otf",
+    "preview": "/tanba/fonts/preview/brioni-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2573,7 +2573,7 @@
     "category": "Sans Serif",
     "family": "Batch4 century-gothic",
     "download": "/tanba/downloads/century-gothic.zip",
-    "preview": "/tanba/fonts/user/century-gothic.ttf",
+    "preview": "/tanba/fonts/preview/century-gothic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2592,7 +2592,7 @@
     "category": "Sans Serif",
     "family": "Batch4 cera-stencil-pro-trial-family",
     "download": "/tanba/downloads/cera-stencil-pro-trial-family.zip",
-    "preview": "/tanba/fonts/user/cera-stencil-pro-trial-family.otf",
+    "preview": "/tanba/fonts/preview/cera-stencil-pro-trial-family.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2611,7 +2611,7 @@
     "category": "Display",
     "family": "Batch4 chunkfiveex",
     "download": "/tanba/downloads/chunkfiveex.zip",
-    "preview": "/tanba/fonts/user/chunkfiveex.ttf",
+    "preview": "/tanba/fonts/preview/chunkfiveex.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2630,7 +2630,7 @@
     "category": "Display",
     "family": "Batch4 classico-urw",
     "download": "/tanba/downloads/classico-urw.rar",
-    "preview": "/tanba/fonts/user/classico-urw.otf",
+    "preview": "/tanba/fonts/preview/classico-urw.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2649,7 +2649,7 @@
     "category": "Handwritten",
     "family": "Batch4 coalhandluke-pro",
     "download": "/tanba/downloads/coalhandluke-pro.zip",
-    "preview": "/tanba/fonts/user/coalhandluke-pro.otf",
+    "preview": "/tanba/fonts/preview/coalhandluke-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2668,7 +2668,7 @@
     "category": "Display",
     "family": "Batch4 cocorp",
     "download": "/tanba/downloads/cocorp.zip",
-    "preview": "/tanba/fonts/user/cocorp.ttf",
+    "preview": "/tanba/fonts/preview/cocorp.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2687,7 +2687,7 @@
     "category": "Sans Serif",
     "family": "Batch4 codename-coder-free-4f-bold",
     "download": "/tanba/downloads/codename-coder-free-4f-bold.rar",
-    "preview": "/tanba/fonts/user/codename-coder-free-4f-bold.otf",
+    "preview": "/tanba/fonts/preview/codename-coder-free-4f-bold.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2706,7 +2706,7 @@
     "category": "Sans Serif",
     "family": "Batch4 comfortaa",
     "download": "/tanba/downloads/comfortaa.zip",
-    "preview": "/tanba/fonts/user/comfortaa.ttf",
+    "preview": "/tanba/fonts/preview/comfortaa.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2727,7 +2727,7 @@
     "category": "Serif",
     "family": "Batch4 cordalecorp",
     "download": "/tanba/downloads/cordalecorp.zip",
-    "preview": "/tanba/fonts/user/cordalecorp.ttf",
+    "preview": "/tanba/fonts/preview/cordalecorp.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2746,7 +2746,7 @@
     "category": "Display",
     "family": "Batch4 cutoff-pro",
     "download": "/tanba/downloads/cutoff-pro.rar",
-    "preview": "/tanba/fonts/user/cutoff-pro.ttf",
+    "preview": "/tanba/fonts/preview/cutoff-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2765,7 +2765,7 @@
     "category": "Display",
     "family": "Batch4 days",
     "download": "/tanba/downloads/days.zip",
-    "preview": "/tanba/fonts/user/days.ttf",
+    "preview": "/tanba/fonts/preview/days.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2786,7 +2786,7 @@
     "category": "Display",
     "family": "Batch4 demosfen",
     "download": "/tanba/downloads/demosfen.zip",
-    "preview": "/tanba/fonts/user/demosfen.ttf",
+    "preview": "/tanba/fonts/preview/demosfen.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2805,7 +2805,7 @@
     "category": "Handwritten",
     "family": "Batch4 dessertscript",
     "download": "/tanba/downloads/dessertscript.zip",
-    "preview": "/tanba/fonts/user/dessertscript.ttf",
+    "preview": "/tanba/fonts/preview/dessertscript.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2824,7 +2824,7 @@
     "category": "Serif",
     "family": "Batch4 didona",
     "download": "/tanba/downloads/didona.zip",
-    "preview": "/tanba/fonts/user/didona.otf",
+    "preview": "/tanba/fonts/preview/didona.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2843,7 +2843,7 @@
     "category": "Display",
     "family": "Batch4 economica-cyrillic-pro",
     "download": "/tanba/downloads/economica-cyrillic-pro.zip",
-    "preview": "/tanba/fonts/user/economica-cyrillic-pro.otf",
+    "preview": "/tanba/fonts/preview/economica-cyrillic-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2862,7 +2862,7 @@
     "category": "Display",
     "family": "Batch4 eirik-raude",
     "download": "/tanba/downloads/eirik-raude.zip",
-    "preview": "/tanba/fonts/user/eirik-raude.ttf",
+    "preview": "/tanba/fonts/preview/eirik-raude.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2881,7 +2881,7 @@
     "category": "Display",
     "family": "Batch4 elevon",
     "download": "/tanba/downloads/elevon.zip",
-    "preview": "/tanba/fonts/user/elevon.otf",
+    "preview": "/tanba/fonts/preview/elevon.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2900,7 +2900,7 @@
     "category": "Display",
     "family": "Batch4 engine",
     "download": "/tanba/downloads/engine.zip",
-    "preview": "/tanba/fonts/user/engine.otf",
+    "preview": "/tanba/fonts/preview/engine.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2921,7 +2921,7 @@
     "category": "Handwritten",
     "family": "Batch4 englishscript",
     "download": "/tanba/downloads/englishscript.zip",
-    "preview": "/tanba/fonts/user/englishscript.ttf",
+    "preview": "/tanba/fonts/preview/englishscript.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2940,7 +2940,7 @@
     "category": "Display",
     "family": "Batch4 febrotesk-4f",
     "download": "/tanba/downloads/febrotesk-4f.zip",
-    "preview": "/tanba/fonts/user/febrotesk-4f.otf",
+    "preview": "/tanba/fonts/preview/febrotesk-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2959,7 +2959,7 @@
     "category": "Serif",
     "family": "Batch4 ff-meta-serif-pro",
     "download": "/tanba/downloads/ff-meta-serif-pro.rar",
-    "preview": "/tanba/fonts/user/ff-meta-serif-pro.otf",
+    "preview": "/tanba/fonts/preview/ff-meta-serif-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2978,7 +2978,7 @@
     "category": "Serif",
     "family": "Batch4 ff-seropro",
     "download": "/tanba/downloads/ff-seropro.rar",
-    "preview": "/tanba/fonts/user/ff-seropro.otf",
+    "preview": "/tanba/fonts/preview/ff-seropro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -2997,7 +2997,7 @@
     "category": "Serif",
     "family": "Batch4 ff-unit-slab-offc-pro",
     "download": "/tanba/downloads/ff-unit-slab-offc-pro.rar",
-    "preview": "/tanba/fonts/user/ff-unit-slab-offc-pro.ttf",
+    "preview": "/tanba/fonts/preview/ff-unit-slab-offc-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3016,7 +3016,7 @@
     "category": "Sans Serif",
     "family": "Batch4 ffmetapro",
     "download": "/tanba/downloads/ffmetapro.zip",
-    "preview": "/tanba/fonts/user/ffmetapro.otf",
+    "preview": "/tanba/fonts/preview/ffmetapro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3035,7 +3035,7 @@
     "category": "Display",
     "family": "Batch4 fs-joeypro",
     "download": "/tanba/downloads/fs-joeypro.zip",
-    "preview": "/tanba/fonts/user/fs-joeypro.otf",
+    "preview": "/tanba/fonts/preview/fs-joeypro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3054,7 +3054,7 @@
     "category": "Handwritten",
     "family": "Batch4 globus-cursive",
     "download": "/tanba/downloads/globus-cursive.zip",
-    "preview": "/tanba/fonts/user/globus-cursive.otf",
+    "preview": "/tanba/fonts/preview/globus-cursive.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3073,7 +3073,7 @@
     "category": "Serif",
     "family": "Batch4 goudy-trajan",
     "download": "/tanba/downloads/goudy-trajan.zip",
-    "preview": "/tanba/fonts/user/goudy-trajan.otf",
+    "preview": "/tanba/fonts/preview/goudy-trajan.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3092,7 +3092,7 @@
     "category": "Display",
     "family": "Batch4 graphiquepronext",
     "download": "/tanba/downloads/graphiquepronext.zip",
-    "preview": "/tanba/fonts/user/graphiquepronext.otf",
+    "preview": "/tanba/fonts/preview/graphiquepronext.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3111,7 +3111,7 @@
     "category": "Serif",
     "family": "Batch4 graublauslab",
     "download": "/tanba/downloads/graublauslab.zip",
-    "preview": "/tanba/fonts/user/graublauslab.otf",
+    "preview": "/tanba/fonts/preview/graublauslab.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3130,7 +3130,7 @@
     "category": "Display",
     "family": "Batch4 hagin",
     "download": "/tanba/downloads/hagin.zip",
-    "preview": "/tanba/fonts/user/hagin.otf",
+    "preview": "/tanba/fonts/preview/hagin.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3149,7 +3149,7 @@
     "category": "Display",
     "family": "Batch4 hamerslag",
     "download": "/tanba/downloads/hamerslag.zip",
-    "preview": "/tanba/fonts/user/hamerslag.otf",
+    "preview": "/tanba/fonts/preview/hamerslag.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3168,7 +3168,7 @@
     "category": "Display",
     "family": "Batch4 impactkz",
     "download": "/tanba/downloads/impactkz.zip",
-    "preview": "/tanba/fonts/user/impactkz.ttf",
+    "preview": "/tanba/fonts/preview/impactkz.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3189,7 +3189,7 @@
     "category": "Display",
     "family": "Batch4 intro",
     "download": "/tanba/downloads/intro.zip",
-    "preview": "/tanba/fonts/user/intro.otf",
+    "preview": "/tanba/fonts/preview/intro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3210,7 +3210,7 @@
     "category": "Display",
     "family": "Batch4 isar-cat",
     "download": "/tanba/downloads/isar-cat.zip",
-    "preview": "/tanba/fonts/user/isar-cat.ttf",
+    "preview": "/tanba/fonts/preview/isar-cat.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3229,7 +3229,7 @@
     "category": "Display",
     "family": "Batch4 iskra",
     "download": "/tanba/downloads/iskra.zip",
-    "preview": "/tanba/fonts/user/iskra.otf",
+    "preview": "/tanba/fonts/preview/iskra.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3248,7 +3248,7 @@
     "category": "Display",
     "family": "Batch4 itcnewveljovicpro",
     "download": "/tanba/downloads/itcnewveljovicpro.zip",
-    "preview": "/tanba/fonts/user/itcnewveljovicpro.otf",
+    "preview": "/tanba/fonts/preview/itcnewveljovicpro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3267,7 +3267,7 @@
     "category": "Display",
     "family": "Batch4 josefk-paneuropean",
     "download": "/tanba/downloads/josefk-paneuropean.zip",
-    "preview": "/tanba/fonts/user/josefk-paneuropean.ttf",
+    "preview": "/tanba/fonts/preview/josefk-paneuropean.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3286,7 +3286,7 @@
     "category": "Handwritten",
     "family": "Batch4 kaligrafica",
     "download": "/tanba/downloads/kaligrafica.zip",
-    "preview": "/tanba/fonts/user/kaligrafica.ttf",
+    "preview": "/tanba/fonts/preview/kaligrafica.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3305,7 +3305,7 @@
     "category": "Display",
     "family": "Batch4 kamenicac",
     "download": "/tanba/downloads/kamenicac.zip",
-    "preview": "/tanba/fonts/user/kamenicac.ttf",
+    "preview": "/tanba/fonts/preview/kamenicac.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3324,7 +3324,7 @@
     "category": "Display",
     "family": "Batch4 kankin-1",
     "download": "/tanba/downloads/kankin-1.zip",
-    "preview": "/tanba/fonts/user/kankin-1.ttf",
+    "preview": "/tanba/fonts/preview/kankin-1.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3343,7 +3343,7 @@
     "category": "Display",
     "family": "Batch4 kankin",
     "download": "/tanba/downloads/kankin.zip",
-    "preview": "/tanba/fonts/user/kankin.ttf",
+    "preview": "/tanba/fonts/preview/kankin.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3362,7 +3362,7 @@
     "category": "Display",
     "family": "Batch4 kanyon",
     "download": "/tanba/downloads/kanyon.zip",
-    "preview": "/tanba/fonts/user/kanyon.ttf",
+    "preview": "/tanba/fonts/preview/kanyon.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3381,7 +3381,7 @@
     "category": "Sans Serif",
     "family": "Batch4 kelsonsans",
     "download": "/tanba/downloads/kelsonsans.zip",
-    "preview": "/tanba/fonts/user/kelsonsans.otf",
+    "preview": "/tanba/fonts/preview/kelsonsans.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3400,7 +3400,7 @@
     "category": "Display",
     "family": "Batch4 kremlin-pro",
     "download": "/tanba/downloads/kremlin-pro.zip",
-    "preview": "/tanba/fonts/user/kremlin-pro.otf",
+    "preview": "/tanba/fonts/preview/kremlin-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3419,7 +3419,7 @@
     "category": "Display",
     "family": "Batch4 kz-american-captain",
     "download": "/tanba/downloads/kz-american-captain.zip",
-    "preview": "/tanba/fonts/user/kz-american-captain.ttf",
+    "preview": "/tanba/fonts/preview/kz-american-captain.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3438,7 +3438,7 @@
     "category": "Handwritten",
     "family": "Batch4 kz-andantino-script",
     "download": "/tanba/downloads/kz-andantino-script.zip",
-    "preview": "/tanba/fonts/user/kz-andantino-script.ttf",
+    "preview": "/tanba/fonts/preview/kz-andantino-script.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3457,7 +3457,7 @@
     "category": "Serif",
     "family": "Batch4 kz-book-antiqua",
     "download": "/tanba/downloads/kz-book-antiqua.zip",
-    "preview": "/tanba/fonts/user/kz-book-antiqua.ttf",
+    "preview": "/tanba/fonts/preview/kz-book-antiqua.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3476,7 +3476,7 @@
     "category": "Display",
     "family": "Batch4 kz-ceremonious",
     "download": "/tanba/downloads/kz-ceremonious.zip",
-    "preview": "/tanba/fonts/user/kz-ceremonious.ttf",
+    "preview": "/tanba/fonts/preview/kz-ceremonious.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3495,7 +3495,7 @@
     "category": "Sans Serif",
     "family": "Batch4 kz-freeset",
     "download": "/tanba/downloads/kz-freeset.zip",
-    "preview": "/tanba/fonts/user/kz-freeset.ttf",
+    "preview": "/tanba/fonts/preview/kz-freeset.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3514,7 +3514,7 @@
     "category": "Sans Serif",
     "family": "Batch4 kz-quadrat-grotesk",
     "download": "/tanba/downloads/kz-quadrat-grotesk.zip",
-    "preview": "/tanba/fonts/user/kz-quadrat-grotesk.ttf",
+    "preview": "/tanba/fonts/preview/kz-quadrat-grotesk.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3533,7 +3533,7 @@
     "category": "Sans Serif",
     "family": "Batch4 kz-trebuchet-ms",
     "download": "/tanba/downloads/kz-trebuchet-ms.zip",
-    "preview": "/tanba/fonts/user/kz-trebuchet-ms.ttf",
+    "preview": "/tanba/fonts/preview/kz-trebuchet-ms.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3552,7 +3552,7 @@
     "category": "Handwritten",
     "family": "Batch4 kzgoodvibes",
     "download": "/tanba/downloads/kzgoodvibes.zip",
-    "preview": "/tanba/fonts/user/kzgoodvibes.ttf",
+    "preview": "/tanba/fonts/preview/kzgoodvibes.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3571,7 +3571,7 @@
     "category": "Display",
     "family": "Batch4 laqonic-4f-unicase",
     "download": "/tanba/downloads/laqonic-4f-unicase.zip",
-    "preview": "/tanba/fonts/user/laqonic-4f-unicase.ttf",
+    "preview": "/tanba/fonts/preview/laqonic-4f-unicase.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3590,7 +3590,7 @@
     "category": "Handwritten",
     "family": "Batch4 lavanderiac",
     "download": "/tanba/downloads/lavanderiac.zip",
-    "preview": "/tanba/fonts/user/lavanderiac.ttf",
+    "preview": "/tanba/fonts/preview/lavanderiac.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3609,7 +3609,7 @@
     "category": "Display",
     "family": "Batch4 lionelofparis",
     "download": "/tanba/downloads/lionelofparis.zip",
-    "preview": "/tanba/fonts/user/lionelofparis.ttf",
+    "preview": "/tanba/fonts/preview/lionelofparis.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3628,7 +3628,7 @@
     "category": "Display",
     "family": "Batch4 marta",
     "download": "/tanba/downloads/marta.zip",
-    "preview": "/tanba/fonts/user/marta.otf",
+    "preview": "/tanba/fonts/preview/marta.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3647,7 +3647,7 @@
     "category": "Display",
     "family": "Batch4 medieval-english",
     "download": "/tanba/downloads/medieval-english.zip",
-    "preview": "/tanba/fonts/user/medieval-english.ttf",
+    "preview": "/tanba/fonts/preview/medieval-english.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3666,7 +3666,7 @@
     "category": "Serif",
     "family": "Batch4 merriweather",
     "download": "/tanba/downloads/merriweather.zip",
-    "preview": "/tanba/fonts/user/merriweather.ttf",
+    "preview": "/tanba/fonts/preview/merriweather.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3685,7 +3685,7 @@
     "category": "Display",
     "family": "Batch4 mir",
     "download": "/tanba/downloads/mir.zip",
-    "preview": "/tanba/fonts/user/mir.otf",
+    "preview": "/tanba/fonts/preview/mir.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3704,7 +3704,7 @@
     "category": "Sans Serif",
     "family": "Batch4 movavi-grotesque-black",
     "download": "/tanba/downloads/movavi-grotesque-black.zip",
-    "preview": "/tanba/fonts/user/movavi-grotesque-black.ttf",
+    "preview": "/tanba/fonts/preview/movavi-grotesque-black.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3725,7 +3725,7 @@
     "category": "Handwritten",
     "family": "Batch4 mrsonion",
     "download": "/tanba/downloads/mrsonion.zip",
-    "preview": "/tanba/fonts/user/mrsonion.otf",
+    "preview": "/tanba/fonts/preview/mrsonion.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3744,7 +3744,7 @@
     "category": "Serif",
     "family": "Batch4 museo-cyrillic",
     "download": "/tanba/downloads/museo-cyrillic.rar",
-    "preview": "/tanba/fonts/user/museo-cyrillic.otf",
+    "preview": "/tanba/fonts/preview/museo-cyrillic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3763,7 +3763,7 @@
     "category": "Sans Serif",
     "family": "Batch4 museosanscyrillic",
     "download": "/tanba/downloads/museosanscyrillic.rar",
-    "preview": "/tanba/fonts/user/museosanscyrillic.otf",
+    "preview": "/tanba/fonts/preview/museosanscyrillic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3782,7 +3782,7 @@
     "category": "Display",
     "family": "Batch4 narziss-pro-cyrillic",
     "download": "/tanba/downloads/narziss-pro-cyrillic.zip",
-    "preview": "/tanba/fonts/user/narziss-pro-cyrillic.otf",
+    "preview": "/tanba/fonts/preview/narziss-pro-cyrillic.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3801,7 +3801,7 @@
     "category": "Display",
     "family": "Batch4 nautilus-pompilius",
     "download": "/tanba/downloads/nautilus-pompilius.zip",
-    "preview": "/tanba/fonts/user/nautilus-pompilius.otf",
+    "preview": "/tanba/fonts/preview/nautilus-pompilius.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3820,7 +3820,7 @@
     "category": "Sans Serif",
     "family": "Batch4 neris",
     "download": "/tanba/downloads/neris.zip",
-    "preview": "/tanba/fonts/user/neris.otf",
+    "preview": "/tanba/fonts/preview/neris.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3839,7 +3839,7 @@
     "category": "Handwritten",
     "family": "Batch4 nickainley",
     "download": "/tanba/downloads/nickainley.zip",
-    "preview": "/tanba/fonts/user/nickainley.ttf",
+    "preview": "/tanba/fonts/preview/nickainley.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3858,7 +3858,7 @@
     "category": "Display",
     "family": "Batch4 nivea",
     "download": "/tanba/downloads/nivea.rar",
-    "preview": "/tanba/fonts/user/nivea.otf",
+    "preview": "/tanba/fonts/preview/nivea.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3877,7 +3877,7 @@
     "category": "Sans Serif",
     "family": "Batch4 noto-sans",
     "download": "/tanba/downloads/noto-sans.zip",
-    "preview": "/tanba/fonts/user/noto-sans.ttf",
+    "preview": "/tanba/fonts/preview/noto-sans.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3898,7 +3898,7 @@
     "category": "Serif",
     "family": "Batch4 noto-serif",
     "download": "/tanba/downloads/noto-serif.zip",
-    "preview": "/tanba/fonts/user/noto-serif.ttf",
+    "preview": "/tanba/fonts/preview/noto-serif.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3917,7 +3917,7 @@
     "category": "Display",
     "family": "Batch4 obelix-pro",
     "download": "/tanba/downloads/obelix-pro.zip",
-    "preview": "/tanba/fonts/user/obelix-pro.ttf",
+    "preview": "/tanba/fonts/preview/obelix-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3936,7 +3936,7 @@
     "category": "Display",
     "family": "Batch4 onlyyoupro",
     "download": "/tanba/downloads/onlyyoupro.zip",
-    "preview": "/tanba/fonts/user/onlyyoupro.otf",
+    "preview": "/tanba/fonts/preview/onlyyoupro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3955,7 +3955,7 @@
     "category": "Display",
     "family": "Batch4 onlyyousexy",
     "download": "/tanba/downloads/onlyyousexy.zip",
-    "preview": "/tanba/fonts/user/onlyyousexy.otf",
+    "preview": "/tanba/fonts/preview/onlyyousexy.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3974,7 +3974,7 @@
     "category": "Display",
     "family": "Batch4 parmamtprocyr",
     "download": "/tanba/downloads/parmamtprocyr.zip",
-    "preview": "/tanba/fonts/user/parmamtprocyr.otf",
+    "preview": "/tanba/fonts/preview/parmamtprocyr.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -3993,7 +3993,7 @@
     "category": "Sans Serif",
     "family": "Batch4 play",
     "download": "/tanba/downloads/play.zip",
-    "preview": "/tanba/fonts/user/play.ttf",
+    "preview": "/tanba/fonts/preview/play.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4012,7 +4012,7 @@
     "category": "Display",
     "family": "Batch4 poiretone",
     "download": "/tanba/downloads/poiretone.zip",
-    "preview": "/tanba/fonts/user/poiretone.ttf",
+    "preview": "/tanba/fonts/preview/poiretone.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4031,7 +4031,7 @@
     "category": "Sans Serif",
     "family": "Batch4 pt-sans-pro",
     "download": "/tanba/downloads/pt-sans-pro.zip",
-    "preview": "/tanba/fonts/user/pt-sans-pro.otf",
+    "preview": "/tanba/fonts/preview/pt-sans-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4052,7 +4052,7 @@
     "category": "Display",
     "family": "Batch4 qargotesk-4f",
     "download": "/tanba/downloads/qargotesk-4f.zip",
-    "preview": "/tanba/fonts/user/qargotesk-4f.otf",
+    "preview": "/tanba/fonts/preview/qargotesk-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4071,7 +4071,7 @@
     "category": "Serif",
     "family": "Batch4 rodeqaslab-4f",
     "download": "/tanba/downloads/rodeqaslab-4f.zip",
-    "preview": "/tanba/fonts/user/rodeqaslab-4f.ttf",
+    "preview": "/tanba/fonts/preview/rodeqaslab-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4090,7 +4090,7 @@
     "category": "Sans Serif",
     "family": "Batch4 ropasanspro",
     "download": "/tanba/downloads/ropasanspro.zip",
-    "preview": "/tanba/fonts/user/ropasanspro.otf",
+    "preview": "/tanba/fonts/preview/ropasanspro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4109,7 +4109,7 @@
     "category": "Display",
     "family": "Batch4 rotisw1g",
     "download": "/tanba/downloads/rotisw1g.zip",
-    "preview": "/tanba/fonts/user/rotisw1g.otf",
+    "preview": "/tanba/fonts/preview/rotisw1g.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4128,7 +4128,7 @@
     "category": "Display",
     "family": "Batch4 sandbox",
     "download": "/tanba/downloads/sandbox.zip",
-    "preview": "/tanba/fonts/user/sandbox.ttf",
+    "preview": "/tanba/fonts/preview/sandbox.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4147,7 +4147,7 @@
     "category": "Display",
     "family": "Batch4 shihan",
     "download": "/tanba/downloads/shihan.zip",
-    "preview": "/tanba/fonts/user/shihan.otf",
+    "preview": "/tanba/fonts/preview/shihan.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4166,7 +4166,7 @@
     "category": "Serif",
     "family": "Batch4 skolar",
     "download": "/tanba/downloads/skolar.zip",
-    "preview": "/tanba/fonts/user/skolar.otf",
+    "preview": "/tanba/fonts/preview/skolar.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4185,7 +4185,7 @@
     "category": "Display",
     "family": "Batch4 sreda",
     "download": "/tanba/downloads/sreda.zip",
-    "preview": "/tanba/fonts/user/sreda.ttf",
+    "preview": "/tanba/fonts/preview/sreda.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4204,7 +4204,7 @@
     "category": "Display",
     "family": "Batch4 sutturah-cyrillic-fat",
     "download": "/tanba/downloads/sutturah-cyrillic-fat.zip",
-    "preview": "/tanba/fonts/user/sutturah-cyrillic-fat.otf",
+    "preview": "/tanba/fonts/preview/sutturah-cyrillic-fat.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4223,7 +4223,7 @@
     "category": "Display",
     "family": "Batch4 tavolga",
     "download": "/tanba/downloads/tavolga.zip",
-    "preview": "/tanba/fonts/user/tavolga.ttf",
+    "preview": "/tanba/fonts/preview/tavolga.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4242,7 +4242,7 @@
     "category": "Display",
     "family": "Batch4 telingaterdisplay",
     "download": "/tanba/downloads/telingaterdisplay.zip",
-    "preview": "/tanba/fonts/user/telingaterdisplay.otf",
+    "preview": "/tanba/fonts/preview/telingaterdisplay.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4261,7 +4261,7 @@
     "category": "Serif",
     "family": "Batch4 tinos",
     "download": "/tanba/downloads/tinos.zip",
-    "preview": "/tanba/fonts/user/tinos.ttf",
+    "preview": "/tanba/fonts/preview/tinos.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4280,7 +4280,7 @@
     "category": "Sans Serif",
     "family": "Batch4 tondocorp",
     "download": "/tanba/downloads/tondocorp.zip",
-    "preview": "/tanba/fonts/user/tondocorp.ttf",
+    "preview": "/tanba/fonts/preview/tondocorp.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4299,7 +4299,7 @@
     "category": "Display",
     "family": "Batch4 ttwpgott",
     "download": "/tanba/downloads/ttwpgott.zip",
-    "preview": "/tanba/fonts/user/ttwpgott.ttf",
+    "preview": "/tanba/fonts/preview/ttwpgott.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4318,7 +4318,7 @@
     "category": "Sans Serif",
     "family": "Batch4 ubuntu",
     "download": "/tanba/downloads/ubuntu.zip",
-    "preview": "/tanba/fonts/user/ubuntu.ttf",
+    "preview": "/tanba/fonts/preview/ubuntu.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4337,7 +4337,7 @@
     "category": "Display",
     "family": "Batch4 ultimapro",
     "download": "/tanba/downloads/ultimapro.zip",
-    "preview": "/tanba/fonts/user/ultimapro.otf",
+    "preview": "/tanba/fonts/preview/ultimapro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4356,7 +4356,7 @@
     "category": "Handwritten",
     "family": "Batch4 verveine-corp",
     "download": "/tanba/downloads/verveine-corp.zip",
-    "preview": "/tanba/fonts/user/verveine-corp.otf",
+    "preview": "/tanba/fonts/preview/verveine-corp.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4375,7 +4375,7 @@
     "category": "Display",
     "family": "Batch4 waldemar-4f",
     "download": "/tanba/downloads/waldemar-4f.zip",
-    "preview": "/tanba/fonts/user/waldemar-4f.otf",
+    "preview": "/tanba/fonts/preview/waldemar-4f.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4394,7 +4394,7 @@
     "category": "Display",
     "family": "Batch4 artica-rough-pro-light",
     "download": "/tanba/downloads/artica-rough-pro-light.zip",
-    "preview": "/tanba/fonts/user/artica-rough-pro-light.ttf",
+    "preview": "/tanba/fonts/preview/artica-rough-pro-light.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4413,7 +4413,7 @@
     "category": "Serif",
     "family": "Batch4 forum-regular",
     "download": "/tanba/downloads/forum-regular.zip",
-    "preview": "/tanba/fonts/user/forum-regular.ttf",
+    "preview": "/tanba/fonts/preview/forum-regular.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4432,7 +4432,7 @@
     "category": "Display",
     "family": "Batch4 fry-pro",
     "download": "/tanba/downloads/fry-pro.zip",
-    "preview": "/tanba/fonts/user/fry-pro.otf",
+    "preview": "/tanba/fonts/preview/fry-pro.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4451,7 +4451,7 @@
     "category": "Display",
     "family": "Batch4 kz-dagger",
     "download": "/tanba/downloads/kz-dagger.zip",
-    "preview": "/tanba/fonts/user/kz-dagger.ttf",
+    "preview": "/tanba/fonts/preview/kz-dagger.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4470,7 +4470,7 @@
     "category": "Display",
     "family": "Batch4 kz-mateur",
     "download": "/tanba/downloads/kz-mateur.zip",
-    "preview": "/tanba/fonts/user/kz-mateur.ttf",
+    "preview": "/tanba/fonts/preview/kz-mateur.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4489,7 +4489,7 @@
     "category": "Handwritten",
     "family": "Batch4 kzbrusher",
     "download": "/tanba/downloads/kzbrusher.zip",
-    "preview": "/tanba/fonts/user/kzbrusher.ttf",
+    "preview": "/tanba/fonts/preview/kzbrusher.woff2",
     "license": "check",
     "local": true,
     "similar": [
@@ -4508,7 +4508,7 @@
     "category": "Display",
     "family": "Batch4 kzsupercell-magic",
     "download": "/tanba/downloads/kzsupercell-magic.zip",
-    "preview": "/tanba/fonts/user/kzsupercell-magic.ttf",
+    "preview": "/tanba/fonts/preview/kzsupercell-magic.woff2",
     "license": "check",
     "local": true,
     "similar": [

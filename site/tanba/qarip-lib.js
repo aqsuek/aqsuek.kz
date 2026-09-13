@@ -174,7 +174,10 @@
       return true;
     }
     try {
-      const face = new FontFace(fam, `url("${src}")`, { display: "swap" });
+      const ext = (src.split(".").pop() || "").toLowerCase();
+      const fmt =
+        ext === "woff2" ? "woff2" : ext === "woff" ? "woff" : ext === "otf" ? "opentype" : "truetype";
+      const face = new FontFace(fam, `url("${src}") format("${fmt}")`, { display: "swap" });
       await withTimeout(face.load(), 10000);
       document.fonts.add(face);
       loadedFamilies.add(fam);
