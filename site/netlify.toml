@@ -1,15 +1,11 @@
 [build]
   publish = "."
-  command = "rm -rf tanba/downloads && mkdir -p tanba/downloads && printf 'CDN: https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/\\n' > tanba/downloads/README.txt"
+  command = "rm -rf qarip/downloads tanba/downloads && mkdir -p qarip/downloads tanba/downloads && printf 'CDN: https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/\\n' > qarip/downloads/README.txt && cp qarip/downloads/README.txt tanba/downloads/README.txt"
 
+# Trailing slash
 [[redirects]]
   from = "/qarip"
-  to = "/tanba/"
-  status = 301
-
-[[redirects]]
-  from = "/qarip/*"
-  to = "/tanba/:splat"
+  to = "/qarip/"
   status = 301
 
 [[redirects]]
@@ -17,8 +13,47 @@
   to = "/tanba/"
   status = 301
 
+# Legacy font URLs → Qarip
+[[redirects]]
+  from = "/tanba/font/*"
+  to = "/qarip/font/:splat"
+  status = 301
+
+# Legacy qarip Stories/Reels aliases → Tañba
+[[redirects]]
+  from = "/qarip/stories"
+  to = "/tanba/stories/"
+  status = 301
+
+[[redirects]]
+  from = "/qarip/stories/*"
+  to = "/tanba/stories/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/qarip/reels"
+  to = "/tanba/stories/"
+  status = 301
+
+[[redirects]]
+  from = "/qarip/reels/*"
+  to = "/tanba/stories/:splat"
+  status = 301
+
+# Font archive CDN proxy (both product prefixes)
+[[redirects]]
+  from = "/qarip/downloads/:file"
+  to = "https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/:file"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/tanba/downloads/:file"
   to = "https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/:file"
   status = 302
   force = true
+
+[[redirects]]
+  from = "/tanba/sitemap-fonts.xml"
+  to = "/qarip/sitemap-fonts.xml"
+  status = 301

@@ -6,13 +6,13 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba17";
+  const ASSET_V = "tanba18";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
   function loadFontData() {
     if (fontDataPromise) return fontDataPromise;
-    fontDataPromise = fetch(`/tanba/data/fonts.json?v=${ASSET_V}`)
+    fontDataPromise = fetch(`/qarip/data/fonts.json?v=${ASSET_V}`)
       .then((r) => (r.ok ? r.json() : []))
       .then((list) => {
         const rows = Array.isArray(list) ? list : [];
@@ -2205,7 +2205,7 @@
     const name = new URLSearchParams(location.search).get("font");
     if (!name) return;
     try {
-      const response = await fetch(`/tanba/data/fonts.json?v=${ASSET_V}`);
+      const response = await fetch(`/qarip/data/fonts.json?v=${ASSET_V}`);
       if (!response.ok) return;
       const rows = await response.json();
       const rec = rows.find(row => row.name === name);

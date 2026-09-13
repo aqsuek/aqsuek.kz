@@ -246,7 +246,7 @@
   function isFontArchiveHref(href) {
     if (!href || isGoogleHref(href)) return false;
     return (
-      /\/tanba\/downloads\/[^/?#]+\.(zip|rar)$/i.test(href) ||
+      /\/(?:qarip|tanba)\/downloads\/[^/?#]+\.(zip|rar)$/i.test(href) ||
       /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[^/]+\/site\/tanba\/downloads\//i.test(href) ||
       /cdn\.jsdelivr\.net\/gh\/[^/]+\/[^/]+@[^/]+\/site\/tanba\/downloads\//i.test(href)
     );
@@ -256,7 +256,7 @@
     try {
       const abs = new URL(href, location.href);
       const file = archiveFileName(abs.pathname);
-      if (/\/tanba\/downloads\//i.test(abs.pathname) && file) return ARCHIVE_CDN + file;
+      if (/\/(?:qarip|tanba)\/downloads\//i.test(abs.pathname) && file) return ARCHIVE_CDN + file;
       if (/raw\.githubusercontent\.com/i.test(abs.hostname) && /\/tanba\/downloads\//i.test(abs.pathname)) {
         return abs.href;
       }
@@ -264,7 +264,7 @@
         return ARCHIVE_CDN + file;
       }
     } catch {}
-    if (href && href.startsWith("/tanba/downloads/")) return ARCHIVE_CDN + archiveFileName(href);
+    if (href && /^\/(?:qarip|tanba)\/downloads\//.test(href)) return ARCHIVE_CDN + archiveFileName(href);
     return href;
   }
 

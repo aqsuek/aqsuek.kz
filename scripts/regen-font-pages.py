@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate Qarip font detail pages + sitemap from fonts.json (does NOT strip @font-face)."""
+"""Regenerate Qarip font detail pages + sitemap from fonts.json."""
 from __future__ import annotations
 
 import json
@@ -12,8 +12,8 @@ SITE = ROOT / "site" / "qarip"
 DATA = SITE / "data" / "fonts.json"
 FONT_DIR = SITE / "font"
 SITEMAP = SITE / "sitemap-fonts.xml"
-ASSET_V = "fontseo4"
-OG_IMAGE = "https://aqsuek.kz/qarip/assets/story-cards/create.jpg"
+ASSET_V = "qarip1"
+OG_IMAGE = "https://aqsuek.kz/qarip/assets/og-create.jpg"
 
 PREVIEW = "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І"
 GLYPHS = "Әә · Ғғ · Ққ · Ңң · Өө · Ұұ · Үү · Һһ · Іі"
@@ -63,7 +63,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     author_block = (
         f'<p class="font-detail-author">Автор: {escape(author)}</p>'
         if author
-        else '<p class="font-detail-author">Автор көрсетілмеген</p>'
+        else ""
     )
     similar_links = "".join(
         f'<a class="font-similar-card" href="/qarip/font/{escape(s)}/"><strong>{escape(names.get(s, s))}</strong></a>'
@@ -152,21 +152,21 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <meta name="twitter:title" content="{escape(title)}"/>
 <meta name="twitter:description" content="{escape(description)}"/>
 <meta name="twitter:image" content="{OG_IMAGE}"/>
-<link rel="stylesheet" href="/qarip/_next/static/css/index.Bx9punr5.css?v={ASSET_V}" media="print"/>
 <link rel="stylesheet" href="/qarip/catalog-pages.css?v={ASSET_V}"/>
 {google_link}<script type="application/ld+json">{ld}</script>
+<script defer src="/qarip/qarip-site.js?v={ASSET_V}"></script>
 </head>
 <body class="qarip-font-page">
 <header class="topbar">
-  <a class="brand" href="/qarip/"><span class="brand-mark">Ә</span><span>Qarip<span class="brand-dot">.</span></span></a>
+  <a class="brand" href="/qarip/" aria-label="Qarip — басты бет"><span class="brand-mark">Ә</span><span>Qarip<span class="brand-dot">.</span></span></a>
   <nav aria-label="Негізгі мәзір">
     <a href="/qarip/#catalog">Қаріптер</a>
-    <a href="/qarip/stories/">Stories</a>
+    <a href="/tanba/stories/">Stories</a>
     <a href="/qarip/#tester">Онлайн тексеру</a>
     <a href="/qarip/#about">Жоба туралы</a>
   </nav>
   <div class="qarip-nav-actions">
-    <a class="qarip-nav-start" href="/qarip/stories/">Бастау →</a>
+    <a class="qarip-nav-start" href="/tanba/stories/">Stories →</a>
     <button type="button" class="qarip-nav-toggle" aria-label="Мәзір" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -205,7 +205,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     <div class="font-detail-actions">
       {dl_btn}
       <button type="button" class="font-favorite" aria-pressed="false" aria-label="Ұнағандарға қосу">♡</button>
-      <a class="qarip-cta-secondary font-detail-stories" href="/qarip/stories/">Stories жасап көру</a>
+      <a class="qarip-cta-secondary font-detail-stories" href="/tanba/stories/">Stories жасап көру</a>
     </div>
   </section>
 
@@ -215,7 +215,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
   <p class="disclaimer">{escape(DISCLAIMER)}</p>
   <nav class="qarip-footer-nav" aria-label="Төменгі мәзір">
     <a href="/qarip/#catalog">Қаріптер</a>
-    <a href="/qarip/stories/">Stories</a>
+    <a href="/tanba/stories/">Stories</a>
     <a href="/qarip/#about">Жоба туралы</a>
   </nav>
 </footer>
@@ -227,10 +227,9 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 
 
 def write_sitemap(fonts: list[dict]) -> None:
-    urls = [
-        "https://aqsuek.kz/qarip/",
-        "https://aqsuek.kz/qarip/stories/",
-    ] + [f"https://aqsuek.kz/qarip/font/{f['slug']}/" for f in fonts]
+    urls = ["https://aqsuek.kz/qarip/"] + [
+        f"https://aqsuek.kz/qarip/font/{f['slug']}/" for f in fonts
+    ]
     body = "\n".join(
         f"  <url><loc>{escape(u)}</loc><changefreq>weekly</changefreq></url>" for u in urls
     )
@@ -248,6 +247,7 @@ def main() -> None:
     fonts = json.loads(DATA.read_text(encoding="utf-8"))
     names = {f["slug"]: f["name"] for f in fonts}
     keep = {f["slug"] for f in fonts}
+    FONT_DIR.mkdir(parents=True, exist_ok=True)
     for path in FONT_DIR.glob("*/index.html"):
         if path.parent.name not in keep:
             path.unlink()

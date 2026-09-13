@@ -1,14 +1,13 @@
 (() => {
-  const HOME_TITLE = "Таңба — қазақша Stories және қаріптер";
+  const HOME_TITLE = "Таңба — қазақша Stories құралы";
   const HOME_DESC =
-    "Қазақша Stories редакторымен 9:16 PNG жасаңыз және қазақ әріптерін қолдайтын қаріптерді онлайн тексеріп, жүктеңіз.";
+    "Қазақша Stories редакторымен мәтін, қаріп және фонды біріктіріп, дайын 9:16 PNG жасаңыз.";
   const STORIES_TITLE = "Қазақша Stories редакторы | Таңба";
   const STORIES_DESC =
     "Қазақша Stories үшін мәтін, қаріп, фон және логотиппен дайын 9:16 PNG жасаңыз.";
   const DISCLAIMER =
-    "Таңба қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
+    "Таңба — қазақша Stories жасау құралы. Қаріп каталогы Qarip өнімінде. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі.";
 
-  const READY = "v2h";
   let timer = 0;
 
   function isStoriesPage() {
@@ -37,38 +36,31 @@
     document.documentElement.classList.add("qarip-v2");
   }
 
-  function fontCount() {
-    const count = document.querySelector(".workspace-heading .count");
-    const match = count?.textContent.match(/(\d+)\s*\/\s*(\d+)/);
-    if (match) return match[2];
-    const cards = document.querySelectorAll(".font-grid > .font-card").length;
-    return cards ? String(cards) : "";
-  }
-
   function polishNav() {
     document.querySelectorAll(".topbar nav a").forEach((link) => {
       const label = (link.textContent || "").replace(/\s+/g, " ").trim();
       const href = link.getAttribute("href") || "";
-      if (label === "Reels" || label === "Reels беті" || href === "#reels" || /\/tanba\/reels\/?$/.test(href)) {
+      if (label === "Reels" || href === "#reels" || /\/tanba\/reels\/?$/.test(href)) {
         link.textContent = "Stories";
         link.setAttribute("href", "/tanba/stories/");
         return;
       }
       if (label === "Қаріптер") {
-        link.setAttribute("href", isStoriesPage() ? "/tanba/#catalog" : "#catalog");
+        link.setAttribute("href", "/qarip/#catalog");
         return;
       }
-      if (label === "Онлайн тексеру") {
-        link.setAttribute("href", isStoriesPage() ? "/tanba/#tester" : "#tester");
+      if (label === "Stories") {
+        link.setAttribute("href", "/tanba/stories/");
         return;
       }
       if (label === "Жоба туралы") {
         link.setAttribute("href", isStoriesPage() ? "/tanba/#about" : "#about");
       }
     });
+
     const brand = document.querySelector(".topbar .brand");
     if (brand) {
-      brand.setAttribute("href", isStoriesPage() ? "/tanba/" : "#top");
+      brand.setAttribute("href", "/tanba/");
       brand.setAttribute("aria-label", "Таңба — басты бет");
     }
 
@@ -85,12 +77,12 @@
     if (!actions.querySelector(".qarip-nav-search")) {
       const search = document.createElement("a");
       search.className = "qarip-nav-search";
-      search.href = isStoriesPage() ? "/tanba/#catalog" : "#catalog";
+      search.href = "/qarip/#catalog";
       search.setAttribute("aria-label", "Қаріптерді іздеу");
       search.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`;
       actions.append(search);
     } else {
-      actions.querySelector(".qarip-nav-search").href = isStoriesPage() ? "/tanba/#catalog" : "#catalog";
+      actions.querySelector(".qarip-nav-search").href = "/qarip/#catalog";
     }
 
     if (!actions.querySelector(".qarip-nav-start")) {
@@ -99,6 +91,8 @@
       start.href = "/tanba/stories/";
       start.textContent = "Бастау →";
       actions.append(start);
+    } else {
+      actions.querySelector(".qarip-nav-start").href = "/tanba/stories/";
     }
 
     if (!actions.querySelector(".qarip-nav-toggle")) {
@@ -145,222 +139,11 @@
     canon.href = canonical;
   }
 
-  function polishHomeHero() {
-    if (isStoriesPage()) return;
-    const intro = document.querySelector(".intro");
-    if (!intro) return;
-    intro.classList.add("qarip-hero");
-
-    let copy = intro.querySelector(".qarip-hero-copy");
-    if (!copy) {
-      copy = document.createElement("div");
-      copy.className = "qarip-hero-copy";
-      intro.prepend(copy);
-    }
-    [...intro.children].forEach((child) => {
-      if (child === copy || child.classList.contains("alphabet") || child.classList.contains("qarip-hero-visual")) return;
-      copy.append(child);
-    });
-
-    const eyebrow = copy.querySelector(".eyebrow");
-    if (eyebrow) {
-      eyebrow.replaceChildren();
-      eyebrow.classList.add("qarip-hero-label");
-      eyebrow.textContent = "ҚАЗАҚША STORIES ҚҰРАЛЫ ✨";
-    }
-
-    const h1 = copy.querySelector("h1");
-    if (h1) {
-      h1.innerHTML = `Қазақша <span class="hero-word">Stories-ты</span><br><span class="qarip-accent">әдемі</span> жасаңыз`;
-    }
-
-    let desc = copy.querySelector(".qarip-hero-desc");
-    if (!desc) {
-      desc = copy.querySelector(":scope > p:not(.qarip-hero-glyphs)");
-      if (desc) desc.className = "qarip-hero-desc";
-    }
-    if (desc) {
-      desc.textContent =
-        "Қазақ әріптерін қолдайтын қаріптермен Stories жасаңыз. Мәтін жазып, 9:16 PNG алыңыз.";
-    }
-
-    const row = copy.querySelector(".intro-cta-row");
-    if (row) {
-      row.innerHTML = `
-        <a class="intro-cta qarip-cta-primary" href="/tanba/stories/">Stories жасап көру →</a>
-        <a class="qarip-cta-secondary" href="#catalog"><i class="qarip-grid-ico" aria-hidden="true"></i>Қаріптерді көру</a>
-      `;
-    }
-
-    copy.querySelector(".qarip-trust")?.remove();
-
-    let glyphs = copy.querySelector(".qarip-hero-glyphs");
-    if (!glyphs) {
-      glyphs = document.createElement("p");
-      glyphs.className = "qarip-hero-glyphs";
-      glyphs.lang = "kk";
-      row?.after(glyphs);
-    }
-    glyphs.textContent = "Ә Ғ Қ Ң Ө Ұ Ү Һ І";
-
-    let features = copy.querySelector(".qarip-features");
-    if (!features) {
-      features = document.createElement("ul");
-      features.className = "qarip-features";
-      glyphs.after(features);
-    }
-    features.innerHTML = `
-      <li><i class="qarip-ico qarip-ico-bolt" aria-hidden="true"></i><span>Тез және оңай</span></li>
-      <li><i class="qarip-ico qarip-ico-heart" aria-hidden="true"></i><span>Қазақша қаріптер</span></li>
-      <li><i class="qarip-ico qarip-ico-frame" aria-hidden="true"></i><span>Жоғары сапалы PNG</span></li>
-    `;
-
-    intro.querySelector(".alphabet")?.setAttribute("hidden", "");
-    if (!intro.querySelector(".qarip-hero-visual")) {
-      const visual = document.createElement("aside");
-      visual.className = "qarip-hero-visual";
-      visual.setAttribute("aria-label", "Дайын нәтиже үлгілері");
-      visual.innerHTML = `<div class="hero-story-example"><small>STORIES ҮЛГІСІ</small><strong>Бүгін —<br>сіздің күніңіз</strong><span>Әдемі сәттерді бөлісіңіз</span></div><div class="hero-sticker-example"><small>МӨЛДІР СТИКЕР ҮЛГІСІ</small><b>Жақсы күн!</b></div>`;
-      intro.append(visual);
-    }
-  }
-
-  function ensureLanding() {
-    if (isStoriesPage()) {
-      document.querySelector(".qarip-landing")?.remove();
-      document.querySelector(".stories-promo")?.remove();
-      return;
-    }
-    document.querySelector(".stories-promo")?.remove();
-    const intro = document.querySelector(".intro");
-    const catalog = document.getElementById("catalog");
-    if (!intro || !catalog) return;
-    let landing = document.querySelector(".qarip-landing");
-    if (!landing) {
-      landing = document.createElement("div");
-      landing.className = "qarip-landing";
-    }
-    if (landing.dataset.ready === READY && landing.querySelector("#qarip-how-title") && !landing.querySelector(".qarip-styles")) {
-      if (catalog.previousElementSibling !== intro) intro.after(catalog);
-      if (landing.previousElementSibling !== catalog) catalog.after(landing);
-      return;
-    }
-
-    const n = fontCount();
-    landing.innerHTML = `
-      <section class="qarip-how" aria-labelledby="qarip-how-title">
-        <div class="qarip-section-head qarip-how-head">
-          <h2 id="qarip-how-title">3 қадамда Stories</h2>
-          <p class="qarip-how-note">Әркім жасай алады! ♡</p>
-        </div>
-        <ol class="qarip-steps">
-          <li class="qarip-step">
-            <span class="qarip-step-ico qarip-step-ico-1" aria-hidden="true"></span>
-            <strong>1. Мәтінді жазыңыз</strong>
-            <p>Қазақша мәтінді бірден енгізіңіз</p>
-          </li>
-          <li class="qarip-step-arrow" aria-hidden="true">→</li>
-          <li class="qarip-step">
-            <span class="qarip-step-ico qarip-step-ico-2" aria-hidden="true"></span>
-            <strong>2. Қаріп пен фонды таңдаңыз</strong>
-            <p>Редакторда қаріп, түс және фонды баптаңыз</p>
-          </li>
-          <li class="qarip-step-arrow" aria-hidden="true">→</li>
-          <li class="qarip-step">
-            <span class="qarip-step-ico qarip-step-ico-3" aria-hidden="true"></span>
-            <strong>3. PNG жүктеп алыңыз</strong>
-            <p>9:16 Stories суретін алыңыз</p>
-          </li>
-        </ol>
-      </section>
-
-      <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
-        <div class="qarip-toolcta-copy">
-          <h2 id="qarip-toolcta-title">Өз идеяларыңызды әдемі етіңіз</h2>
-          <p>Қазақша мәтінді жазып, 9:16 PNG алыңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
-        </div>
-        <a class="qarip-cta-primary" href="/tanba/stories/">Stories жасап көру →</a>
-      </section>
-      <div id="pricing-slot" hidden></div>
-    `;
-    intro.after(catalog);
-    catalog.after(landing);
-    landing.dataset.ready = READY;
-  }
-
-  function polishCatalog() {
-    if (isStoriesPage()) return;
-    const heading = document.querySelector(".workspace-heading h2");
-    if (heading) heading.textContent = "Қазақша қаріптер каталогы";
-    const wrap = document.querySelector(".workspace-heading > div");
-    if (wrap && !wrap.querySelector(".qarip-catalog-lead")) {
-      const lead = document.createElement("p");
-      lead.className = "qarip-catalog-lead";
-      lead.textContent =
-        "Қазақ әріптерін қолдайтын қаріптерді тексеріп, өз мәтініңізбен көріп және жүктеп алыңыз.";
-      wrap.append(lead);
-    }
-    const count = document.querySelector(".workspace-heading .count");
-    if (count && !count.dataset.qaripCount) {
-      const n = document.querySelectorAll(".font-grid > .font-card").length;
-      if (n) {
-        count.textContent = `${n} қаріп`;
-        count.dataset.qaripCount = "1";
-      }
-    }
-  }
-
-  function polishGeneratorCopy() {
-    const copy = document.querySelector(".reels-copy .section-number");
-    if (copy) copy.textContent = "STORIES / 2026";
-    const title = document.querySelector(".reels-copy h2");
-    if (title && /Субтитр|Reels|REELS/i.test(title.textContent || "")) {
-      title.innerHTML = "Stories<br><em>редакторы</em>";
-    }
-    document.querySelectorAll(".reel-ui span").forEach((el) => {
-      if ((el.textContent || "").trim() === "REELS") el.textContent = "STORIES";
-    });
-  }
-
-  function ensureStoriesHero() {
-    if (!isStoriesPage()) {
-      document.querySelector(".stories-page-hero")?.remove();
-      return;
-    }
-    // Leto editor owns the stories chrome — do not inject a hero that is immediately removed.
-    document.querySelector(".stories-page-hero")?.remove();
-    setMeta(STORIES_TITLE, STORIES_DESC, "https://aqsuek.kz/tanba/stories/");
-  }
-
-  function ensureStoriesEditorAssets() {
-    if (!isStoriesPage()) return;
-    if (!document.querySelector('link[data-stories-editor-css]')) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "/tanba/stories-editor.css?v=tanba17";
-      link.dataset.storiesEditorCss = "1";
-      document.head.appendChild(link);
-    }
-    if (!document.querySelector('script[data-stories-editor]')) {
-      const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba17";
-      script.defer = true;
-      script.dataset.storiesEditor = "1";
-      document.body.appendChild(script);
-    }
-  }
-
   function polishAboutFooter() {
-    const aboutH = document.querySelector("#about h2");
-    if (aboutH) aboutH.textContent = "Жоба туралы";
     const aboutP = document.querySelector("#about p");
-    if (aboutP) aboutP.textContent = DISCLAIMER;
+    if (aboutP && !aboutP.querySelector("a")) aboutP.textContent = DISCLAIMER;
     const footer = document.querySelector("footer");
     if (!footer) return;
-
-    footer.querySelectorAll("p").forEach((p) => {
-      if ((p.textContent || "").includes("әліпбиін қолдауын")) p.remove();
-    });
 
     let slogan = footer.querySelector(".qarip-footer-slogan");
     if (!slogan) {
@@ -370,40 +153,44 @@
     }
     slogan.textContent = "Жақсы Stories — жарқын күндерге! ♡";
 
-    if (!footer.querySelector(".qarip-footer-nav")) {
-      const nav = document.createElement("nav");
+    let nav = footer.querySelector(".qarip-footer-nav");
+    if (!nav) {
+      nav = document.createElement("nav");
       nav.className = "qarip-footer-nav";
       nav.setAttribute("aria-label", "Төменгі мәзір");
-      nav.innerHTML = `
-        <a href="${isStoriesPage() ? "/tanba/#catalog" : "#catalog"}">Қаріптер</a>
-        <a href="/tanba/stories/">Stories</a>
-        <a href="${isStoriesPage() ? "/tanba/#about" : "#about"}">Жоба туралы</a>
-      `;
       slogan.after(nav);
+    }
+    nav.innerHTML = `
+      <a href="/qarip/">Qarip</a>
+      <a href="/tanba/stories/">Stories</a>
+      <a href="${isStoriesPage() ? "/tanba/#about" : "#about"}">Жоба туралы</a>
+      <a href="/">AQSUEK</a>
+    `;
+  }
+
+  function ensureStoriesEditorAssets() {
+    if (!isStoriesPage()) return;
+    if (!document.querySelector('link[data-stories-editor-css]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "/tanba/stories-editor.css?v=tanba18";
+      link.dataset.storiesEditorCss = "1";
+      document.head.appendChild(link);
+    }
+    if (!document.querySelector('script[data-stories-editor]')) {
+      const script = document.createElement("script");
+      script.src = "/tanba/stories-editor.js?v=tanba18";
+      script.defer = true;
+      script.dataset.storiesEditor = "1";
+      document.body.appendChild(script);
     }
   }
 
   function isHomePolished() {
     return !!(
       document.querySelector(".intro.qarip-hero .qarip-hero-copy") &&
-      document.querySelector(".qarip-landing[data-ready]") &&
-      !document.querySelector(".qarip-styles") &&
       document.querySelector(".topbar .qarip-nav-actions")
     );
-  }
-
-  function syncHomeBoot() {
-    if (isStoriesPage()) return;
-    if (isHomePolished()) document.documentElement.classList.add("qarip-booted");
-    else document.documentElement.classList.remove("qarip-booted");
-  }
-
-  function demoteLegacyCss() {
-    document
-      .querySelectorAll('link[href*="_next/static/css"], link[data-rsc-css-href]')
-      .forEach((link) => {
-        if (link.getAttribute("media") !== "print") link.setAttribute("media", "print");
-      });
   }
 
   let applying = false;
@@ -413,21 +200,16 @@
     applying = true;
     try {
       if (redirectLegacy()) return;
-      demoteLegacyCss();
       markPage();
       polishNav();
       if (isStoriesPage()) {
-        polishGeneratorCopy();
         ensureStoriesEditorAssets();
         setMeta(STORIES_TITLE, STORIES_DESC, "https://aqsuek.kz/tanba/stories/");
       } else {
-        polishHomeHero();
-        ensureLanding();
-        polishCatalog();
         setMeta(HOME_TITLE, HOME_DESC, "https://aqsuek.kz/tanba/");
+        if (isHomePolished()) document.documentElement.classList.add("qarip-booted");
       }
       polishAboutFooter();
-      syncHomeBoot();
     } finally {
       queueMicrotask(() => {
         applying = false;
@@ -436,12 +218,6 @@
   }
 
   function scheduleApply() {
-    demoteLegacyCss();
-    if (!isStoriesPage() && !isHomePolished()) {
-      document.documentElement.classList.remove("qarip-booted");
-      apply();
-      return;
-    }
     clearTimeout(timer);
     timer = setTimeout(apply, 40);
   }
@@ -457,38 +233,20 @@
         if (document.title !== STORIES_TITLE) document.title = STORIES_TITLE;
       }).observe(document.head, { childList: true });
     }
-    const main = document.querySelector("main");
-    if (main) {
-      new MutationObserver((mutations) => {
-        const noisy = mutations.every((m) => {
-          const t = m.target;
-          if (!(t instanceof Element)) return false;
-          return !!(t.closest?.(".font-grid") || t.classList?.contains("font-grid"));
-        });
-        if (noisy) return;
-        scheduleApply();
-      }).observe(main, { childList: true, subtree: true });
-    }
-    new MutationObserver(demoteLegacyCss).observe(document.documentElement, {
-      childList: true,
-    });
   }
 
-  window.QaripSite = { isStoriesPage, apply, fontCount };
+  window.QaripSite = { isStoriesPage, apply };
 
   if (redirectLegacy()) return;
-  demoteLegacyCss();
   markPage();
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", watch);
   else watch();
   window.addEventListener("load", () => {
     setTimeout(apply, 80);
-    setTimeout(apply, 400);
-    // Only lift cover if polish markers exist — never reveal raw SPA intro.
     setTimeout(() => {
       if (!isStoriesPage() && isHomePolished()) {
         document.documentElement.classList.add("qarip-booted");
       }
-    }, 1200);
+    }, 400);
   });
 })();

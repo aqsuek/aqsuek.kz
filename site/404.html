@@ -3,20 +3,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Бет табылмады | Таңба</title>
-<link rel="icon" href="/tanba/assets/tanba-mark.png" type="image/png"/>
+<title>Бет табылмады | AQSUEK</title>
+<link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml"/>
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f6f2;font-family:Arial,sans-serif;color:#1a1a1a}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f5f0;font-family:system-ui,sans-serif;color:#121212}
   .box{max-width:420px;padding:32px 20px;text-align:center}
   h1{font-size:28px;margin:0 0 12px}
-  p{color:#6b6b6b;line-height:1.5}
-  a{display:inline-flex;margin-top:18px;padding:12px 20px;border-radius:999px;background:#0040dc;color:#fff;font-weight:800;text-decoration:none}
+  p{color:#5c5a55;line-height:1.5}
+  a{display:inline-flex;margin:8px 6px 0;padding:12px 20px;border-radius:999px;background:#121212;color:#fff;font-weight:700;text-decoration:none}
+  a.secondary{background:#fff;color:#121212;border:1px solid #e5e1d8}
 </style>
 <script>
 (function () {
   var path = location.pathname || "";
-  if (path === "/qarip" || path.indexOf("/qarip/") === 0) {
-    location.replace("/tanba" + path.slice("/qarip".length) + location.search + location.hash);
+  // Legacy font URLs under /tanba/font/ → /qarip/font/
+  if (path === "/tanba/font" || path.indexOf("/tanba/font/") === 0) {
+    location.replace("/qarip" + path.slice("/tanba".length) + location.search + location.hash);
+    return;
+  }
+  // Legacy /qarip/stories|reels → Tañba Stories
+  if (path === "/qarip/stories" || path.indexOf("/qarip/stories/") === 0 ||
+      path === "/qarip/reels" || path.indexOf("/qarip/reels/") === 0) {
+    location.replace("/tanba/stories/" + location.search + location.hash);
   }
 })();
 </script>
@@ -24,8 +32,9 @@
 <body>
   <div class="box">
     <h1>Бұл бет жоқ</h1>
-    <p>Қаріп немесе бет табылмады. Каталогтан қазақша қаріпті таңдаңыз.</p>
-    <a href="/tanba/">Таңбаға оралу</a>
+    <p>Қаріптер — Qarip, Stories — Tañba.</p>
+    <a href="/qarip/">Qarip</a>
+    <a class="secondary" href="/tanba/">Tañba</a>
   </div>
 </body>
 </html>

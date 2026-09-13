@@ -1327,11 +1327,11 @@
 
   let FONT_INDEX = null;
   let fontIndexPromise = null;
-  const FONT_ASSET_V = "tanba17";
+  const FONT_ASSET_V = "tanba18";
 
   function loadFontIndex() {
     if (fontIndexPromise) return fontIndexPromise;
-    fontIndexPromise = fetch(`/tanba/data/fonts.json?v=${FONT_ASSET_V}`)
+    fontIndexPromise = fetch(`/qarip/data/fonts.json?v=${FONT_ASSET_V}`)
       .then((r) => (r.ok ? r.json() : []))
       .then((list) => {
         const byName = new Map();
