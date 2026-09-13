@@ -1,87 +1,14 @@
 (() => {
   const HOME_TITLE = "Таңба — қазақша Stories және қаріптер";
   const HOME_DESC =
-    "Қазақша Stories үшін дайын мәтін стильдерін жасаңыз және қазақ әріптерін қолдайтын қаріптерді онлайн тексеріп, жүктеңіз.";
+    "Қазақша Stories редакторымен 9:16 PNG жасаңыз және қазақ әріптерін қолдайтын қаріптерді онлайн тексеріп, жүктеңіз.";
   const STORIES_TITLE = "Қазақша Stories редакторы | Таңба";
   const STORIES_DESC =
     "Қазақша Stories үшін мәтін, қаріп, фон және логотиппен дайын 9:16 PNG жасаңыз.";
   const DISCLAIMER =
     "Таңба қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
 
-  const STYLE_PREVIEWS = [
-    {
-      title: "Create",
-      sub: "Идеяңды бүгін баста",
-      name: "Create",
-      bg: "#efe8dc",
-      photo: "/tanba/assets/story-cards/create.jpg",
-    },
-    {
-      title: "Good Days",
-      sub: "Жақсы күндер алда",
-      name: "Good Days",
-      bg: "#f4ebe8",
-      photo: "/tanba/assets/story-cards/good-days.jpg",
-    },
-    {
-      title: "Dream Big",
-      sub: "Арманнан қорықпа",
-      name: "Dream Big",
-      bg: "#3a4550",
-      photo: "/tanba/assets/story-cards/dream-big.jpg",
-    },
-    {
-      title: "City Girl",
-      sub: "Кішкентай сәттерден шабыт тап",
-      name: "City Girl",
-      bg: "#e8e4dc",
-      photo: "/tanba/assets/story-cards/city-girl.jpg",
-    },
-    {
-      title: "Coffee Time",
-      sub: "Кофе, тыныштық, жаңа ойлар",
-      name: "Coffee Time",
-      bg: "#f0ebe3",
-      photo: "/tanba/assets/story-cards/coffee-time.jpg",
-    },
-    {
-      title: "Travel Mood",
-      sub: "Жаңа жерлер, жаңа сезімдер",
-      name: "Travel Mood",
-      bg: "#dbe8f0",
-      photo: "/tanba/assets/story-cards/travel-mood.jpg",
-    },
-    {
-      title: "Soft Life",
-      sub: "Әдемілік тыныштықта",
-      name: "Soft Life",
-      bg: "#f2ebe4",
-      photo: "/tanba/assets/story-cards/soft-life.jpg",
-    },
-    {
-      title: "Slow Morning",
-      sub: "Бүгін өзіңе уақыт бер",
-      name: "Slow Morning",
-      bg: "#efe8dc",
-      photo: "/tanba/assets/story-cards/slow-morning.jpg",
-    },
-    {
-      title: "Glow",
-      sub: "Өзіңе арналған әдемі сәттер",
-      name: "Glow",
-      bg: "#f5efe6",
-      photo: "/tanba/assets/story-cards/glow.jpg",
-    },
-    {
-      title: "Weekend",
-      sub: "Кішкентай демалыс — үлкен қуат",
-      name: "Weekend",
-      bg: "#e8efe0",
-      photo: "/tanba/assets/story-cards/weekend.jpg",
-    },
-  ];
-
-  const READY = "v2f";
+  const READY = "v2g";
   let timer = 0;
 
   function isStoriesPage() {
@@ -116,12 +43,6 @@
     if (match) return match[2];
     const cards = document.querySelectorAll(".font-grid > .font-card").length;
     return cards ? String(cards) : "";
-  }
-
-  function storyHTML(item, extraClass = "") {
-    const photo = item.photo ? `background-image:url('${item.photo}')` : "";
-    const label = `${item.title} — ${item.sub}`;
-    return `<a class="qarip-story qarip-story-life ${extraClass}" href="/tanba/stories/" style="--story-bg:${item.bg};${photo}" aria-label="${label}" title="${label}"></a>`;
   }
 
   function polishNav() {
@@ -257,7 +178,7 @@
     }
     if (desc) {
       desc.textContent =
-        "Қазақ әріптерін толық қолдайтын дайын стильдер. Мәтін жазып, 9:16 PNG алыңыз.";
+        "Қазақ әріптерін қолдайтын қаріптермен Stories жасаңыз. Мәтін жазып, 9:16 PNG алыңыз.";
     }
 
     const row = copy.querySelector(".intro-cta-row");
@@ -292,26 +213,7 @@
     `;
 
     intro.querySelector(".alphabet")?.setAttribute("hidden", "");
-
-    let visual = intro.querySelector(".qarip-hero-visual");
-    if (!visual) {
-      visual = document.createElement("div");
-      visual.className = "qarip-hero-visual";
-      intro.append(visual);
-    }
-    const heroItems = [STYLE_PREVIEWS[0], STYLE_PREVIEWS[1], STYLE_PREVIEWS[2]];
-    visual.innerHTML = `
-      <div class="qarip-hero-stack" aria-hidden="true">
-        ${storyHTML(heroItems[1], "qarip-story-side qarip-story-left")}
-        ${storyHTML(heroItems[0], "qarip-story-main")}
-        ${storyHTML(heroItems[2], "qarip-story-side qarip-story-right")}
-        <p class="qarip-hero-note qarip-hero-note-top">Дайын stories бірнеше минутта!</p>
-        <p class="qarip-hero-note qarip-hero-note-bottom">Stories-қа дайын 9:16 PNG</p>
-      </div>
-      <div class="qarip-hero-mobile-story">
-        ${storyHTML(heroItems[0], "qarip-story-main")}
-      </div>
-    `;
+    intro.querySelector(".qarip-hero-visual")?.remove();
   }
 
   function ensureLanding() {
@@ -329,7 +231,7 @@
       landing = document.createElement("div");
       landing.className = "qarip-landing";
     }
-    if (landing.dataset.ready === READY && landing.querySelector("#qarip-how-title")) {
+    if (landing.dataset.ready === READY && landing.querySelector("#qarip-how-title") && !landing.querySelector(".qarip-styles")) {
       if (landing.previousElementSibling !== intro) intro.after(landing);
       if (catalog.previousElementSibling !== landing) landing.after(catalog);
       return;
@@ -339,7 +241,7 @@
     landing.innerHTML = `
       <section class="qarip-how" aria-labelledby="qarip-how-title">
         <div class="qarip-section-head qarip-how-head">
-          <h2 id="qarip-how-title">3 қадамда дайын Stories</h2>
+          <h2 id="qarip-how-title">3 қадамда Stories</h2>
           <p class="qarip-how-note">Әркім жасай алады! ♡</p>
         </div>
         <ol class="qarip-steps">
@@ -351,35 +253,22 @@
           <li class="qarip-step-arrow" aria-hidden="true">→</li>
           <li class="qarip-step">
             <span class="qarip-step-ico qarip-step-ico-2" aria-hidden="true"></span>
-            <strong>2. Стиль таңдаңыз</strong>
-            <p>Дайын қаріп комбинациясын таңдаңыз</p>
+            <strong>2. Қаріп пен фонды таңдаңыз</strong>
+            <p>Редакторда қаріп, түс және фонды баптаңыз</p>
           </li>
           <li class="qarip-step-arrow" aria-hidden="true">→</li>
           <li class="qarip-step">
             <span class="qarip-step-ico qarip-step-ico-3" aria-hidden="true"></span>
             <strong>3. PNG жүктеп алыңыз</strong>
-            <p>9:16 дайын Stories алыңыз</p>
+            <p>9:16 Stories суретін алыңыз</p>
           </li>
         </ol>
-      </section>
-
-      <section class="qarip-styles" aria-labelledby="qarip-styles-title">
-        <div class="qarip-styles-head">
-          <div>
-            <h2 id="qarip-styles-title">Дайын стильдер</h2>
-            <p class="qarip-styles-sub">Оңай, жылдам, әдемі. Дайын стильдерді қолданып көріңіз.</p>
-          </div>
-          <a class="qarip-styles-cta" href="/tanba/stories/">Барлығын көру →</a>
-        </div>
-        <div class="qarip-style-rail">
-          ${STYLE_PREVIEWS.map((item, i) => storyHTML(item, `qarip-style-card qarip-style-${i}`)).join("")}
-        </div>
       </section>
 
       <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
         <div class="qarip-toolcta-copy">
           <h2 id="qarip-toolcta-title">Өз идеяларыңызды әдемі етіңіз</h2>
-          <p>Қазақша мәтінді жазып, дайын 9:16 PNG алыңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
+          <p>Қазақша мәтінді жазып, 9:16 PNG алыңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
         </div>
         <a class="qarip-cta-primary" href="/tanba/stories/">Stories жасап көру →</a>
       </section>
@@ -494,8 +383,9 @@
 
   function isHomePolished() {
     return !!(
-      document.querySelector(".intro.qarip-hero .qarip-hero-visual") &&
+      document.querySelector(".intro.qarip-hero .qarip-hero-copy") &&
       document.querySelector(".qarip-landing[data-ready]") &&
+      !document.querySelector(".qarip-styles") &&
       document.querySelector(".topbar .qarip-nav-actions")
     );
   }

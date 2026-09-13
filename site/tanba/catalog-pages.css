@@ -577,7 +577,7 @@ html.qarip-home .intro-cta:active{transform:scale(.98)}
 html.qarip-home .intro.qarip-hero{
   position:relative;
   display:grid;
-  grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);
+  grid-template-columns:1fr;
   gap:36px 40px;
   align-items:center;
   min-height:min(84vh,780px);
@@ -662,63 +662,6 @@ html.qarip-home .qarip-features li{
 .qarip-ico-frame{background:#e7f0ff}
 .qarip-ico-frame::before{content:"▣";font-size:13px;color:#3b6fd8}
 
-/* Story cards — finished lifestyle art (text already in image) */
-.qarip-story{
-  position:relative;
-  display:block;
-  aspect-ratio:9/16;
-  width:150px;
-  padding:0;
-  border-radius:var(--q-r-lg);
-  text-decoration:none;
-  color:transparent;
-  background-color:var(--story-bg,#efe8dc);
-  background-size:cover;
-  background-position:center top;
-  border:1px solid #ffffff66;
-  box-shadow:var(--q-shadow);
-  overflow:hidden;
-  flex:0 0 auto;
-  transition:transform .3s var(--q-ease),box-shadow .3s var(--q-ease);
-}
-.qarip-story::before{display:none!important}
-.qarip-story:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 44px #1a1a1a22;
-  z-index:3;
-}
-
-.qarip-hero-visual{position:relative;min-height:440px}
-.qarip-hero-stack{
-  position:relative;height:100%;min-height:440px;
-  display:flex;align-items:center;justify-content:center;
-}
-.qarip-hero-stack .qarip-story-main{width:200px;z-index:2}
-.qarip-hero-stack .qarip-story-side{width:152px;opacity:.98}
-.qarip-hero-stack .qarip-story-left{
-  transform:rotate(-8deg) translate(14px,20px);
-  margin-right:-46px;z-index:1;
-}
-.qarip-hero-stack .qarip-story-right{
-  transform:rotate(8deg) translate(-14px,24px);
-  margin-left:-46px;z-index:1;
-}
-.qarip-hero-note{
-  position:absolute;z-index:4;margin:0;
-  font:700 12px/1.25 Georgia,"Times New Roman",serif;
-  font-style:italic;
-  color:#8a5a00;
-  background:#fff8d8;
-  border:1px solid #f0d98a;
-  border-radius:14px;
-  padding:8px 12px;
-  max-width:12rem;
-  box-shadow:0 8px 18px #0001;
-}
-.qarip-hero-note-top{top:18px;right:8px;transform:rotate(4deg)}
-.qarip-hero-note-bottom{bottom:28px;left:4px;transform:rotate(-3deg);color:#2b4c8a;background:#eef4ff;border-color:#c9d8f5}
-.qarip-hero-mobile-story{display:none}
-
 /* Landing */
 .qarip-landing{
   width:min(1120px,calc(100% - 40px));
@@ -775,35 +718,6 @@ html.qarip-home .qarip-features li{
 .qarip-step-ico-2::before{content:"◐"}
 .qarip-step-ico-3{background:#dde8ff}
 .qarip-step-ico-3::before{content:"⇩"}
-
-.qarip-styles{margin:80px 0}
-.qarip-styles-head{
-  display:flex;align-items:end;justify-content:space-between;
-  gap:16px;margin-bottom:18px;
-}
-.qarip-styles-sub{
-  margin:8px 0 0;font:500 15px/1.4 Arial,sans-serif;color:var(--q-muted);
-}
-.qarip-styles-cta{
-  display:inline-flex;align-items:center;min-height:44px;
-  font:800 14px/1 Arial,sans-serif;color:var(--q-ink);text-decoration:none;
-}
-.qarip-styles-cta:hover{text-decoration:underline}
-.qarip-style-rail{
-  display:flex;gap:14px;overflow-x:auto;
-  padding:8px 4px 18px;
-  scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.qarip-style-rail::-webkit-scrollbar{display:none}
-.qarip-style-rail .qarip-style-card{
-  width:188px;
-  aspect-ratio:3/4;
-  scroll-snap-align:start;
-  justify-content:flex-end;
-  padding-bottom:18px;
-}
 
 .qarip-toolcta{
   display:flex;align-items:center;justify-content:space-between;gap:20px;
@@ -934,16 +848,10 @@ html.qarip-stories footer p{max-width:52em;line-height:1.55;font-size:12px}
   .qarip-cta-primary,.qarip-cta-secondary,html.qarip-home .intro-cta{width:100%;max-width:100%;box-sizing:border-box;min-height:50px}
   html.qarip-home .qarip-hero-glyphs{font-size:16px;letter-spacing:.08em;text-align:center}
   html.qarip-home .qarip-features{justify-content:center}
-  .qarip-hero-stack{display:none}
-  .qarip-hero-mobile-story{display:flex;justify-content:center;padding:4px 0 8px}
-  .qarip-hero-mobile-story .qarip-story{width:min(220px,68vw)}
-  .qarip-hero-visual{min-height:0}
   .qarip-landing{width:auto;margin:0 16px}
   .qarip-how{margin:56px 0}
   .qarip-steps{grid-template-columns:1fr;gap:12px}
   .qarip-step-arrow{display:none}
-  .qarip-styles{margin:56px 0}
-  .qarip-style-rail .qarip-style-card{width:168px}
   .qarip-toolcta{flex-direction:column;align-items:stretch;margin:48px 0 64px;padding:22px 18px}
   .qarip-toolcta .qarip-cta-primary{width:100%}
   html.qarip-home .font-card{min-height:260px;padding:16px}
