@@ -1386,7 +1386,7 @@
     const fonts = catalogFonts().filter((font) => !query || font.name.toLowerCase().includes(query));
     if (!list) return;
     if (!fonts.length) {
-      list.innerHTML = '<p class="reels-font-empty">Қаріп табылмады.</p>';
+      list.innerHTML = '<p class="reels-font-empty">Қаріптер жүктелуде немесе табылмады.</p>';
       return;
     }
     const key = selectedKey(stack || document.querySelector(".subtitle-stack"));

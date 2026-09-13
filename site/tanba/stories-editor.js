@@ -6,16 +6,23 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba7";
+  const ASSET_V = "tanba9";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
   function loadFontData() {
     if (fontDataPromise) return fontDataPromise;
-    fontDataPromise = fetch("/tanba/data/fonts.json")
+    fontDataPromise = fetch(`/tanba/data/fonts.json?v=${ASSET_V}`)
       .then((r) => (r.ok ? r.json() : []))
       .then((list) => {
-        FONT_DATA = Array.isArray(list) ? list : [];
+        const rows = Array.isArray(list) ? list : [];
+        const byName = new Map();
+        rows.forEach((row) => {
+          if (!row?.name) return;
+          const prev = byName.get(row.name);
+          if (!prev || (prev.source === "google" && row.source !== "google")) byName.set(row.name, row);
+        });
+        FONT_DATA = [...byName.values()];
         return FONT_DATA;
       })
       .catch(() => {
@@ -2030,9 +2037,11 @@
 
   async function exportPng({ transparent = false } = {}) {
     const preview = qs(".phone-preview");
-    if (!preview) return;
+    if (!preview || exportPng.busy) return;
+    exportPng.busy = true;
     const force = transparent || state.bg.type === "transparent";
     preview.classList.add("exporting");
+    letoToast("PNG дайындалуда…");
     qs(".stories-bg-hit", preview)?.setAttribute("hidden", "");
     qs(".stories-bg-tools", preview)?.setAttribute("hidden", "");
     if (force) {
@@ -2045,21 +2054,27 @@
       preview.style.background = "transparent";
     }
     try {
-      if (document.fonts?.ready) await document.fonts.ready;
+      if (document.fonts?.ready) {
+        await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2000))]);
+      }
       const html2canvas = await ensureHtml2Canvas();
-      const canvas = await html2canvas(preview, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
+      const scale = window.innerWidth < 720 ? 2 : 2.25;
+      const canvas = await html2canvas(preview, { scale, useCORS: true, backgroundColor: null, logging: false });
       const a = document.createElement("a");
       a.download = force ? "qarip-story-transparent.png" : "qarip-story.png";
       a.href = canvas.toDataURL("image/png");
       a.click();
+      letoToast("PNG жүктелді");
     } catch (err) {
       console.warn(err);
+      letoToast("Экспорт сәтсіз — қайта көріңіз");
       qsa(".reels-act").find((b) => /9:16|PNG/i.test(b.textContent || ""))?.click();
     } finally {
       preview.classList.remove("exporting");
       qs(".stories-bg-hit", preview)?.removeAttribute("hidden");
       qs(".stories-bg-tools", preview)?.removeAttribute("hidden");
       applyBackground();
+      exportPng.busy = false;
     }
   }
 
@@ -2338,10 +2353,14 @@
     if (!start.observed) {
       start.observed = true;
       let hideT = 0;
-      new MutationObserver(() => {
+      new MutationObserver((mutations) => {
+        const touched = mutations.some((m) =>
+          [...m.addedNodes].some((n) => n.nodeType === 1 && (n.matches?.(LEGACY_HIDE_SELECTORS.join(",")) || n.querySelector?.(LEGACY_HIDE_SELECTORS.join(","))))
+        );
+        if (!touched) return;
         clearTimeout(hideT);
         hideT = setTimeout(hideLegacyChrome, 60);
-      }).observe(document.documentElement, { childList: true, subtree: true });
+      }).observe(document.body, { childList: true, subtree: true });
     }
   }
 

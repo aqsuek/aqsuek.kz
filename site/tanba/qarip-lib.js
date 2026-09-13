@@ -153,12 +153,16 @@
     const fam = cleanText(family).replace(/^["']|["']$/g, "");
     let src = cleanText(url);
     if (!fam) return false;
+    const withTimeout = (promise, ms = 8000) =>
+      Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("font-timeout")), ms)),
+      ]);
     if (src.startsWith("google:")) {
       src = src.slice(7) || fam;
       ensureGoogleCss(src);
       try {
-        await document.fonts.load(`72px "${fam}"`);
-        await document.fonts.ready;
+        await withTimeout(document.fonts.load(`72px "${fam}"`), 6000);
       } catch {}
       loadedFamilies.add(fam);
       return true;
@@ -170,8 +174,8 @@
       return true;
     }
     try {
-      const face = new FontFace(fam, `url("${src}")`);
-      await face.load();
+      const face = new FontFace(fam, `url("${src}")`, { display: "swap" });
+      await withTimeout(face.load(), 10000);
       document.fonts.add(face);
       loadedFamilies.add(fam);
       return true;

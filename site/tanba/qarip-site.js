@@ -306,7 +306,7 @@
     if (copy) copy.textContent = "STORIES / 2026";
     const title = document.querySelector(".reels-copy h2");
     if (title && /Субтитр|Reels|REELS/i.test(title.textContent || "")) {
-      title.innerHTML = "Stories<br><em>мәтін стильдері</em>";
+      title.innerHTML = "Stories<br><em>редакторы</em>";
     }
     document.querySelectorAll(".reel-ui span").forEach((el) => {
       if ((el.textContent || "").trim() === "REELS") el.textContent = "STORIES";
@@ -318,19 +318,8 @@
       document.querySelector(".stories-page-hero")?.remove();
       return;
     }
-    const reels = document.getElementById("reels");
-    if (!reels) return;
-    let hero = document.querySelector(".stories-page-hero");
-    if (!hero) {
-      hero = document.createElement("header");
-      hero.className = "stories-page-hero";
-      reels.parentNode.insertBefore(hero, reels);
-    }
-    hero.innerHTML = `
-      <p class="stories-page-eyebrow">ТАҢБА STORIES</p>
-      <h1>Қазақша Stories редакторы</h1>
-      <p>Мәтін, қаріп, фон және логотиппен дайын 9:16 Stories жасап, PNG жүктеп алыңыз.</p>
-    `;
+    // Leto editor owns the stories chrome — do not inject a hero that is immediately removed.
+    document.querySelector(".stories-page-hero")?.remove();
     setMeta(STORIES_TITLE, STORIES_DESC, "https://aqsuek.kz/tanba/stories/");
   }
 
@@ -339,13 +328,13 @@
     if (!document.querySelector('link[data-stories-editor-css]')) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "/tanba/stories-editor.css?v=tanba7";
+      link.href = "/tanba/stories-editor.css?v=tanba9";
       link.dataset.storiesEditorCss = "1";
       document.head.appendChild(link);
     }
     if (!document.querySelector('script[data-stories-editor]')) {
       const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba7";
+      script.src = "/tanba/stories-editor.js?v=tanba9";
       script.defer = true;
       script.dataset.storiesEditor = "1";
       document.body.appendChild(script);
@@ -453,15 +442,22 @@
     if (isStoriesPage()) {
       new MutationObserver(() => {
         if (document.title !== STORIES_TITLE) document.title = STORIES_TITLE;
-      }).observe(document.head, { childList: true, subtree: true });
+      }).observe(document.head, { childList: true });
     }
     const main = document.querySelector("main");
     if (main) {
-      new MutationObserver(scheduleApply).observe(main, { childList: true, subtree: true });
+      new MutationObserver((mutations) => {
+        const noisy = mutations.every((m) => {
+          const t = m.target;
+          if (!(t instanceof Element)) return false;
+          return !!(t.closest?.(".font-grid") || t.classList?.contains("font-grid"));
+        });
+        if (noisy) return;
+        scheduleApply();
+      }).observe(main, { childList: true, subtree: true });
     }
     new MutationObserver(demoteLegacyCss).observe(document.documentElement, {
       childList: true,
-      subtree: true,
     });
   }
 

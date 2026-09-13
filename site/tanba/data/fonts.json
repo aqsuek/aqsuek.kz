@@ -4739,26 +4739,6 @@
     ]
   },
   {
-    "slug": "comfortaa-google",
-    "name": "Comfortaa",
-    "maker": "Google Fonts",
-    "author": "Johan Aakerlund",
-    "style": "Санс-сериф",
-    "category": "Sans Serif",
-    "family": "Comfortaa",
-    "download": "https://fonts.google.com/specimen/Comfortaa",
-    "preview": "google:Comfortaa",
-    "license": "open",
-    "local": false,
-    "source": "google",
-    "similar": [
-      "alegreya-sans",
-      "andika",
-      "arimo",
-      "arsenal"
-    ]
-  },
-  {
     "slug": "commissioner",
     "name": "Commissioner",
     "maker": "Google Fonts",
@@ -5179,26 +5159,6 @@
     ]
   },
   {
-    "slug": "merriweather-google",
-    "name": "Merriweather",
-    "maker": "Google Fonts",
-    "author": "Sorkin Type",
-    "style": "Сериф",
-    "category": "Serif",
-    "family": "Merriweather",
-    "download": "https://fonts.google.com/specimen/Merriweather",
-    "preview": "google:Merriweather",
-    "license": "open",
-    "local": false,
-    "source": "google",
-    "similar": [
-      "alegreya",
-      "alice-google",
-      "bitter-google",
-      "brygada-1918"
-    ]
-  },
-  {
     "slug": "montserrat-google",
     "name": "Montserrat",
     "maker": "Google Fonts",
@@ -5208,26 +5168,6 @@
     "family": "Montserrat",
     "download": "https://fonts.google.com/specimen/Montserrat",
     "preview": "google:Montserrat",
-    "license": "open",
-    "local": false,
-    "source": "google",
-    "similar": [
-      "alegreya-sans",
-      "andika",
-      "arimo",
-      "arsenal"
-    ]
-  },
-  {
-    "slug": "noto-sans-google",
-    "name": "Noto Sans",
-    "maker": "Google Fonts",
-    "author": "Google",
-    "style": "Санс-сериф",
-    "category": "Sans Serif",
-    "family": "Noto Sans",
-    "download": "https://fonts.google.com/specimen/Noto+Sans",
-    "preview": "google:Noto Sans",
     "license": "open",
     "local": false,
     "source": "google",
@@ -5256,26 +5196,6 @@
       "fira-code",
       "fira-mono",
       "ibm-plex-mono"
-    ]
-  },
-  {
-    "slug": "noto-serif-google",
-    "name": "Noto Serif",
-    "maker": "Google Fonts",
-    "author": "Google",
-    "style": "Сериф",
-    "category": "Serif",
-    "family": "Noto Serif",
-    "download": "https://fonts.google.com/specimen/Noto+Serif",
-    "preview": "google:Noto Serif",
-    "license": "open",
-    "local": false,
-    "source": "google",
-    "similar": [
-      "alegreya",
-      "alice-google",
-      "bitter-google",
-      "brygada-1918"
     ]
   },
   {
@@ -5776,26 +5696,6 @@
       "alice-google",
       "bitter-google",
       "brygada-1918"
-    ]
-  },
-  {
-    "slug": "ubuntu-google",
-    "name": "Ubuntu",
-    "maker": "Google Fonts",
-    "author": "Dalton Maag",
-    "style": "Санс-сериф",
-    "category": "Sans Serif",
-    "family": "Ubuntu",
-    "download": "https://fonts.google.com/specimen/Ubuntu",
-    "preview": "google:Ubuntu",
-    "license": "open",
-    "local": false,
-    "source": "google",
-    "similar": [
-      "alegreya-sans",
-      "andika",
-      "arimo",
-      "arsenal"
     ]
   },
   {

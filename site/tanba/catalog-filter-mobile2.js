@@ -9,10 +9,14 @@
   let licenseMode = "all";
   let localIndex = new Map();
   let googleIndex = new Map();
+  let allRows = [];
+  let catalogByName = new Map();
+  let mounting = false;
+  const FONTS_JSON = "/tanba/data/fonts.json?v=tanba9";
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =
-    '.font-card[data-filter-hide="1"]{display:none!important}.font-sticker,.qarip-sticker-toast{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #0040dc;background:#0040dc;color:#fff;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#0e1a33;color:#fff}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #0e1a33;background:transparent;color:#0e1a33;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#f06848;color:#fff}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#0e1a33;white-space:nowrap}.fav-filter.active{background:#0040dc;color:#fff}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5b6780;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #0040dc;border-radius:999px;background:#0040dc;color:#fff;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#0036c4;color:#fff}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-sticker,.qarip-sticker-toast{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #0040dc;background:#0040dc;color:#fff;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#0e1a33;color:#fff}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #0e1a33;background:transparent;color:#0e1a33;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#f06848;color:#fff}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#0e1a33;white-space:nowrap}.fav-filter.active{background:#0040dc;color:#fff}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5b6780;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #0040dc;border-radius:999px;background:#0040dc;color:#fff;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#0036c4;color:#fff}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(styleSheet);
 
   function slugify(name, download) {
@@ -25,13 +29,15 @@
   }
 
   function isGoogleCard(card) {
+    if (card.dataset.source === "google") return true;
+    if (card.dataset.source === "local") return false;
     return [...card.querySelectorAll("a")].some((a) => /fonts\.google\.com/.test(a.getAttribute("href") || ""));
   }
 
   function recordFor(card) {
     const name = (card.querySelector("h3")?.textContent || "").trim();
-    if (isGoogleCard(card)) return googleIndex.get(name) || null;
-    return localIndex.get(name) || null;
+    if (!name) return null;
+    return catalogByName.get(name) || (isGoogleCard(card) ? googleIndex.get(name) : localIndex.get(name)) || null;
   }
 
   function pruneDroppedCards() {
@@ -264,22 +270,40 @@
     if (small) small.textContent = String(savedNames().size);
   }
 
+  function paintCategoryCounts() {
+    ensureFiltersUi();
+    ensureFavButton();
+    const categoryTotals = new Map();
+    let stories = 0;
+    allRows.forEach((row) => {
+      const category = row.style || "";
+      if (category) categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
+      if (row.useCase === "stories") stories += 1;
+    });
+    document.querySelectorAll(".categories button").forEach((button) => {
+      if (button.classList.contains("fav-filter")) return;
+      const category = styleName(button);
+      button.dataset.style = category;
+      let total = 0;
+      if (category === ALL) total = allRows.length;
+      else if (category === STORIES_GROUP) total = stories;
+      else total = categoryTotals.get(category) || 0;
+      let count = button.querySelector("small");
+      if (!count) {
+        count = document.createElement("small");
+        button.appendChild(count);
+      }
+      count.textContent = String(total);
+    });
+    updateFavCount();
+  }
+
   function decorateCatalog(cards) {
     const Q = window.Qarip;
-    const categoryTotals = new Map();
-    const seen = new Set();
     cards.forEach((card) => {
       const name = Q?.cleanText(card.querySelector("h3")?.textContent) || card.querySelector("h3")?.textContent?.trim();
       if (!name) return;
       const rec = recordFor(card);
-      const uniq = `${isGoogleCard(card) ? "g" : "l"}:${name}`;
-      if (!seen.has(uniq)) {
-        seen.add(uniq);
-        const category = rec?.style || card.querySelector(".meta > span")?.textContent?.trim();
-        if (category) {
-          categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
-        }
-      }
       const category = rec?.style || card.querySelector(".meta > span")?.textContent?.trim();
       if (category) card.dataset.style = category;
       const makerEl = card.querySelector(".card-top p");
@@ -327,33 +351,16 @@
       if (license) {
         license.title = Q?.licenseInfo(licenseKey).title || "";
       }
-      if (card.dataset.fontLoaded === "1") applyGlyphDataset(card, `"${card.dataset.family}"`);
+      if (card.dataset.fontLoaded === "1") scheduleGlyph(card, `"${card.dataset.family}"`);
       else card.dataset.glyph = "wait";
     });
+    paintCategoryCounts();
+  }
 
-    ensureFiltersUi();
-    ensureFavButton();
-    document.querySelectorAll(".categories button").forEach((button) => {
-      if (button.classList.contains("fav-filter")) return;
-      const category = styleName(button);
-      button.dataset.style = category;
-      let total = 0;
-      if (category === ALL) total = seen.size;
-      else if (category === STORIES_GROUP) {
-        seen.forEach((key) => {
-          const nm = key.slice(2);
-          const rec = key.startsWith("g:") ? googleIndex.get(nm) : localIndex.get(nm);
-          if (rec?.useCase === "stories") total += 1;
-        });
-      } else total = categoryTotals.get(category) || 0;
-      let count = button.querySelector("small");
-      if (!count) {
-        count = document.createElement("small");
-        button.appendChild(count);
-      }
-      count.textContent = String(total);
-    });
-    updateFavCount();
+  function scheduleGlyph(card, family) {
+    const run = () => applyGlyphDataset(card, family);
+    if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 1400 });
+    else setTimeout(run, 0);
   }
 
   function addFavorites(cards) {
@@ -385,47 +392,56 @@
     });
   }
 
-  function apply(resetLimit = false) {
-    if (resetLimit) visibleLimit = PAGE_SIZE;
+  function rowMatches(row) {
+    const name = row.name || "";
+    const fav = savedNames();
     const q = query();
+    const fontStyle = row.style || "";
+    const license = row.license || "check";
+    const matchStyle =
+      mode === "fav"
+        ? fav.has(name)
+        : style === ALL
+          ? true
+          : style === STORIES_GROUP
+            ? row.useCase === "stories"
+            : fontStyle === style;
+    const matchLicense = licenseMode === "all" || license === licenseMode;
+    const tags = Array.isArray(row.tags) ? row.tags.join(" ") : row.tags || "";
+    const hay = `${name} ${row.author || row.maker || ""} ${fontStyle} ${row.category || ""} ${tags} ${row.useCase || ""}`.toLowerCase();
+    const matchQ = !q || hay.includes(q);
+    return matchStyle && matchLicense && matchQ;
+  }
+
+  function matchingRows() {
+    return allRows.filter(rowMatches);
+  }
+
+  function polishMountedCards(cards) {
+    decorateCatalog(cards);
+    addFavorites(cards);
+    stripStickers(cards);
+    observeVisibleFonts(cards);
+  }
+
+  function mountVisible(matching) {
     const grid = document.querySelector(".font-grid");
     if (!grid) return;
-    const cards = grid.querySelectorAll(":scope > .font-card");
-    const fav = savedNames();
-    const seen = new Set();
-    const matching = [];
-    cards.forEach((card) => {
-      const name = (card.querySelector("h3")?.textContent || "").trim();
-      const maker = (card.querySelector(".card-top p")?.textContent || "").trim();
-      const fontStyle = card.dataset.style || (card.querySelector(".meta > span")?.textContent || "").trim();
-      const license = card.dataset.license || "check";
-      const duplicate = name !== "" && seen.has(name);
-      if (name) seen.add(name);
-      const matchStyle =
-        mode === "fav"
-          ? fav.has(name)
-          : style === ALL
-            ? true
-            : style === STORIES_GROUP
-              ? card.dataset.usecase === "stories"
-              : fontStyle === style;
-      const matchLicense = licenseMode === "all" || license === licenseMode;
-      const hay = `${name} ${maker} ${fontStyle} ${card.dataset.category || ""} ${card.dataset.tags || ""} ${card.dataset.usecase || ""}`.toLowerCase();
-      const matchQ = !q || hay.includes(q);
-      if (matchStyle && matchLicense && matchQ && !duplicate) matching.push(card);
-    });
+    const slice = matching.slice(0, visibleLimit);
+    mounting = true;
+    if (observeVisibleFonts.io) {
+      grid.querySelectorAll(":scope > .font-card").forEach((card) => observeVisibleFonts.io.unobserve(card));
+    }
+    grid.innerHTML = slice.map(cardHTML).join("");
+    const cards = [...grid.querySelectorAll(":scope > .font-card")];
+    polishMountedCards(cards);
+    mounting = false;
+  }
 
-    const shownCards = new Set(matching.slice(0, visibleLimit));
-    cards.forEach((card) => {
-      const show = shownCards.has(card);
-      if (show) {
-        card.removeAttribute("data-filter-hide");
-        card.style.removeProperty("display");
-      } else {
-        card.setAttribute("data-filter-hide", "1");
-        card.style.display = "none";
-      }
-    });
+  function apply(resetLimit = false) {
+    if (resetLimit) visibleLimit = PAGE_SIZE;
+    const matching = matchingRows();
+    mountVisible(matching);
     const count = document.querySelector(".workspace-heading .count");
     if (count) {
       const shown = Math.min(matching.length, visibleLimit);
@@ -512,8 +528,9 @@
   });
 
   function observeVisibleFonts(cards) {
+    const list = [...cards].filter((card) => card.isConnected);
     if (!("IntersectionObserver" in window)) {
-      cards.forEach((card) => loadCardFont(card));
+      list.forEach((card) => loadCardFont(card));
       return;
     }
     if (!observeVisibleFonts.io) {
@@ -523,7 +540,7 @@
         });
       }, { rootMargin: "120px 0px", threshold: 0.01 });
     }
-    cards.forEach((card) => observeVisibleFonts.io.observe(card));
+    list.forEach((card) => observeVisibleFonts.io.observe(card));
   }
 
   async function loadCardFont(card) {
@@ -537,7 +554,7 @@
     }
     card.dataset.fontReady = "1";
     card.dataset.fontLoaded = "1";
-    applyGlyphDataset(card, `"${family}"`);
+    scheduleGlyph(card, `"${family}"`);
   }
 
   function polishFooter() {
@@ -587,11 +604,12 @@
     const preview = row.preview || "";
     const download = row.download || "";
     const slug = row.slug || slugify(name, download);
+    const source = row.source === "google" ? "google" : "local";
     const sample = window.Qarip?.PREVIEW_TEXT || "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І";
     const dl = download
       ? `<a href="${esc(download)}" download aria-label="${esc(name)} жүктеу"></a>`
       : "";
-    return `<article class="font-card" data-slug="${esc(slug)}" data-family="${esc(family)}" data-preview="${esc(preview)}" data-download="${esc(download)}" data-style="${esc(style)}" data-license="${esc(row.license || "check")}">
+    return `<article class="font-card" data-slug="${esc(slug)}" data-family="${esc(family)}" data-preview="${esc(preview)}" data-download="${esc(download)}" data-style="${esc(style)}" data-license="${esc(row.license || "check")}" data-source="${source}"${row.useCase ? ` data-usecase="${esc(row.useCase)}"` : ""}${row.category ? ` data-category="${esc(row.category)}"` : ""}>
       <div class="card-top"><div><h3>${esc(name)}</h3>${author ? `<p>${esc(author)}</p>` : "<p hidden></p>"}</div></div>
       <div class="font-preview" style="font-family:&quot;${esc(family)}&quot;;font-size:34px">${esc(sample)}</div>
       <div class="letters" style="font-family:&quot;${esc(family)}&quot;">Әә · Ғғ · Ққ · Ңң · Өө · Ұұ · Үү · Һһ · Іі</div>
@@ -599,25 +617,43 @@
     </article>`;
   }
 
+  function ingestFontRows(rows) {
+    localIndex = new Map();
+    googleIndex = new Map();
+    catalogByName = new Map();
+    (Array.isArray(rows) ? rows : []).forEach((row) => {
+      if (!row?.name) return;
+      if (row.source === "google") googleIndex.set(row.name, row);
+      else localIndex.set(row.name, row);
+    });
+    // Prefer local over google when names collide.
+    const names = new Set([...localIndex.keys(), ...googleIndex.keys()]);
+    allRows = [];
+    names.forEach((name) => {
+      const row = localIndex.get(name) || googleIndex.get(name);
+      if (!row) return;
+      catalogByName.set(name, row);
+      allRows.push(row);
+    });
+    allRows.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "kk"));
+  }
+
   function hydrateGrid() {
-    const grid = document.querySelector(".font-grid");
-    if (!grid) return;
-    const rows = [...localIndex.values(), ...googleIndex.values()];
-    if (!rows.length) return;
-    grid.innerHTML = rows.map(cardHTML).join("");
+    apply(true);
   }
 
   async function loadFontIndex() {
-    if (localIndex.size || googleIndex.size) return;
+    if (allRows.length) return;
     try {
-      const res = await fetch("/tanba/data/fonts.json", { cache: "no-store" });
+      const res = await fetch(FONTS_JSON, { cache: "force-cache" });
       const rows = await res.json();
-      (Array.isArray(rows) ? rows : []).forEach((row) => {
-        if (!row?.name) return;
-        if (row.source === "google") googleIndex.set(row.name, row);
-        else localIndex.set(row.name, row);
-      });
-    } catch {}
+      ingestFontRows(rows);
+    } catch {
+      try {
+        const res = await fetch("/tanba/data/fonts.json");
+        ingestFontRows(await res.json());
+      } catch {}
+    }
   }
 
   function start() {
@@ -631,12 +667,6 @@
     grid.dataset.filterObserved = "1";
     loadFontIndex().then(() => {
       hydrateGrid();
-      pruneDroppedCards();
-      decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-      addFavorites(grid.querySelectorAll(":scope > .font-card"));
-      stripStickers(grid.querySelectorAll(":scope > .font-card"));
-      observeVisibleFonts(grid.querySelectorAll(":scope > .font-card"));
-      apply();
       applyGroupFromUrl();
     });
     polishFooter();
@@ -646,16 +676,14 @@
     window.addEventListener("resize", () => requestAnimationFrame(syncCatOverflow));
     let timer = 0;
     new MutationObserver(() => {
+      if (mounting) return;
       clearTimeout(timer);
-        timer = setTimeout(() => {
-          pruneDroppedCards();
-          decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-          addFavorites(grid.querySelectorAll(":scope > .font-card"));
-          stripStickers(grid.querySelectorAll(":scope > .font-card"));
-          observeVisibleFonts(grid.querySelectorAll(":scope > .font-card"));
-          apply();
-        }, 40);
-    }).observe(grid, { childList: true, subtree: true });
+      timer = setTimeout(() => {
+        if (mounting) return;
+        const cards = grid.querySelectorAll(":scope > .font-card");
+        polishMountedCards(cards);
+      }, 60);
+    }).observe(grid, { childList: true });
   }
 
   function refreshGlyphs() {
@@ -664,9 +692,9 @@
     grid.querySelectorAll(":scope > .font-card .meta > span:nth-child(2)").forEach((span) => {
       delete span.dataset.glyphChecked;
     });
-    decorateCatalog(grid.querySelectorAll(":scope > .font-card"));
-    stripStickers(grid.querySelectorAll(":scope > .font-card"));
-    apply();
+    const cards = grid.querySelectorAll(":scope > .font-card");
+    decorateCatalog(cards);
+    stripStickers(cards);
   }
 
   if (document.readyState === "loading") {
@@ -683,19 +711,15 @@
       }
       const grid = document.querySelector(".font-grid");
       if (!grid) return;
-      pruneDroppedCards();
-      const cards = grid.querySelectorAll(":scope > .font-card");
-      decorateCatalog(cards);
-      addFavorites(cards);
-      stripStickers(cards);
-      observeVisibleFonts(cards);
-      apply();
+      if (allRows.length) apply();
       polishFooter();
       bindPreviewDefault();
       window.QaripSite?.apply?.();
       const ready = document.fonts?.ready;
-      if (ready && typeof ready.then === "function") ready.then(() => setTimeout(refreshGlyphs, 50));
-      else setTimeout(refreshGlyphs, 400);
+      const refresh = () => setTimeout(refreshGlyphs, 50);
+      if (ready && typeof ready.then === "function") {
+        Promise.race([ready, new Promise((r) => setTimeout(r, 2500))]).then(refresh);
+      } else setTimeout(refreshGlyphs, 400);
     }, 220);
   });
 })();
