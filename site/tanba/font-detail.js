@@ -66,7 +66,12 @@
   dl?.addEventListener("click", (event) => {
     const href = dl.getAttribute("href") || download;
     const filename = (href.split("/").pop() || "").split("?")[0];
-    Q.handleDownloadClick(event, licenseKey, href, filename);
+    if (Q.handleDownloadClick(event, licenseKey, href, filename)) return;
+    // Fallback: keep user on the font page for archive downloads.
+    if (href && /\/tanba\/downloads\//i.test(href)) {
+      event.preventDefault();
+      Q.startDownload(href, filename);
+    }
   });
 
   input?.addEventListener("input", paintPreview);

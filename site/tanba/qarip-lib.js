@@ -222,43 +222,100 @@
     return modal;
   }
 
+  const ARCHIVE_CDN =
+    "https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/";
+
+  function archiveFileName(href, fallback = "") {
+    const raw = (href || "").split("/").pop() || fallback || "font.zip";
+    return raw.split("?")[0] || "font.zip";
+  }
+
+  function isGoogleHref(href) {
+    return /fonts\.google\.com/i.test(href || "");
+  }
+
+  function isFontArchiveHref(href) {
+    if (!href || isGoogleHref(href)) return false;
+    return (
+      /\/tanba\/downloads\/[^/?#]+\.(zip|rar)$/i.test(href) ||
+      /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[^/]+\/site\/tanba\/downloads\//i.test(href) ||
+      /cdn\.jsdelivr\.net\/gh\/[^/]+\/[^/]+@[^/]+\/site\/tanba\/downloads\//i.test(href)
+    );
+  }
+
+  function resolveArchiveUrl(href) {
+    try {
+      const abs = new URL(href, location.href);
+      const file = archiveFileName(abs.pathname);
+      if (/\/tanba\/downloads\//i.test(abs.pathname) && file) return ARCHIVE_CDN + file;
+      if (/raw\.githubusercontent\.com/i.test(abs.hostname) && /\/tanba\/downloads\//i.test(abs.pathname)) {
+        return abs.href;
+      }
+      if (/cdn\.jsdelivr\.net/i.test(abs.hostname) && /\/tanba\/downloads\//i.test(abs.pathname)) {
+        return ARCHIVE_CDN + file;
+      }
+    } catch {}
+    if (href && href.startsWith("/tanba/downloads/")) return ARCHIVE_CDN + archiveFileName(href);
+    return href;
+  }
+
   function hideModal() {
     const modal = document.querySelector(".qarip-license-modal");
     if (modal) modal.hidden = true;
   }
 
-  function startDownload(href, filename) {
-    const link = document.createElement("a");
-    link.href = href;
-    // Same-origin can force a filename; CDN zips rely on Content-Type / URL.
-    try {
-      const abs = new URL(href, location.href);
-      if (abs.origin === location.origin && filename) link.download = filename;
-      else if (abs.origin === location.origin) link.setAttribute("download", "");
-    } catch {
-      if (filename) link.download = filename;
+  async function startDownload(href, filename) {
+    if (isGoogleHref(href)) {
+      window.open(href, "_blank", "noopener,noreferrer");
+      return;
     }
-    link.rel = "noopener noreferrer";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const file = archiveFileName(href, filename);
+    const src = isFontArchiveHref(href) ? resolveArchiveUrl(href) : href;
+    try {
+      const res = await fetch(src, { mode: "cors", credentials: "omit" });
+      if (!res.ok) throw new Error(`download ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2500);
+    } catch (err) {
+      console.warn(err);
+      // Last resort: stay on-site messaging — open blob path failed.
+      const link = document.createElement("a");
+      link.href = src;
+      link.rel = "noopener noreferrer";
+      link.download = file;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
   }
 
   function showDownloadWarning(href, filename) {
     const modal = ensureModal();
     modal.dataset.href = href;
-    modal.dataset.filename = filename || "";
+    modal.dataset.filename = filename || archiveFileName(href);
     modal.hidden = false;
     modal.querySelector(".qarip-dl-go")?.focus();
   }
 
   function handleDownloadClick(event, licenseKey, href, filename) {
-    const info = licenseInfo(licenseKey);
-    if (!info.warn) return false;
+    if (isGoogleHref(href)) return false;
+    if (!isFontArchiveHref(href)) return false;
     event.preventDefault();
     event.stopPropagation();
-    showDownloadWarning(href, filename);
+    const info = licenseInfo(licenseKey);
+    const name = filename || archiveFileName(href);
+    if (info.warn) {
+      showDownloadWarning(href, name);
+      return true;
+    }
+    startDownload(href, name);
     return true;
   }
 
