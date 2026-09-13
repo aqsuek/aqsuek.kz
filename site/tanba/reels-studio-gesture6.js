@@ -33,7 +33,7 @@
     }
     .phone-preview:before,.phone-preview:after{display:none!important}
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
-    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:0 4px 18px #000!important;pointer-events:none}
+    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:hidden!important;transform:none!important;text-align:center!important;text-shadow:none!important;pointer-events:none}
     .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:calc(100% - 28px);margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
     .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
     .subtitle-stack .sub-mark{top:58%;padding:8px 16px!important;border-radius:999px!important;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
@@ -91,6 +91,8 @@
     .text-tool-row button.active{outline:2px solid #d9ff47;outline-offset:2px}
     .text-tool-row .bg-off{width:auto;height:26px;border-radius:7px;padding:0 8px;background:#191918;color:#fff;font:800 9px/1 Arial,sans-serif}
     .text-tool-row .bg-off.active{background:#d9ff47;color:#171715}
+    .text-tool-row .shadow-toggle{width:auto;height:26px;border-radius:7px;padding:0 8px;background:#191918;color:#fff;font:800 9px/1 Arial,sans-serif;border:2px solid #fff4}
+    .text-tool-row .shadow-toggle.active{background:#d9ff47;color:#171715;outline:none}
     .text-tool-row input[type=color]{width:32px;height:28px;padding:0;border:1px solid #ffffff33;border-radius:6px;background:transparent;cursor:pointer}
     .text-face-row button{width:auto!important;height:32px!important;min-width:72px;border:1px solid #ffffff22!important;border-radius:8px!important;background:#191918;color:#fff;padding:0 12px;font:700 12px/1 Arial,sans-serif}
     .text-face-row button.active{background:#d9ff47;color:#171715;outline:none}
@@ -165,6 +167,7 @@
     bgOpacity: 1,
     radius: null,
     letterSpacing: null,
+    textShadow: true,
     on,
     text: "",
     family: "",
@@ -579,6 +582,11 @@
     } else {
       el.style.removeProperty("letter-spacing");
     }
+    if (layer.textShadow === false) {
+      el.style.setProperty("text-shadow", "none", "important");
+    } else {
+      el.style.setProperty("text-shadow", "0 4px 18px #000", "important");
+    }
     if (layer.bg) {
       const alpha = layer.bgOpacity == null ? 1 : Number(layer.bgOpacity);
       const radius = layer.radius == null ? 999 : Number(layer.radius);
@@ -682,6 +690,13 @@
     if (opacityNative) opacityNative.value = layer.bgOpacity == null ? 1 : layer.bgOpacity;
     if (radiusNative) radiusNative.value = layer.radius == null ? 999 : layer.radius;
     if (trackingNative) trackingNative.value = layer.letterSpacing == null ? 0 : layer.letterSpacing;
+    const shadowBtn = tools.querySelector("[data-shadow-toggle]");
+    if (shadowBtn) {
+      const on = layer.textShadow !== false;
+      shadowBtn.classList.toggle("active", on);
+      shadowBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      shadowBtn.textContent = on ? "Қосулы" : "Өшірулі";
+    }
   }
 
   function layerCenter(element) {
@@ -1183,11 +1198,12 @@
     const italicPad = /italic|oblique/.test(cs.fontStyle) ? fontSize * 0.32 : fontSize * 0.06;
     const w = Math.max(el.offsetWidth * scale * outScale, textW + padL + padR + italicPad * 2, 2);
     const h = Math.max(el.offsetHeight * scale * outScale, lh * lines.length + padT + padB, 2);
+    const wantShadow = state[item.key]?.textShadow !== false;
     if (hasBg) {
       ctx.fillStyle = bg;
       fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius || h / 2);
       ctx.fillStyle = cs.color;
-    } else {
+    } else if (wantShadow) {
       ctx.shadowColor = "rgba(0,0,0,0.55)";
       ctx.shadowBlur = 10 * outScale * scale;
       ctx.shadowOffsetY = 2 * outScale * scale;
@@ -1560,6 +1576,10 @@
         <span>АРАЛ</span>
         <input type="range" data-native="tracking" min="-4" max="16" step="0.5" value="0" aria-label="Әріп аралығы">
       </div>
+      <div class="text-tool-row" data-row="shadow">
+        <span>КӨЛЕҢ</span>
+        <button type="button" class="shadow-toggle active" data-shadow-toggle aria-pressed="true">Қосулы</button>
+      </div>
     `;
     editor?.after(tools);
 
@@ -1594,13 +1614,15 @@
       const textBtn = event.target.closest("[data-text-color]");
       const bgBtn = event.target.closest("[data-bg-color]");
       const faceBtn = event.target.closest("[data-face]");
-      if (!off && !textBtn && !bgBtn && !faceBtn) return;
+      const shadowBtn = event.target.closest("[data-shadow-toggle]");
+      if (!off && !textBtn && !bgBtn && !faceBtn && !shadowBtn) return;
       const key = selectedKey(stack);
       const el = stack.querySelector(layerSelector(key));
       if (off) state[key].bg = "";
       if (textBtn) state[key].color = textBtn.dataset.textColor;
       if (bgBtn) state[key].bg = bgBtn.dataset.bgColor;
       if (faceBtn) state[key].face = faceBtn.dataset.face;
+      if (shadowBtn) state[key].textShadow = state[key].textShadow === false;
       applyLayerLook(el, key);
       syncSwatches(key);
       syncFace(key);

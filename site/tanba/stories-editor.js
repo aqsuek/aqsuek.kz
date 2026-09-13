@@ -6,7 +6,7 @@
   const STORE = "qarip-stories-editor-v2";
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
-  const ASSET_V = "tanba2";
+  const ASSET_V = "tanba4";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -632,6 +632,15 @@
       `;
     }
     let fonts = catalogFonts();
+    if (!FONT_DATA) {
+      loadFontData().then(() => {
+        if (activeSheet === "fonts") renderSheet("fonts");
+      });
+      return `
+      <p class="leto-style-tag">Қаріпті басыңыз. Кейбіреуінде Thin / Bold бар.</p>
+      <p class="leto-hint">Қаріптер жүктелуде…</p>
+    `;
+    }
     if (fontQuery) {
       const q = fontQuery.toLowerCase();
       fonts = fonts.filter((f) => f.name.toLowerCase().includes(q));
@@ -795,6 +804,7 @@
       return `<p class="leto-hint">Мәтін қабаттарын табу мүмкін болмады. Бетті жаңартып көріңіз.</p>`;
     }
     const track = currentTracking();
+    const shadowOn = currentTextShadow();
     return `
       <p class="leto-hint">Осы жерге жазыңыз — Stories-та бірден көрінеді.</p>
       <div class="leto-text-list">
@@ -821,6 +831,10 @@
           <button type="button" data-track-step="0.5" aria-label="Кеңейту">+</button>
           <span class="leto-style-val" data-style-tracking-val>${formatTrack(track)}</span>
         </div>
+      </div>
+      <div class="leto-style-row-head leto-shadow-row">
+        <p class="leto-style-label">Көлеңке</p>
+        <button type="button" class="leto-style-bgoff${shadowOn ? " active" : ""}" data-text-shadow-toggle aria-pressed="${shadowOn ? "true" : "false"}">${shadowOn ? "Қосулы" : "Өшірулі"}</button>
       </div>
       ${
         canAdd
@@ -874,6 +888,37 @@
     const val = root.querySelector("[data-style-tracking-val]");
     if (slider) slider.value = String(n);
     if (val) val.textContent = formatTrack(n);
+  }
+
+  function currentTextShadow() {
+    const native = qs(".text-color-tools [data-shadow-toggle]");
+    if (native) return native.getAttribute("aria-pressed") !== "false";
+    const { el } = selectedLayerInfo();
+    if (!el) return true;
+    const shadow = getComputedStyle(el).textShadow;
+    return !!shadow && shadow !== "none";
+  }
+
+  function syncShadowUi(body) {
+    const root = body || sheetEl("text")?.querySelector(".leto-sheet-body");
+    const btn = root?.querySelector("[data-text-shadow-toggle]");
+    if (!btn) return;
+    const on = currentTextShadow();
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.textContent = on ? "Қосулы" : "Өшірулі";
+  }
+
+  function toggleTextShadow() {
+    const native = qs(".text-color-tools [data-shadow-toggle]");
+    if (native) native.click();
+    else {
+      const { el } = selectedLayerInfo();
+      if (!el) return;
+      const on = currentTextShadow();
+      el.style.setProperty("text-shadow", on ? "none" : "0 4px 18px #000", "important");
+    }
+    syncShadowUi();
   }
 
   function mountTextInputs(body) {
@@ -1093,6 +1138,12 @@
       const trackStep = e.target.closest("[data-track-step]");
       if (trackStep) {
         applyTracking(currentTracking() + Number(trackStep.dataset.trackStep));
+        return;
+      }
+      if (e.target.closest("[data-text-shadow-toggle]")) {
+        toggleTextShadow();
+        pushHistory();
+        save();
         return;
       }
       if (e.target.closest("[data-native-add-text]")) {
@@ -1340,6 +1391,7 @@
       const key = slot.dataset.slot;
       if (key) qs(`.text-layer-picks [data-layer="${key}"]`)?.click();
       syncTrackingUi(body);
+      syncShadowUi(body);
     };
 
     body.oninput = (e) => {
@@ -2019,6 +2071,8 @@
     closeSheets();
     qs(".leto-textbar")?.classList.remove("on");
     choice.classList.remove("done");
+    choice.removeAttribute("hidden");
+    choice.setAttribute("aria-hidden", "false");
     quickMode = false;
     document.documentElement.classList.remove("leto-sticker-mode");
     updateExportButtonForMode();
@@ -2030,7 +2084,11 @@
     quickMode = mode === "sticker";
     document.documentElement.classList.toggle("leto-sticker-mode", quickMode);
     updateExportButtonForMode();
-    if (choice) choice.classList.add("done");
+    if (choice) {
+      choice.classList.add("done");
+      choice.setAttribute("hidden", "");
+      choice.setAttribute("aria-hidden", "true");
+    }
     if (quickMode) {
       state.bg = { ...state.bg, type: "transparent", value: "" };
       applyBackground();
@@ -2072,30 +2130,47 @@
   function ensureChoice() {
     let choice = qs(".leto-choice");
     if (choice) {
+      if (!choice.dataset.bound) bindChoice(choice);
       markLetoReady();
       return choice;
     }
     choice = document.createElement("div");
     choice.className = "leto-choice";
+    choice.setAttribute("role", "dialog");
+    choice.setAttribute("aria-modal", "true");
+    choice.setAttribute("aria-label", "Stories режимін таңдау");
     choice.innerHTML = renderChoiceHome();
     document.body.append(choice);
+    bindChoice(choice);
     markLetoReady();
-    choice.addEventListener("click", (e) => {
-      if (e.target.closest("[data-choice-back]")) {
-        location.href = "/tanba/";
-        return;
-      }
-      const editorBtn = e.target.closest('[data-choice="editor"]');
-      if (editorBtn) {
-        enterChoice("editor");
-        return;
-      }
-      const stickerBtn = e.target.closest('[data-choice="sticker"]');
-      if (stickerBtn) {
-        enterChoice("sticker");
-      }
-    });
     return choice;
+  }
+
+  function bindChoice(choice) {
+    if (!choice || choice.dataset.bound === "1") return;
+    choice.dataset.bound = "1";
+    choice.addEventListener(
+      "click",
+      (e) => {
+        if (e.target.closest("[data-choice-back]")) {
+          e.preventDefault();
+          location.href = "/tanba/";
+          return;
+        }
+        const editorBtn = e.target.closest('[data-choice="editor"]');
+        if (editorBtn) {
+          e.preventDefault();
+          enterChoice("editor");
+          return;
+        }
+        const stickerBtn = e.target.closest('[data-choice="sticker"]');
+        if (stickerBtn) {
+          e.preventDefault();
+          enterChoice("sticker");
+        }
+      },
+      true
+    );
   }
 
   function markLetoReady() {
