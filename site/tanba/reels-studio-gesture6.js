@@ -485,11 +485,14 @@
 
   function addLayer(stack, editor) {
     const next = ["hook", "mark", "extra"].find((key) => !isOn(key));
-    if (!next) return;
+    if (!next) {
+      toast("Ең көбі 3 мәтін.");
+      return false;
+    }
     if (next === "extra") {
       createExtra(stack, editor, true);
       syncLayerVisibility(stack, editor);
-      return;
+      return true;
     }
     state[next].on = true;
     syncLayerVisibility(stack, editor);
@@ -497,6 +500,7 @@
     selectLayer(stack, next);
     requestAnimationFrame(() => startEdit(stack, next, true));
     save();
+    return true;
   }
 
   function setLayerText(el, value) {
@@ -1322,7 +1326,7 @@
 
   let FONT_INDEX = null;
   let fontIndexPromise = null;
-  const FONT_ASSET_V = "tanba14";
+  const FONT_ASSET_V = "tanba15";
 
   function loadFontIndex() {
     if (fontIndexPromise) return fontIndexPromise;
@@ -1795,6 +1799,12 @@
       if (!stack) return false;
       applyFontToSelected(stack, family, name, faceId || "");
       return true;
+    },
+    addTextLayer() {
+      const stack = document.querySelector(".subtitle-stack");
+      const editor = document.querySelector(".reels-copy-edit");
+      if (!stack) return false;
+      return !!addLayer(stack, editor);
     },
     setFace(faceId) {
       const stack = document.querySelector(".subtitle-stack");

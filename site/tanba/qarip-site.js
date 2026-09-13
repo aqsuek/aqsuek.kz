@@ -328,13 +328,13 @@
     if (!document.querySelector('link[data-stories-editor-css]')) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "/tanba/stories-editor.css?v=tanba14";
+      link.href = "/tanba/stories-editor.css?v=tanba15";
       link.dataset.storiesEditorCss = "1";
       document.head.appendChild(link);
     }
     if (!document.querySelector('script[data-stories-editor]')) {
       const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba14";
+      script.src = "/tanba/stories-editor.js?v=tanba15";
       script.defer = true;
       script.dataset.storiesEditor = "1";
       document.body.appendChild(script);

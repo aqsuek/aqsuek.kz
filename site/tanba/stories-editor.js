@@ -375,9 +375,13 @@
       }
       if (act === "text") {
         setBgEdit(false);
+        closeSheets();
+        const added = window.__qaripGesture?.addTextLayer?.();
+        if (!added) qs(".text-add-btn")?.click();
         showTextbar();
-        openSheet("text");
-        syncDock("text");
+        syncDock("");
+        pushHistory();
+        save();
       }
       if (act === "fonts") {
         setBgEdit(false);
