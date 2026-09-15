@@ -140,7 +140,14 @@
   }
 
   function polishAboutFooter() {
-    const aboutP = document.querySelector("#about p");
+    const about = document.querySelector("#about");
+    if (about && !about.querySelector(".qarip-about-kicker")) {
+      const kicker = document.createElement("p");
+      kicker.className = "qarip-about-kicker";
+      kicker.textContent = "Жоба";
+      about.prepend(kicker);
+    }
+    const aboutP = document.querySelector("#about p:not(.qarip-about-kicker)");
     if (aboutP && !aboutP.querySelector("a")) aboutP.textContent = DISCLAIMER;
     const footer = document.querySelector("footer");
     if (!footer) return;
@@ -173,13 +180,13 @@
     if (!document.querySelector('link[data-stories-editor-css]')) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "/tanba/stories-editor.css?v=tanba51";
+      link.href = "/tanba/stories-editor.css?v=tanba52";
       link.dataset.storiesEditorCss = "1";
       document.head.appendChild(link);
     }
     if (!document.querySelector('script[data-stories-editor]')) {
       const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba54";
+      script.src = "/tanba/stories-editor.js?v=tanba56";
       script.defer = true;
       script.dataset.storiesEditor = "1";
       document.body.appendChild(script);

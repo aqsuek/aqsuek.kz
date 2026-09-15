@@ -1,3 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&display=swap");
+:root{
+  --lg-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","SF Pro Rounded","Inter","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+}
+html,body{
+  font-family:var(--lg-sans);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 .font-download,
 .card-bottom a[aria-label$="жүктеу"],
 .card-bottom a[download]{
@@ -26,7 +35,7 @@
 .card-bottom a[download]::after,
 .font-download::after{
   content:"Жүктеу"!important;
-  font:800 11px/1 Arial,sans-serif;
+  font:800 11px/1 var(--lg-sans);
   letter-spacing:.03em;
 }
 .font-card .meta{
@@ -48,7 +57,7 @@
 }
 .font-card .meta > span:nth-child(2)::after,
 .font-card .meta > span:last-child::after{
-  font:700 10px/1.2 Arial,sans-serif;
+  font:700 10px/1.2 var(--lg-sans);
   letter-spacing:.02em;
 }
 .font-card[data-license="open"] .meta > span:last-child::after{content:"Open Source";color:#286332}
@@ -126,7 +135,7 @@
   padding:10px 13px!important;
   min-height:0;
   border:0;
-  font:700 13px/1 Arial,sans-serif;
+  font:700 13px/1 var(--lg-sans);
 }
 .cat-carousel:not(.has-more){
   grid-template-columns:minmax(0,1fr);
@@ -154,7 +163,7 @@
   border-radius:99px;
   background:#fff;
   color:#181816;
-  font:800 16px/40px Arial,sans-serif;
+  font:800 16px/40px var(--lg-sans);
   padding:0;
   cursor:pointer;
   align-self:center;
@@ -183,8 +192,8 @@
   color:#181816;
   box-shadow:0 24px 80px #0005;
 }
-.qarip-license-dialog h2{margin:0 0 12px;font:800 22px/1.15 Arial,sans-serif}
-.qarip-license-dialog p{margin:0 0 10px;font:600 14px/1.45 Arial,sans-serif;color:#3f3f3a}
+.qarip-license-dialog h2{margin:0 0 12px;font:800 22px/1.15 var(--lg-sans)}
+.qarip-license-dialog p{margin:0 0 10px;font:600 14px/1.45 var(--lg-sans);color:#3f3f3a}
 .qarip-license-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .qarip-dl-go,
 .qarip-dl-info{
@@ -194,7 +203,7 @@
   min-height:42px;
   padding:0 16px;
   border-radius:999px;
-  font:800 13px/1 Arial,sans-serif;
+  font:800 13px/1 var(--lg-sans);
   text-decoration:none;
   cursor:pointer;
 }
@@ -202,7 +211,7 @@
 .qarip-dl-info{border:1px solid #181816;color:#181816;background:#fff}
 .qarip-dl-close{
   position:absolute;top:10px;right:12px;width:32px;height:32px;
-  border:0;background:transparent;font:700 22px/1 Arial,sans-serif;cursor:pointer;
+  border:0;background:transparent;font:700 22px/1 var(--lg-sans);cursor:pointer;
 }
 .font-detail{
   width:min(920px,calc(100% - 32px));
@@ -219,12 +228,12 @@
 .font-detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
 .font-detail-meta span{
   display:inline-flex;align-items:center;min-height:28px;padding:0 10px;
-  border-radius:999px;background:#1818160f;font:700 12px/1 Arial,sans-serif;
+  border-radius:999px;background:#1818160f;font:700 12px/1 var(--lg-sans);
 }
 .font-detail-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .similar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px}
 .similar-grid a{padding:14px;border:1px solid #18181622;border-radius:14px;color:inherit;text-decoration:none}
-.disclaimer{max-width:720px;margin:0 auto;padding:0 16px 48px;color:#5c5c56;font:600 13px/1.5 Arial,sans-serif}
+.disclaimer{max-width:720px;margin:0 auto;padding:0 16px 48px;color:#5c5c56;font:600 13px/1.5 var(--lg-sans)}
 
 /* Font detail — Variant 2 */
 body.qarip-font-page{
@@ -247,7 +256,7 @@ body.qarip-font-page .topbar{
 }
 body.qarip-font-page .topbar nav{display:flex;gap:18px}
 body.qarip-font-page .topbar nav a{
-  font:700 14px/1 Arial,sans-serif;color:#1a1a1a;opacity:.72;text-decoration:none;
+  font:700 14px/1 var(--lg-sans);color:#1a1a1a;opacity:.72;text-decoration:none;
 }
 body.qarip-font-page .topbar nav a:hover{opacity:1}
 body.qarip-font-page .brand{text-decoration:none;color:#1a1a1a;display:flex;align-items:center;max-width:min(220px,52vw);line-height:0}
@@ -255,7 +264,7 @@ body.qarip-font-page .brand-logo{display:none}
 body.qarip-font-page .qarip-nav-actions{display:flex}
 body.qarip-font-page .qarip-nav-start{
   display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border-radius:999px;
-  background:var(--q-blue,#0040dc);color:#fff;font:800 14px/1 Arial,sans-serif;text-decoration:none;
+  background:var(--q-blue,#0040dc);color:#fff;font:800 14px/1 var(--lg-sans);text-decoration:none;
 }
 body.qarip-font-page .font-detail{
   width:min(880px,calc(100% - 32px));
@@ -263,19 +272,19 @@ body.qarip-font-page .font-detail{
 }
 .font-detail-crumbs{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
-  margin:0 0 22px;font:600 13px/1 Arial,sans-serif;color:#6b6b6b;
+  margin:0 0 22px;font:600 13px/1 var(--lg-sans);color:#6b6b6b;
 }
 .font-detail-crumbs a{color:#1a1a1a;text-decoration:none}
 .font-detail-crumbs a:hover{text-decoration:underline}
 .font-detail-kicker{
-  margin:0 0 8px;font:800 11px/1 Arial,sans-serif;letter-spacing:.12em;color:#9a7a00;
+  margin:0 0 8px;font:800 11px/1 var(--lg-sans);letter-spacing:.12em;color:#9a7a00;
 }
 .font-detail-head h1{
-  margin:0 0 8px;font:800 clamp(28px,5vw,42px)/1.1 Arial,sans-serif;letter-spacing:-.04em;
+  margin:0 0 8px;font:800 clamp(28px,5vw,42px)/1.1 var(--lg-sans);letter-spacing:-.04em;
 }
-.font-detail-author{margin:0 0 8px;font:600 14px/1.4 Arial,sans-serif;color:#6b6b6b}
+.font-detail-author{margin:0 0 8px;font:600 14px/1.4 var(--lg-sans);color:#6b6b6b}
 .font-detail-lead{
-  margin:0 0 22px;max-width:40em;font:500 15px/1.5 Arial,sans-serif;color:#6b6b6b;
+  margin:0 0 22px;max-width:40em;font:500 15px/1.5 var(--lg-sans);color:#6b6b6b;
 }
 .font-detail-stage{
   padding:22px;border:1px solid #ebe8e1;border-radius:22px;background:#fff;
@@ -283,14 +292,14 @@ body.qarip-font-page .font-detail{
 }
 .font-detail-stage .tester-label{
   display:flex;flex-direction:column;gap:8px;
-  font:800 12px/1 Arial,sans-serif;letter-spacing:.04em;color:#6b6b6b;
+  font:800 12px/1 var(--lg-sans);letter-spacing:.04em;color:#6b6b6b;
 }
 .font-detail-stage .detail-preview-input{
   width:100%;min-height:48px;padding:0 14px;border:1px solid #ebe8e1;border-radius:12px;
-  font:600 16px/1.4 Arial,sans-serif;box-sizing:border-box;background:#fafaf8;
+  font:600 16px/1.4 var(--lg-sans);box-sizing:border-box;background:#fafaf8;
 }
 .font-detail-stage .size-control{
-  display:flex;align-items:center;gap:10px;margin:14px 0 8px;color:#6b6b6b;font:700 13px/1 Arial,sans-serif;
+  display:flex;align-items:center;gap:10px;margin:14px 0 8px;color:#6b6b6b;font:700 13px/1 var(--lg-sans);
 }
 .font-detail-stage .size-control input{flex:1}
 body.qarip-font-page .font-detail-preview{
@@ -301,7 +310,7 @@ body.qarip-font-page .font-detail-letters{
   color:#6b6b6b;font-size:16px;letter-spacing:.06em;
 }
 .glyph-live{
-  margin:0;font:700 13px/1.4 Arial,sans-serif;color:#6b6b6b;
+  margin:0;font:700 13px/1.4 var(--lg-sans);color:#6b6b6b;
 }
 .font-detail-panel{
   padding:20px 22px;border:1px solid #ebe8e1;border-radius:22px;background:#fff;
@@ -310,14 +319,14 @@ body.qarip-font-page .font-detail-letters{
 body.qarip-font-page .font-detail-meta{margin:0 0 12px}
 body.qarip-font-page .font-detail-meta span{
   background:#f3f1ec;border-radius:999px;padding:0 12px;min-height:30px;
-  font:700 12px/1 Arial,sans-serif;color:#6b6b6b;
+  font:700 12px/1 var(--lg-sans);color:#6b6b6b;
 }
 body.qarip-font-page .license-badge{color:#8b4a14!important}
-.license-copy{margin:0 0 16px;font:500 13px/1.45 Arial,sans-serif;color:#6b6b6b;max-width:42em}
+.license-copy{margin:0 0 16px;font:500 13px/1.45 var(--lg-sans);color:#6b6b6b;max-width:42em}
 body.qarip-font-page .font-download{
   min-height:46px!important;padding:0 18px!important;border-radius:999px!important;
   background:var(--q-blue,#0040dc)!important;border:1px solid var(--q-blue,#0040dc)!important;color:#fff!important;
-  font:800 13px/1 Arial,sans-serif;
+  font:800 13px/1 var(--lg-sans);
 }
 /* Catalog cards use ::after label; detail pages already have text in HTML */
 body.qarip-font-page .font-download::after{content:none!important}
@@ -327,13 +336,13 @@ body.qarip-font-page .font-favorite{
 }
 .font-detail-stories{min-height:46px;padding:0 16px}
 .font-detail-similar h2{
-  margin:0 0 12px;font:800 22px/1.2 Arial,sans-serif;letter-spacing:-.03em;
+  margin:0 0 12px;font:800 22px/1.2 var(--lg-sans);letter-spacing:-.03em;
 }
 body.qarip-font-page .similar-grid a,
 body.qarip-font-page .font-similar-card{
   display:flex;align-items:center;min-height:64px;padding:16px 18px;
   border:1px solid #ebe8e1;border-radius:16px;background:#fff;
-  text-decoration:none;color:#1a1a1a;font:800 15px/1.2 Arial,sans-serif;
+  text-decoration:none;color:#1a1a1a;font:800 15px/1.2 var(--lg-sans);
   transition:transform .2s,box-shadow .2s;
 }
 body.qarip-font-page .similar-grid a:hover,
@@ -344,13 +353,13 @@ body.qarip-font-page .font-similar-card:hover{
   border-top:1px solid #ebe8e1;padding:28px 16px 40px;margin-top:24px;
 }
 .font-detail-footer .disclaimer{
-  max-width:880px;margin:0 auto 12px;padding:0;font:500 12px/1.55 Arial,sans-serif;color:#6b6b6b;
+  max-width:880px;margin:0 auto 12px;padding:0;font:500 12px/1.55 var(--lg-sans);color:#6b6b6b;
 }
 .font-detail-footer .qarip-footer-nav{
   max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 18px;
 }
 .font-detail-footer .qarip-footer-nav a{
-  color:#1a1a1a;font:700 13px/1 Arial,sans-serif;text-decoration:none;opacity:.8;
+  color:#1a1a1a;font:700 13px/1 var(--lg-sans);text-decoration:none;opacity:.8;
 }
 @media(max-width:720px){
   body.qarip-font-page .topbar nav{display:none}
@@ -374,7 +383,7 @@ body.qarip-font-page .font-similar-card:hover{
     align-items:center;
     gap:6px;
     color:#181816;
-    font:800 13px/1 Arial,sans-serif;
+    font:800 13px/1 var(--lg-sans);
     letter-spacing:.02em;
     cursor:text;
   }
@@ -385,7 +394,7 @@ body.qarip-font-page .font-similar-card:hover{
   }
   #catalog .sticky-tester > input{
     min-height:28px;
-    font:600 16px/1.35 Arial,sans-serif;
+    font:600 16px/1.35 var(--lg-sans);
   }
 }
 #reels{display:none!important}
@@ -479,7 +488,7 @@ html.qarip-v2 .topbar nav{
   gap:22px;
 }
 html.qarip-v2 .topbar nav a{
-  font:700 14px/1 Arial,sans-serif;
+  font:700 14px/1 var(--lg-sans);
   color:var(--q-ink);
   opacity:.72;
   transition:opacity .2s;
@@ -520,7 +529,7 @@ html.qarip-v2 .qarip-nav-start{
   border-radius:999px;
   background:var(--q-blue);
   color:#fff;
-  font:800 14px/1 Arial,sans-serif;
+  font:800 14px/1 var(--lg-sans);
   text-decoration:none;
   box-shadow:0 8px 18px #0040dc33;
   transition:transform .2s var(--q-ease),background .2s;
@@ -538,7 +547,7 @@ html.qarip-home .intro-cta{
   min-height:var(--q-btn-h);
   padding:0 22px;
   border-radius:999px;
-  font:800 15px/1 Arial,sans-serif;
+  font:800 15px/1 var(--lg-sans);
   letter-spacing:.01em;
   text-decoration:none;
   transition:transform .2s var(--q-ease),background .2s,box-shadow .2s,border-color .2s;
@@ -603,7 +612,7 @@ html.qarip-home .intro.qarip-hero::after{
   width:min(240px,42vw);
   height:min(240px,42vw);
   max-width:38%;
-  background:url("/qarip/assets/tanba-mark.png") center/contain no-repeat;
+  background:url("/qarip/assets/tanba-mark.png?v=logo2") center/contain no-repeat;
   opacity:.08;
   pointer-events:none;
   z-index:0;
@@ -618,14 +627,14 @@ html.qarip-home .intro.qarip-hero .eyebrow{
   border-radius:999px;
   background:#e8eeff;
   color:var(--q-blue);
-  font:700 11px/1.2 Arial,sans-serif!important;
+  font:700 11px/1.2 var(--lg-sans)!important;
   letter-spacing:.05em;
   text-transform:uppercase;
 }
 html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{
   margin:0 0 14px;
   max-width:14ch;
-  font:800 clamp(38px,5.8vw,62px)/1.05 Arial,sans-serif;
+  font:800 clamp(38px,5.8vw,62px)/1.05 var(--lg-sans);
   letter-spacing:-.05em;
   color:var(--q-ink);
 }
@@ -639,7 +648,7 @@ html.qarip-home .intro.qarip-hero .qarip-accent{
 html.qarip-home .qarip-hero-desc{
   margin:0 0 20px!important;
   max-width:32em;
-  font:500 16px/1.55 Arial,sans-serif!important;
+  font:500 16px/1.55 var(--lg-sans)!important;
   color:var(--q-muted)!important;
 }
 html.qarip-home .intro-cta-row{
@@ -647,7 +656,7 @@ html.qarip-home .intro-cta-row{
 }
 html.qarip-home .qarip-hero-glyphs{
   margin:0 0 16px;
-  font:700 20px/1.35 "Playfair Display",Georgia,serif;
+  font:700 20px/1.35 var(--lg-sans);
   letter-spacing:.12em;
   color:var(--q-ink);
 }
@@ -657,7 +666,7 @@ html.qarip-home .qarip-features{
 }
 html.qarip-home .qarip-features li{
   display:inline-flex;align-items:center;gap:8px;
-  font:700 13px/1 Arial,sans-serif;color:var(--q-muted);
+  font:700 13px/1 var(--lg-sans);color:var(--q-muted);
 }
 .qarip-ico{
   width:30px;height:30px;border-radius:10px;
@@ -674,7 +683,7 @@ html.qarip-home .qarip-features li{
 }
 .qarip-landing h2{
   margin:0;
-  font:800 clamp(26px,3.4vw,36px)/1.12 Arial,sans-serif;
+  font:800 clamp(26px,3.4vw,36px)/1.12 var(--lg-sans);
   letter-spacing:-.04em;color:var(--q-ink);
 }
 .qarip-section-head{margin:0 0 28px;max-width:40rem}
@@ -682,7 +691,7 @@ html.qarip-home .qarip-features li{
 .qarip-how-head{display:flex;flex-wrap:wrap;align-items:end;gap:12px 20px}
 .qarip-how-note{
   margin:0!important;
-  font:700 14px/1.2 Georgia,"Times New Roman",serif;
+  font:700 14px/1.2 var(--lg-sans);
   font-style:italic;
   color:#c45b7a;
 }
@@ -701,15 +710,15 @@ html.qarip-home .qarip-features li{
   box-shadow:var(--q-shadow-soft);
 }
 .qarip-step strong{
-  font:800 17px/1.25 Arial,sans-serif;
+  font:800 17px/1.25 var(--lg-sans);
   color:var(--q-ink);letter-spacing:-.02em;
 }
 .qarip-step p{
-  margin:0;font:500 13px/1.4 Arial,sans-serif;color:var(--q-muted);
+  margin:0;font:500 13px/1.4 var(--lg-sans);color:var(--q-muted);
 }
 .qarip-step-arrow{
   display:grid;place-items:center;
-  font:800 22px/1 Arial,sans-serif;color:#cfc9bc;
+  font:800 22px/1 var(--lg-sans);color:#cfc9bc;
   padding-top:28px;
 }
 .qarip-step-ico{
@@ -731,12 +740,12 @@ html.qarip-home .qarip-features li{
 }
 .qarip-toolcta h2{margin:0 0 8px;font-size:clamp(22px,2.8vw,30px)}
 .qarip-toolcta p{
-  margin:0;color:var(--q-muted);font:500 15px/1.5 Arial,sans-serif;max-width:36em;
+  margin:0;color:var(--q-muted);font:500 15px/1.5 var(--lg-sans);max-width:36em;
 }
 
 .qarip-catalog-lead{
   margin:10px 0 0;max-width:38em;
-  font:500 14px/1.5 Arial,sans-serif;color:var(--q-muted);
+  font:500 14px/1.5 var(--lg-sans);color:var(--q-muted);
 }
 html.qarip-home #catalog.workspace{
   padding-top:28px;border-top:1px solid var(--q-line);
@@ -767,11 +776,11 @@ html.qarip-home .letters{
 }
 html.qarip-home .font-card .meta > span{
   background:transparent;border:0;border-radius:0;color:var(--q-muted);
-  padding:0 10px 0 0;font:600 11px/1.2 Arial,sans-serif!important;
+  padding:0 10px 0 0;font:600 11px/1.2 var(--lg-sans)!important;
 }
 html.qarip-home .font-card .meta > span:nth-child(2){display:none!important}
 html.qarip-home .font-card .meta > span:last-child{font-size:0!important;line-height:0;opacity:.85}
-html.qarip-home .font-card .meta > span:last-child::after{font:600 11px/1.2 Arial,sans-serif}
+html.qarip-home .font-card .meta > span:last-child::after{font:600 11px/1.2 var(--lg-sans)}
 html.qarip-home .card-bottom{margin-top:16px}
 html.qarip-home .font-download,
 html.qarip-home .card-bottom a[aria-label$="жүктеу"],
@@ -801,10 +810,10 @@ html.qarip-home .cat-carousel{border-top-color:var(--q-line)}
 html.qarip-home .cat-more{border-color:var(--q-line);border-radius:var(--q-r-sm)}
 
 .qarip-footer-nav{display:flex;flex-wrap:wrap;gap:12px 18px;margin:10px 0 0}
-.qarip-footer-nav a{color:inherit;font:700 13px/1 Arial,sans-serif;text-decoration:none;opacity:.8}
+.qarip-footer-nav a{color:inherit;font:700 13px/1 var(--lg-sans);text-decoration:none;opacity:.8}
 .qarip-footer-nav a:hover{opacity:1}
 .qarip-footer-slogan{
-  margin:14px 0 0;font:700 14px/1.3 Arial,sans-serif;color:var(--q-ink);
+  margin:14px 0 0;font:700 14px/1.3 var(--lg-sans);color:var(--q-ink);
 }
 html.qarip-home footer,
 html.qarip-stories footer{
@@ -819,9 +828,9 @@ html.qarip-stories footer p{max-width:52em;line-height:1.55;font-size:12px}
   width:100%;margin:0;padding:28px 16px 14px;text-align:center;color:var(--q-ink);
   background:radial-gradient(circle at 50% 0%,#0040dc18 0,transparent 55%),var(--q-paper);
 }
-.stories-page-eyebrow{margin:0 0 8px;font:800 11px/1 Arial,sans-serif;letter-spacing:.14em;color:var(--q-coral)}
-.stories-page-hero h1{margin:0 0 8px;font:800 clamp(24px,5.2vw,34px)/1.12 Arial,sans-serif;letter-spacing:-.04em}
-.stories-page-hero p{margin:0 auto;max-width:34em;font:500 14px/1.45 Arial,sans-serif;color:var(--q-muted,#6b6b6b)}
+.stories-page-eyebrow{margin:0 0 8px;font:800 11px/1 var(--lg-sans);letter-spacing:.14em;color:var(--q-coral)}
+.stories-page-hero h1{margin:0 0 8px;font:800 clamp(24px,5.2vw,34px)/1.12 var(--lg-sans);letter-spacing:-.04em}
+.stories-page-hero p{margin:0 auto;max-width:34em;font:500 14px/1.45 var(--lg-sans);color:var(--q-muted,#6b6b6b)}
 
 @media(max-width:980px){
   html.qarip-v2 .topbar{
@@ -891,12 +900,12 @@ html.qarip-home #catalog .workspace-heading .section-number{
   color:var(--q-muted);
   opacity:.7;
   padding:0;
-  font:800 11px/1 Arial,sans-serif;
+  font:800 11px/1 var(--lg-sans);
   letter-spacing:.14em;
 }
 html.qarip-home #catalog .workspace-heading h2{
   margin:0;
-  font:800 clamp(28px,4vw,40px)/1.08 Arial,sans-serif;
+  font:800 clamp(28px,4vw,40px)/1.08 var(--lg-sans);
   letter-spacing:-.045em;
   color:var(--q-ink);
 }
@@ -907,7 +916,7 @@ html.qarip-home #catalog .workspace-heading .count{
   border:0!important;
   border-radius:999px;
   padding:8px 14px;
-  font:800 12px/1 Arial,sans-serif;
+  font:800 12px/1 var(--lg-sans);
   white-space:nowrap;
 }
 
@@ -948,7 +957,7 @@ html.qarip-home #catalog .search input{
   outline:0;
   background:transparent;
   color:var(--q-ink);
-  font:600 16px/1.3 Arial,sans-serif;
+  font:600 16px/1.3 var(--lg-sans);
   appearance:none;
   -webkit-appearance:none;
 }
@@ -973,7 +982,7 @@ html.qarip-home #catalog .categories button{
   border-radius:999px;
   background:transparent;
   color:var(--q-ink);
-  font:700 13px/1 Arial,sans-serif;
+  font:700 13px/1 var(--lg-sans);
   white-space:nowrap;
 }
 html.qarip-home #catalog .categories button:hover{
@@ -990,14 +999,14 @@ html.qarip-home #catalog .categories button small,
 html.qarip-home #catalog .fav-filter small{
   margin-left:6px;
   opacity:.5;
-  font:700 11px/1 Arial,sans-serif;
+  font:700 11px/1 var(--lg-sans);
 }
 html.qarip-home #catalog .fav-filter{
   cursor:pointer;
   min-height:38px;
   padding:0 14px;
   border-radius:999px;
-  font:700 13px/1 Arial,sans-serif;
+  font:700 13px/1 var(--lg-sans);
 }
 html.qarip-home #catalog .cat-more{
   width:38px;
@@ -1006,7 +1015,7 @@ html.qarip-home #catalog .cat-more{
   border-radius:12px;
   background:#fff;
   color:var(--q-ink);
-  font:800 16px/38px Arial,sans-serif;
+  font:800 16px/38px var(--lg-sans);
 }
 
 html.qarip-home #catalog .sticky-tester.tester{
@@ -1029,7 +1038,7 @@ html.qarip-home #catalog .sticky-tester .tester-label{
   align-items:center;
   gap:8px;
   color:var(--q-muted);
-  font:800 12px/1 Arial,sans-serif;
+  font:800 12px/1 var(--lg-sans);
   letter-spacing:.04em;
   text-transform:uppercase;
   white-space:nowrap;
@@ -1049,7 +1058,7 @@ html.qarip-home #catalog .sticky-tester > input{
   outline:0;
   background:transparent;
   color:var(--q-ink);
-  font:600 16px/1.35 Arial,sans-serif;
+  font:600 16px/1.35 var(--lg-sans);
   appearance:none;
   -webkit-appearance:none;
 }
@@ -1061,7 +1070,7 @@ html.qarip-home #catalog .size-control{
   align-items:center;
   gap:8px;
   color:var(--q-muted);
-  font:700 12px/1 Arial,sans-serif;
+  font:700 12px/1 var(--lg-sans);
 }
 html.qarip-home #catalog .size-control input[type="range"]{
   width:88px;
@@ -1102,7 +1111,7 @@ html.qarip-home #catalog .font-card .card-top{
 }
 html.qarip-home #catalog .font-card h3{
   margin:0;
-  font:800 16px/1.15 Arial,sans-serif;
+  font:800 16px/1.15 var(--lg-sans);
   letter-spacing:-.03em;
   color:var(--q-ink);
 }
@@ -1147,7 +1156,7 @@ html.qarip-home #catalog .font-card .meta > span{
   padding:0;
   background:transparent;
   color:var(--q-muted);
-  font:600 11px/1.2 Arial,sans-serif!important;
+  font:600 11px/1.2 var(--lg-sans)!important;
 }
 html.qarip-home #catalog .font-card .meta > span:nth-child(2){display:none!important}
 html.qarip-home #catalog .font-favorite{
@@ -1197,7 +1206,7 @@ html.qarip-home #catalog .catalog-more{
   border-radius:999px;
   background:var(--q-blue);
   color:#fff;
-  font:800 14px/1 Arial,sans-serif;
+  font:800 14px/1 var(--lg-sans);
   cursor:pointer;
 }
 html.qarip-home #catalog .catalog-more:hover{background:var(--q-ink);color:#fff}
@@ -1205,7 +1214,7 @@ html.qarip-home #catalog .catalog-empty{
   width:min(100%,520px);
   margin:28px auto 0;
   color:var(--q-muted);
-  font:600 14px/1.45 Arial,sans-serif;
+  font:600 14px/1.45 var(--lg-sans);
   text-align:center;
 }
 
@@ -1225,17 +1234,9 @@ html.qarip-home #catalog .catalog-empty{
   html.qarip-home #catalog .font-card{min-height:240px}
 }
 
-/* Audit: readable mobile navigation and tangible output examples. */
 html.qarip-home .intro.qarip-hero .hero-word{white-space:nowrap}
 html.qarip-home .intro.qarip-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:40px;align-items:center}
 html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(34px,4.2vw,58px);max-width:none}
-html.qarip-home .qarip-hero-visual{display:grid!important;gap:16px;max-width:280px;justify-self:center;width:100%;position:relative}
-.hero-story-example{aspect-ratio:9/16;background:#153e36;color:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}
-.hero-story-example strong{font:700 32px/1.1 Georgia,serif}
-.hero-story-example small,.hero-sticker-example small{font:700 10px/1.4 Arial,sans-serif;letter-spacing:.1em}
-.hero-story-example span{font-size:14px}
-.hero-sticker-example{padding:16px;border:1px dashed #8c94a8;border-radius:16px;text-align:center;display:grid;gap:10px}
-.hero-sticker-example b{font:italic 700 30px/1.2 Georgia,serif;color:#153e36}
 .catalog-empty button{min-height:44px;padding:10px 16px;border:1px solid #0040dc;border-radius:12px;background:#fff;color:#0040dc;cursor:pointer}
 @media(max-width:900px){
  html.qarip-v2 .topbar nav{display:none!important}

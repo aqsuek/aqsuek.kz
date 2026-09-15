@@ -10,8 +10,8 @@
   --radius-sm: 12px;
   --space: clamp(20px, 4vw, 48px);
   --max: 1120px;
-  --font: "Manrope", "Noto Sans", system-ui, sans-serif;
-  --display: "Onest", "Manrope", system-ui, sans-serif;
+  --font: var(--lg-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif);
+  --display: var(--lg-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --header-h: 64px;
 }
@@ -47,6 +47,8 @@ body {
   font-size: 16px;
   line-height: 1.55;
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background: transparent;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;

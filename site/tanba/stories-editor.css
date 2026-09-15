@@ -63,7 +63,7 @@ html.qarip-stories .leto-topbar .leto-icon,
 html.qarip-stories .leto-fab{
   width:40px;height:40px;border:0;border-radius:50%;
   background:#ffffff12;color:#fff;display:inline-grid;place-items:center;
-  cursor:pointer;font:800 16px/1 Arial,sans-serif;
+  cursor:pointer;font:800 16px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-top-center{display:flex;gap:8px}
 html.qarip-stories .leto-top-right{display:flex;gap:8px;align-items:center}
@@ -71,7 +71,7 @@ html.qarip-stories .leto-export{
   width:auto;min-width:0;height:40px;padding:0 14px;border:0;border-radius:14px;
   background:var(--leto-yellow);color:#fff;display:inline-grid;place-items:center;
   cursor:pointer;box-shadow:0 8px 24px #0040dc55;
-  font:800 13px/1 Arial,sans-serif;flex:0 0 auto;box-sizing:border-box;
+  font:800 13px/1 var(--lg-sans);flex:0 0 auto;box-sizing:border-box;
 }
 html.qarip-stories .leto-stage{
   flex:1;display:flex;align-items:flex-start;justify-content:center;
@@ -126,12 +126,12 @@ html.qarip-stories .phone-preview .stories-bg-tools{
 html.qarip-stories .phone-preview.leto-bg-edit .stories-bg-tools{display:flex}
 html.qarip-stories .phone-preview .stories-bg-hint{
   padding:7px 12px;border-radius:999px;
-  background:#0009;color:#fff;font:700 12px/1 Arial,sans-serif;
+  background:#0009;color:#fff;font:700 12px/1 var(--lg-sans);
   white-space:nowrap;backdrop-filter:blur(8px);
 }
 html.qarip-stories .phone-preview .stories-bg-tools [data-bg-reset]{
   pointer-events:auto;min-height:32px;padding:0 12px;border:0;border-radius:999px;
-  background:#ffffff18;color:#fff;font:800 12px/1 Arial,sans-serif;cursor:pointer;
+  background:#ffffff18;color:#fff;font:800 12px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .phone-preview.exporting .stories-bg-hit,
 html.qarip-stories .phone-preview.exporting .stories-bg-tools{display:none!important}
@@ -199,10 +199,10 @@ html.qarip-stories .leto-dock{
 html.qarip-stories .leto-dock-btn{
   flex:1;min-height:52px;border:0;border-radius:14px;
   background:#2a2a33;color:#fff;cursor:pointer;
-  font:800 16px/1 Arial,sans-serif;
+  font:800 16px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-dock-btn.leto-dock-add{
-  flex:0 0 76px;font:800 22px/1 Arial,sans-serif;letter-spacing:-.04em;
+  flex:0 0 76px;font:800 22px/1 var(--lg-sans);letter-spacing:-.04em;
   background:var(--leto-yellow);
 }
 html.qarip-stories .leto-dock-btn:active,
@@ -251,7 +251,7 @@ html.qarip-stories .leto-sheet-head{
   gap:10px;padding:4px 16px 10px;flex:0 0 auto;
 }
 html.qarip-stories .leto-sheet-head h3{
-  margin:0;font:800 16px/1.2 Arial,sans-serif;letter-spacing:-.02em;
+  margin:0;font:800 16px/1.2 var(--lg-sans);letter-spacing:-.02em;
 }
 html.qarip-stories .leto-sheet-head button{
   width:34px;height:34px;border:0;border-radius:50%;background:#ffffff12;color:#fff;cursor:pointer;
@@ -274,7 +274,7 @@ html.qarip-stories .leto-add-grid button .ico{
   width:42px;height:42px;display:grid;place-items:center;font-size:28px;line-height:1;
 }
 html.qarip-stories .leto-add-grid button small{
-  font:700 11px/1.1 Arial,sans-serif;color:#d7d7de;text-align:center;
+  font:700 11px/1.1 var(--lg-sans);color:#d7d7de;text-align:center;
 }
 html.qarip-stories .leto-add-grid button[disabled]{opacity:.35;cursor:not-allowed}
 
@@ -285,7 +285,7 @@ html.qarip-stories .leto-chips{
 html.qarip-stories .leto-chips::-webkit-scrollbar{display:none}
 html.qarip-stories .leto-chips button{
   flex:0 0 auto;min-height:34px;padding:0 12px;border-radius:999px;border:0;
-  background:#2a2a33;color:#ddd;font:700 12px/1 Arial,sans-serif;cursor:pointer;
+  background:#2a2a33;color:#ddd;font:700 12px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-chips button.active{
   background:linear-gradient(90deg,#ff4d8d,#ff8a3d);color:#fff;
@@ -294,7 +294,7 @@ html.qarip-stories .leto-search{
   position:sticky;top:0;z-index:2;
   width:100%;box-sizing:border-box;min-height:38px;margin:0 0 10px;
   border:0;border-radius:12px;background:#2a2a33;color:#fff;
-  padding:0 12px;font:600 13px/1 Arial,sans-serif;
+  padding:0 12px;font:600 13px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-font-grid,
 html.qarip-stories .leto-pair-grid,
@@ -320,11 +320,11 @@ html.qarip-stories .leto-font-grid button b{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c9c9d2;
 }
 html.qarip-stories .leto-font-grid .fc-cuts{
-  display:block;margin-top:2px;color:var(--leto-pink);font:700 10px/1 Arial,sans-serif;letter-spacing:.02em;
+  display:block;margin-top:2px;color:var(--leto-pink);font:700 10px/1 var(--lg-sans);letter-spacing:.02em;
 }
 html.qarip-stories .leto-weight-back{
   display:inline-flex;align-items:center;min-height:40px;margin:0 0 12px;padding:0 12px;
-  border:0;border-radius:12px;background:#2a2a33;color:#fff;font:700 13px/1 Arial,sans-serif;cursor:pointer;
+  border:0;border-radius:12px;background:#2a2a33;color:#fff;font:700 13px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-weight-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:10px;
@@ -337,9 +337,9 @@ html.qarip-stories .leto-weight-grid button:active{background:#33333e}
 html.qarip-stories .leto-weight-grid .wc-glyph{
   font-size:34px;line-height:1;letter-spacing:.02em;
 }
-html.qarip-stories .leto-weight-grid b{font:700 13px/1 Arial,sans-serif;color:#c9c9d2}
+html.qarip-stories .leto-weight-grid b{font:700 13px/1 var(--lg-sans);color:#c9c9d2}
 html.qarip-stories .leto-face-group[hidden]{display:none!important}
-html.qarip-stories .leto-face-group button span{font:700 11px/1 Arial,sans-serif;white-space:nowrap}
+html.qarip-stories .leto-face-group button span{font:700 11px/1 var(--lg-sans);white-space:nowrap}
 html.qarip-stories .leto-font-grid .heart,
 html.qarip-stories .leto-pair-grid .heart{
   position:absolute;right:8px;bottom:8px;width:22px;height:22px;border:0;border-radius:50%;
@@ -420,7 +420,7 @@ html.qarip-stories .leto-color-pop-head{
   padding:8px 2px 12px;
 }
 html.qarip-stories .leto-color-pop-head h3{
-  margin:0;font:800 17px/1.2 Arial,sans-serif;letter-spacing:-.03em;
+  margin:0;font:800 17px/1.2 var(--lg-sans);letter-spacing:-.03em;
 }
 html.qarip-stories .leto-color-pop-x{
   width:30px;height:30px;border:0;border-radius:50%;cursor:pointer;padding:0;
@@ -459,7 +459,7 @@ html.qarip-stories .leto-color-hue-knob{ top:50%; }
 html.qarip-stories .leto-grad-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 html.qarip-stories .leto-grad-grid button{
   min-height:40px;border:0;border-radius:10px;cursor:pointer;
-  color:#fff;font:800 13px/1 Arial,sans-serif;
+  color:#fff;font:800 13px/1 var(--lg-sans);
   text-shadow:0 1px 2px rgba(0,0,0,.62);
 }
 html.qarip-stories .leto-grad-grid button[data-grad="paper"]{
@@ -476,7 +476,7 @@ html.qarip-stories .leto-custom-grad-row{display:flex;gap:10px}
 html.qarip-stories .leto-custom-swatch{
   flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;
   min-height:44px;padding:0 12px;border-radius:12px;background:#22222a;
-  font:700 12px/1 Arial,sans-serif;color:#c9c9d2;
+  font:700 12px/1 var(--lg-sans);color:#c9c9d2;
 }
 html.qarip-stories .leto-custom-swatch input[type="color"]{
   width:34px;height:28px;border:0;border-radius:8px;background:none;padding:0;cursor:pointer;
@@ -484,7 +484,7 @@ html.qarip-stories .leto-custom-swatch input[type="color"]{
 html.qarip-stories .leto-custom-grad input[type="range"]{accent-color:var(--leto-pink)}
 html.qarip-stories .leto-custom-apply{
   width:100%;min-height:44px;margin-top:12px;border:0;border-radius:12px;cursor:pointer;
-  background:linear-gradient(90deg,#ff4d8d,#ff8a3d);color:#fff;font:800 13px/1 Arial,sans-serif;
+  background:linear-gradient(90deg,#ff4d8d,#ff8a3d);color:#fff;font:800 13px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 html.qarip-stories .leto-photo-grid button{
@@ -492,15 +492,15 @@ html.qarip-stories .leto-photo-grid button{
 }
 html.qarip-stories .leto-photo-grid button span{
   position:absolute;left:6px;right:6px;bottom:6px;padding:4px;border-radius:8px;
-  background:#0008;color:#fff;font:700 10px/1 Arial,sans-serif;
+  background:#0008;color:#fff;font:700 10px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-file{
   display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 12px;
   border:1px dashed #ffffff28;border-radius:14px;background:#ffffff08;
-  font:800 13px/1 Arial,sans-serif;cursor:pointer;
+  font:800 13px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-file input{display:none}
-html.qarip-stories .leto-hint{margin:0 0 10px;color:var(--leto-muted);font:500 12px/1.4 Arial,sans-serif}
+html.qarip-stories .leto-hint{margin:0 0 10px;color:var(--leto-muted);font:500 12px/1.4 var(--lg-sans)}
 
 /* Text add/remove sheet */
 html.qarip-stories .leto-text-list{display:grid;gap:10px;margin-bottom:14px}
@@ -510,25 +510,25 @@ html.qarip-stories .leto-text-row{
 html.qarip-stories .row-head{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
 }
-html.qarip-stories .row-head b{font:800 12px/1 Arial,sans-serif;color:#c9c9d2;letter-spacing:.03em;text-transform:uppercase}
+html.qarip-stories .row-head b{font:800 12px/1 var(--lg-sans);color:#c9c9d2;letter-spacing:.03em;text-transform:uppercase}
 html.qarip-stories .row-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 html.qarip-stories .row-font,
 html.qarip-stories .row-style{
   border:1px solid var(--leto-line);background:transparent;color:#fff;
-  font:700 11px/1 Arial,sans-serif;cursor:pointer;padding:6px 10px;border-radius:999px;
+  font:700 11px/1 var(--lg-sans);cursor:pointer;padding:6px 10px;border-radius:999px;
 }
 html.qarip-stories .row-remove{
-  border:0;background:none;color:#ff6b8f;font:700 12px/1 Arial,sans-serif;cursor:pointer;padding:4px 6px;
+  border:0;background:none;color:#ff6b8f;font:700 12px/1 var(--lg-sans);cursor:pointer;padding:4px 6px;
 }
 html.qarip-stories .row-slot input{
   width:100%;box-sizing:border-box;min-height:46px;border-radius:12px;
   border:1px solid #ffffff22;background:#161615;color:#fff;padding:0 14px;
-  font:600 15px/1.3 Arial,sans-serif;
+  font:600 15px/1.3 var(--lg-sans);
 }
 html.qarip-stories .row-slot input:focus{outline:2px solid var(--leto-yellow)}
 html.qarip-stories .leto-text-add{
   width:100%;min-height:52px;margin-top:12px;border:0;border-radius:14px;
-  background:var(--leto-yellow);color:#fff;font:800 22px/1 Arial,sans-serif;
+  background:var(--leto-yellow);color:#fff;font:800 22px/1 var(--lg-sans);
   letter-spacing:-.04em;cursor:pointer;
 }
 
@@ -537,7 +537,7 @@ html.qarip-stories .leto-layer-list{display:grid;gap:8px}
 html.qarip-stories .leto-layer-list button{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   min-height:48px;padding:0 14px;border:0;border-radius:14px;background:#2a2a33;color:#fff;
-  font:700 13px/1 Arial,sans-serif;cursor:pointer;text-align:left;
+  font:700 13px/1 var(--lg-sans);cursor:pointer;text-align:left;
 }
 html.qarip-stories .leto-layer-list button.active{outline:2px solid var(--leto-yellow)}
 
@@ -552,7 +552,7 @@ html.qarip-stories .leto-textbar{
 html.qarip-stories .leto-textbar.on{display:flex}
 html.qarip-stories .leto-textbar button{
   flex:1 1 auto;min-height:44px;padding:0 12px;border:0;border-radius:12px;
-  background:#2f2f38;color:#fff;font:800 14px/1 Arial,sans-serif;cursor:pointer;
+  background:#2f2f38;color:#fff;font:800 14px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-textbar button.active{background:var(--leto-yellow);color:#fff}
 html.qarip-stories .leto-face-group{
@@ -569,7 +569,7 @@ html.qarip-stories .leto-face-row{
 html.qarip-stories .leto-face-row button{
   flex:0 0 auto;width:40px;height:40px;min-height:40px;padding:0;
   border:0;border-radius:12px;background:#2a2a33;color:#ddd;
-  font:0/0 Arial,sans-serif;cursor:pointer;
+  font:0/0 var(--lg-sans);cursor:pointer;
   display:inline-grid;place-items:center;
 }
 html.qarip-stories .leto-face-row button span{
@@ -589,12 +589,12 @@ html.qarip-stories .leto-bg-thumb{
   width:52px;height:72px;flex:0 0 auto;border-radius:10px;background:#222 center/cover no-repeat;
 }
 html.qarip-stories .leto-bg-current-meta{flex:1;min-width:0}
-html.qarip-stories .leto-bg-current-meta b{display:block;font:800 13px/1.2 Arial,sans-serif}
-html.qarip-stories .leto-bg-current-meta small{display:block;margin-top:4px;color:var(--leto-muted);font:600 11px/1.2 Arial,sans-serif}
+html.qarip-stories .leto-bg-current-meta b{display:block;font:800 13px/1.2 var(--lg-sans)}
+html.qarip-stories .leto-bg-current-meta small{display:block;margin-top:4px;color:var(--leto-muted);font:600 11px/1.2 var(--lg-sans)}
 html.qarip-stories .leto-bg-current [data-bg-clear],
 html.qarip-stories .leto-bg-current [data-bg-reset]{
   flex:0 0 auto;min-height:40px;padding:0 12px;border:0;border-radius:12px;
-  background:#ff4d8d;color:#fff;font:800 12px/1 Arial,sans-serif;cursor:pointer;
+  background:#ff4d8d;color:#fff;font:800 12px/1 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-bg-current [data-bg-reset]{
   background:#2a2a33;color:#fff;
@@ -603,7 +603,7 @@ html.qarip-stories .leto-photo-grid button.is-current{outline:2px solid var(--le
 
 html.qarip-stories .leto-text-sticker{
   width:100%;min-height:44px;margin-top:12px;border:0;border-radius:12px;
-  background:#ffffff10;color:#c9c9d2;font:700 13px/1 Arial,sans-serif;cursor:pointer;
+  background:#ffffff10;color:#c9c9d2;font:700 13px/1 var(--lg-sans);cursor:pointer;
 }
 
 html.qarip-stories .leto-choice{
@@ -627,11 +627,11 @@ html.qarip-stories .leto-choice[hidden]{
 }
 html.qarip-stories .leto-choice-head{max-width:420px;margin:0 auto 22px;text-align:center}
 html.qarip-stories .leto-choice-eyebrow{
-  margin:0 0 10px;font:800 11px/1 Arial,sans-serif;letter-spacing:.14em;color:var(--leto-pink);
+  margin:0 0 10px;font:800 11px/1 var(--lg-sans);letter-spacing:.14em;color:var(--leto-pink);
 }
-html.qarip-stories .leto-choice-head h1{margin:0 0 10px;font:800 26px/1.2 Arial,sans-serif;letter-spacing:-.02em}
-html.qarip-stories .leto-choice-head h2{margin:0;font:800 18px/1.2 Arial,sans-serif}
-html.qarip-stories .leto-choice-sub{margin:0;color:var(--leto-muted);font:500 13px/1.45 Arial,sans-serif}
+html.qarip-stories .leto-choice-head h1{margin:0 0 10px;font:800 26px/1.2 var(--lg-sans);letter-spacing:-.02em}
+html.qarip-stories .leto-choice-head h2{margin:0;font:800 18px/1.2 var(--lg-sans)}
+html.qarip-stories .leto-choice-sub{margin:0;color:var(--leto-muted);font:500 13px/1.45 var(--lg-sans)}
 html.qarip-stories .leto-choice-cards{display:grid;gap:14px;max-width:420px;margin:0 auto;width:100%}
 html.qarip-stories .leto-choice-card{
   display:flex;align-items:center;gap:14px;width:100%;box-sizing:border-box;
@@ -640,8 +640,8 @@ html.qarip-stories .leto-choice-card{
 }
 html.qarip-stories .leto-choice-card .cc-ico{flex:0 0 auto}
 html.qarip-stories .leto-choice-card .cc-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-html.qarip-stories .leto-choice-card .cc-body b{font:800 15px/1.25 Arial,sans-serif}
-html.qarip-stories .leto-choice-card .cc-body small{color:var(--leto-muted);font:500 12px/1.4 Arial,sans-serif}
+html.qarip-stories .leto-choice-card .cc-body b{font:800 15px/1.25 var(--lg-sans)}
+html.qarip-stories .leto-choice-card .cc-body small{color:var(--leto-muted);font:500 12px/1.4 var(--lg-sans)}
 html.qarip-stories .leto-choice-card .cc-arrow{flex:0 0 auto}
 
 /* Sticker-mode export button + toast feedback */
@@ -650,7 +650,7 @@ html.qarip-stories .leto-toast{
   position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));
   transform:translateX(-50%) translateY(8px);z-index:95;max-width:min(360px,86vw);
   padding:12px 16px;border-radius:14px;background:#1b1b22ee;backdrop-filter:blur(10px);
-  color:#fff;font:600 13px/1.4 Arial,sans-serif;text-align:center;
+  color:#fff;font:600 13px/1.4 var(--lg-sans);text-align:center;
   opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
 }
 html.qarip-stories .leto-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -658,20 +658,20 @@ html.qarip-stories .leto-toast.show{opacity:1;transform:translateX(-50%) transla
 /* Text style sheet: bg pill (radius/opacity/color) + letter-spacing */
 html.qarip-stories .leto-textbar .tb-style{background:var(--leto-pink)!important;color:#fff!important;border-color:transparent!important}
 html.qarip-stories .leto-textbar .tb-font{background:var(--leto-yellow)!important;color:#fff!important;border-color:transparent!important}
-html.qarip-stories .leto-style-tag{margin:0 0 14px;color:var(--leto-muted);font:600 12px/1.4 Arial,sans-serif}
+html.qarip-stories .leto-style-tag{margin:0 0 14px;color:var(--leto-muted);font:600 12px/1.4 var(--lg-sans)}
 html.qarip-stories .leto-style-tag b{color:#fff}
-html.qarip-stories .leto-style-label{margin:0 0 8px;color:#fff;font:800 11px/1 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+html.qarip-stories .leto-style-label{margin:0 0 8px;color:#fff;font:800 11px/1 var(--lg-sans);letter-spacing:.06em;text-transform:uppercase}
 html.qarip-stories .leto-style-label.disabled{color:var(--leto-muted)}
 html.qarip-stories .leto-style-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}
 html.qarip-stories .leto-style-row-head .leto-style-label{margin:0}
 html.qarip-stories .leto-style-bgoff{
   border:1px solid var(--leto-line);border-radius:999px;background:transparent;color:var(--leto-muted);
-  font:700 11px/1 Arial,sans-serif;padding:6px 12px;cursor:pointer;
+  font:700 11px/1 var(--lg-sans);padding:6px 12px;cursor:pointer;
 }
 html.qarip-stories .leto-style-bgoff.active{background:#fff;color:#111;border-color:#fff}
 html.qarip-stories .leto-style-range-row{display:flex;align-items:center;gap:12px;margin:0 0 14px}
 html.qarip-stories .leto-style-range-row input[type="range"]{flex:1;min-width:0}
-html.qarip-stories .leto-style-val{flex:0 0 auto;min-width:44px;text-align:right;color:var(--leto-muted);font:700 12px/1 Arial,sans-serif}
+html.qarip-stories .leto-style-val{flex:0 0 auto;min-width:44px;text-align:right;color:var(--leto-muted);font:700 12px/1 var(--lg-sans)}
 html.qarip-stories .leto-track{margin:16px 0 4px}
 html.qarip-stories .leto-shadow-row{margin-top:12px}
 html.qarip-stories .leto-shadow-intensity{margin-top:8px}
@@ -681,7 +681,7 @@ html.qarip-stories .leto-bg-extra.is-off{opacity:.4;pointer-events:none}
 html.qarip-stories .leto-track-row{display:flex;align-items:center;gap:8px}
 html.qarip-stories .leto-track-row button{
   flex:0 0 40px;height:40px;border:0;border-radius:12px;background:#2a2a33;color:#fff;
-  font:0/0 Arial,sans-serif;cursor:pointer;
+  font:0/0 var(--lg-sans);cursor:pointer;
 }
 html.qarip-stories .leto-track-row button::before{
   position:absolute!important;
@@ -707,8 +707,8 @@ html.qarip-stories .leto-layout-grid .lo-line{
   border-radius:4px;background:#ffffff30;
 }
 html.qarip-stories .leto-layout-grid .lo-line.lo-sm{height:7%;background:#ffffff20}
-html.qarip-stories .leto-layout-grid button b{font:800 12px/1 Arial,sans-serif}
-html.qarip-stories .leto-layout-grid button small{color:var(--leto-muted);font:500 11px/1.35 Arial,sans-serif}
+html.qarip-stories .leto-layout-grid button b{font:800 12px/1 var(--lg-sans)}
+html.qarip-stories .leto-layout-grid button small{color:var(--leto-muted);font:500 11px/1.35 var(--lg-sans)}
 
 @media(min-width:900px){
   html.qarip-stories .leto-app{max-width:520px;padding-bottom:100px}
@@ -749,7 +749,7 @@ html.qarip-stories body{
 html.qarip-stories .leto-help{
   padding:4px 4px 12px;
   color:var(--leto-ink);
-  font:500 15px/1.5 Arial,sans-serif;
+  font:500 15px/1.5 var(--lg-sans);
 }
 html.qarip-stories .leto-help ol{margin:12px 0;padding-left:22px}
 html.qarip-stories .leto-help li{margin:6px 0}

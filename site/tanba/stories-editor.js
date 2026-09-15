@@ -7,7 +7,7 @@
   const FAV_FONTS = "qarip-stories-font-favs";
   const FAV_PAIRS = "qarip-stories-combo-favs";
   const ONBOARD = "qarip-stories-onboard-v1";
-  const ASSET_V = "tanba18";
+  const ASSET_V = "tanba52";
 
   let FONT_DATA = null;
   let fontDataPromise = null;
@@ -866,7 +866,7 @@
         <p class="leto-hint">${state.bg.type === "upload" ? "Жаңа файл ескі фонды ауыстырады." : "Жүктеген соң фотоны жылжытып, үлкейтіп, бұруға болады."}</p>`;
     } else {
       pane = `<p class="leto-hint">Мөлдір фон — PNG экспортында фонсыз шығады. Алдын ала қарауда тор көрінеді.</p>
-        <button type="button" data-transparent="1" style="min-height:44px;width:100%;border:0;border-radius:14px;background:#2a2a33;color:#fff;font:800 13px/1 Arial,sans-serif">Мөлдір қосу</button>`;
+        <button type="button" data-transparent="1" style="min-height:44px;width:100%;border:0;border-radius:14px;background:#2a2a33;color:#fff;font:800 13px/1 var(--lg-sans)">Мөлдір қосу</button>`;
     }
     return `
       <div class="leto-chips" data-bg-tabs>

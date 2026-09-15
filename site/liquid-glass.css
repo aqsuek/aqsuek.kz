@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&display=swap");
+
 /* ==========================================================================
    AQSUEK — Apple Liquid Glass (v2)
    Ref: Apple HIG / "Adopting Liquid Glass"
@@ -17,6 +19,7 @@
    ========================================================================== */
 
 :root{
+  --lg-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","SF Pro Rounded","Inter","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --lg-ink:#0d1526;
   --lg-muted:#5a6378;
 
@@ -37,7 +40,7 @@
   --lg-sat:1.8;
 
   /* Content surfaces (paper, not glass). */
-  --lg-paper:rgba(255,255,255,.93);
+  --lg-paper:#fff;
   --lg-paper-line:rgba(15,23,42,.07);
   --lg-paper-shadow:0 8px 26px rgba(15,23,42,.06);
 
@@ -80,7 +83,15 @@
 /* ==========================================================================
    1. Wallpaper — static and calm on purpose. Every page, editor included.
    ========================================================================== */
-html{ background:#eef1fa; }
+html{
+  background:#eef1fa;
+  font-family:var(--lg-sans);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+body,button,input,select,textarea{
+  font-family:inherit;
+}
 
 html::before{
   content:"";
@@ -142,6 +153,7 @@ html:not(.qarip-stories) .topbar::after,
 html.qarip-home #catalog .controls::after,
 html.qarip-home #catalog .sticky-tester.tester::after,
 .qarip-license-dialog::after,
+html.qarip-home .hero-story-example::after,
 .lg-rim::after{
   content:"";
   position:absolute;
@@ -263,7 +275,7 @@ html.qarip-home #catalog .cat-carousel{
 .project-card,
 html.qarip-home .font-card,
 html.qarip-home #catalog .font-card,
-.qarip-step,
+html.qarip-home #about.notice,
 .qarip-toolcta,
 .experiment-slot,
 body.qarip-font-page .font-detail-stage,
@@ -291,13 +303,258 @@ body.qarip-font-page .font-similar-card:hover{
 }
 
 /* Footer is content chrome, not glass. */
-html:not(.qarip-stories) .site-footer,
-html.qarip-home footer{
+html:not(.qarip-stories) .site-footer{
   background:transparent;
   border-top:1px solid rgba(15,23,42,.08);
   -webkit-backdrop-filter:none;
   backdrop-filter:none;
   border-radius:0;
+}
+
+html.qarip-home #about.notice{
+  width:min(1120px, calc(100% - 40px));
+  margin:8px auto 0;
+  padding:28px 28px 30px;
+  border-radius:var(--lg-r-bar);
+}
+html.qarip-home #about.notice .qarip-about-kicker,
+html.qarip-home .qarip-how .qarip-about-kicker{
+  margin:0 0 8px;
+  font:800 11px/1 var(--lg-sans);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--lg-tint);
+}
+html.qarip-home #about.notice h2{
+  margin:0 0 12px;
+  font:800 clamp(26px,3.4vw,36px)/1.12 var(--lg-sans);
+  letter-spacing:-.04em;
+  color:var(--lg-ink);
+}
+html.qarip-home #about.notice p{
+  margin:0;
+  max-width:42em;
+  font:500 16px/1.55 var(--lg-sans);
+  color:var(--lg-muted);
+}
+html.qarip-home #about.notice a{
+  color:var(--lg-tint);
+  font-weight:700;
+  text-decoration:none;
+}
+html.qarip-home #about.notice a:hover{ text-decoration:underline; }
+
+html.qarip-home .qarip-landing{
+  width:min(1120px, calc(100% - 40px));
+  margin:12px auto 0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+html.qarip-home .qarip-how,
+html.qarip-home .qarip-toolcta{
+  width:100%;
+  margin:0!important;
+  padding:28px 28px 30px;
+  border-radius:var(--lg-r-bar);
+  background:#fff!important;
+  border:1px solid var(--lg-paper-line)!important;
+  box-shadow:var(--lg-paper-shadow)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.qarip-home .qarip-how-head{
+  display:block;
+  margin:0 0 22px;
+  max-width:none;
+}
+html.qarip-home .qarip-how h2,
+html.qarip-home .qarip-toolcta h2{
+  margin:0;
+  font:800 clamp(26px,3.4vw,36px)/1.12 var(--lg-sans);
+  letter-spacing:-.04em;
+  color:var(--lg-ink);
+}
+html.qarip-home .qarip-how-note{
+  margin:8px 0 0!important;
+  font:500 16px/1.45 var(--lg-sans)!important;
+  font-style:normal!important;
+  color:var(--lg-muted)!important;
+}
+html.qarip-home .qarip-steps{
+  gap:8px 12px;
+}
+html.qarip-home .qarip-step{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:4px 2px 0;
+  border-radius:0;
+}
+html.qarip-home .qarip-toolcta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+html.qarip-home .qarip-toolcta p{
+  margin:8px 0 0;
+  color:var(--lg-muted);
+  font:500 16px/1.55 var(--lg-sans);
+  max-width:42em;
+}
+html.qarip-home .qarip-toolcta a:not(.qarip-cta-primary){
+  color:var(--lg-tint);
+  font-weight:700;
+  text-decoration:none;
+}
+html.qarip-home .qarip-toolcta a:not(.qarip-cta-primary):hover{ text-decoration:underline; }
+
+html.qarip-home footer{
+  width:min(1120px, calc(100% - 40px));
+  margin:28px auto 40px!important;
+  padding:18px 0 28px!important;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px 18px;
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid rgba(15,23,42,.08)!important;
+  border-radius:0;
+  color:var(--lg-ink);
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html.qarip-home footer .brand{
+  display:flex;
+  align-items:center;
+  line-height:0;
+  text-decoration:none;
+  color:var(--lg-ink);
+}
+html.qarip-home footer .brand-logo{
+  height:32px;
+  width:auto;
+}
+html.qarip-home .qarip-footer-slogan{
+  margin:0;
+  flex:1 1 14em;
+  font:600 14px/1.35 var(--lg-sans);
+  color:var(--lg-muted);
+}
+html.qarip-home .qarip-footer-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  width:100%;
+  margin:4px 0 0;
+}
+html.qarip-home .qarip-footer-nav a{
+  display:inline-flex;
+  align-items:center;
+  min-height:36px;
+  padding:0 14px;
+  border-radius:var(--lg-r-pill);
+  background:var(--lg-reg-dense)!important;
+  border:1px solid rgba(255,255,255,.6)!important;
+  color:var(--lg-ink)!important;
+  font:700 13px/1 var(--lg-sans);
+  text-decoration:none;
+  opacity:1;
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);
+  backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 3px 10px rgba(15,30,72,.07);
+  transition:transform .22s var(--lg-spring), background .22s var(--lg-ease), color .22s var(--lg-ease);
+}
+html.qarip-home .qarip-footer-nav a:hover{
+  background:rgba(255,255,255,.82)!important;
+  color:var(--lg-tint)!important;
+  opacity:1;
+}
+
+/* Hero device — glass bezel + opaque story (content), paper sticker. */
+html.qarip-home .qarip-hero-visual{
+  display:grid;
+  justify-items:stretch;
+  align-content:center;
+  gap:0;
+  width:min(236px,100%);
+  max-width:236px;
+  justify-self:center;
+  position:relative;
+}
+html.qarip-home .hero-story-example{
+  position:relative;
+  aspect-ratio:auto;
+  display:block;
+  padding:8px;
+  border-radius:36px;
+  color:#fff;
+  background:var(--lg-reg-dense);
+  -webkit-backdrop-filter:blur(22px) saturate(1.7);
+  backdrop-filter:blur(22px) saturate(1.7);
+  box-shadow:var(--lg-lift-2);
+  box-sizing:border-box;
+}
+html.qarip-home .hero-story-screen{
+  position:relative;
+  aspect-ratio:9/16;
+  border-radius:28px;
+  padding:28px 22px 26px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  gap:12px;
+  background:
+    radial-gradient(90% 55% at 12% 8%, rgba(255,220,236,.5), transparent 58%),
+    radial-gradient(80% 50% at 100% 0%, rgba(207,220,255,.65), transparent 52%),
+    linear-gradient(165deg,#7aa0ff 0%, var(--lg-tint) 46%, #2b1f78 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+  overflow:hidden;
+}
+html.qarip-home .hero-story-screen::before{
+  content:"";
+  position:absolute;
+  top:18px;
+  right:16px;
+  width:56px;
+  height:56px;
+  background:url("/tanba/assets/tanba-mark.png?v=logo2") center/contain no-repeat;
+  opacity:.28;
+  pointer-events:none;
+}
+html.qarip-home .hero-story-example small,
+html.qarip-home .hero-sticker-example small{display:none}
+html.qarip-home .hero-story-example strong{
+  margin:0;
+  font:800 clamp(26px,4vw,34px)/1.08 var(--lg-sans);
+  letter-spacing:-.045em;
+}
+html.qarip-home .hero-story-example span{
+  font:600 14px/1.4 var(--lg-sans);
+  color:rgba(255,255,255,.82);
+}
+html.qarip-home .hero-sticker-example{
+  margin:-22px 14px 0;
+  position:relative;
+  z-index:2;
+  padding:12px 18px;
+  border:1px solid var(--lg-paper-line);
+  border-radius:var(--lg-r-box);
+  background:#fff;
+  box-shadow:var(--lg-paper-shadow);
+  text-align:center;
+  display:block;
+  isolation:isolate;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+html.qarip-home .hero-sticker-example b{
+  font:italic 800 22px/1.15 var(--lg-sans);
+  letter-spacing:-.03em;
+  color:var(--lg-tint);
 }
 
 .manifesto{ position:relative; z-index:1; }
@@ -410,6 +667,7 @@ body.qarip-font-page .font-detail-actions .font-download{
 .btn-ghost:active,
 .qarip-cta-primary:active,
 .qarip-cta-secondary:active,
+html.qarip-home .qarip-footer-nav a:active,
 html.qarip-v2 .qarip-nav-start:active,
 html.qarip-home #catalog .categories button:active,
 html.qarip-home .font-download:active,
@@ -994,7 +1252,7 @@ html.qarip-stories .leto-weight-back{
   backdrop-filter:var(--lg-disc-blur);
   box-shadow:var(--lg-disc-shadow)!important;
   color:var(--lg-ink)!important;
-  font:700 13px/1 Arial,sans-serif!important;
+  font:700 13px/1 var(--lg-sans)!important;
 }
 html.qarip-stories .leto-weight-back::before{
   content:"";
@@ -1336,7 +1594,7 @@ html.qarip-v2 .topbar .brand:not(:has(.brand-logo)){
 }
 html.qarip-v2 .topbar .brand:not(:has(.brand-logo)) > span:last-child{
   display:inline;
-  font:800 17px/1 Arial,sans-serif;
+  font:800 17px/1 var(--lg-sans);
   letter-spacing:-.03em;
   color:var(--lg-ink);
 }
@@ -1440,6 +1698,21 @@ html.nav-open .site-nav a:active{
   html:not(.qarip-stories) .site-header{ border-radius:var(--lg-r-pill); }
   html.qarip-home #catalog .sticky-tester.tester{ top:72px; }
   html:not(.qarip-stories) body::before{ height:84px; }
+  html.qarip-home #about.notice,
+  html.qarip-home .qarip-landing,
+  html.qarip-home footer{
+    width:auto;
+    margin-left:16px;
+    margin-right:16px;
+  }
+  html.qarip-home #about.notice,
+  html.qarip-home .qarip-how,
+  html.qarip-home .qarip-toolcta{ padding:22px 18px; }
+  html.qarip-home .qarip-step{
+    padding:14px 0 0;
+    border-top:1px solid var(--lg-paper-line)!important;
+  }
+  html.qarip-home .qarip-step:first-child{ border-top:0!important; padding-top:0; }
 }
 
 /* ==========================================================================
@@ -1456,12 +1729,14 @@ html.nav-open .site-nav a:active{
   .qarip-license-dialog,
   .btn-ghost,
   .qarip-cta-secondary,
+  html.qarip-home .qarip-footer-nav a,
   html.qarip-v2 .qarip-nav-search,
   html.qarip-v2 .qarip-nav-toggle,
   html:not(.qarip-stories) .nav-toggle,
   html.qarip-home .font-favorite,
   html.qarip-home #catalog .font-favorite,
-  body.qarip-font-page .font-favorite{
+  body.qarip-font-page .font-favorite,
+  html.qarip-home .hero-story-example{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
     background:#fbfcfe!important;
@@ -1580,7 +1855,7 @@ body.qarip-font-page .font-detail-stories{
   min-height:42px;
   padding:0 14px;
   border-radius:var(--lg-r-pill);
-  font:700 13px/1 Arial,sans-serif;
+  font:700 13px/1 var(--lg-sans);
   color:var(--lg-ink)!important;
   background:var(--lg-reg)!important;
   text-decoration:none;
@@ -1616,7 +1891,7 @@ html.qarip-stories .leto-choice-steps li{
   padding:8px 12px;
   border-radius:14px;
   background:rgba(255,255,255,.55);
-  font:600 13px/1.25 Arial,sans-serif;
+  font:600 13px/1.25 var(--lg-sans);
   color:var(--lg-ink);
 }
 html.qarip-stories .leto-choice-steps li b{
@@ -1627,7 +1902,7 @@ html.qarip-stories .leto-choice-steps li b{
   place-items:center;
   background:var(--lg-tint);
   color:#fff;
-  font:800 11px/1 Arial,sans-serif;
+  font:800 11px/1 var(--lg-sans);
 }
 html.qarip-stories .leto-choice-steps li::before{ content:none; }
 html.qarip-stories .leto-choice-start,
@@ -1640,7 +1915,7 @@ html.qarip-stories .leto-choice-alt{
   min-height:48px;
   border:0;
   border-radius:var(--lg-r-pill);
-  font:800 15px/1 Arial,sans-serif;
+  font:800 15px/1 var(--lg-sans);
   cursor:pointer;
 }
 html.qarip-stories .leto-choice-start{
@@ -1669,7 +1944,7 @@ html.qarip-stories .leto-saved{
   left:50%;
   top:100%;
   transform:translate(-50%,6px);
-  font:600 11px/1 Arial,sans-serif;
+  font:600 11px/1 var(--lg-sans);
   color:var(--lg-muted);
   opacity:0;
   pointer-events:none;
@@ -1691,7 +1966,7 @@ html.qarip-stories .leto-hint-card{
   backdrop-filter:blur(20px) saturate(1.7);
   box-shadow:var(--lg-lift-2);
   color:var(--lg-ink);
-  font:600 14px/1.35 Arial,sans-serif;
+  font:600 14px/1.35 var(--lg-sans);
 }
 html.qarip-stories .leto-hint-card button{
   margin-left:auto;
@@ -1701,7 +1976,7 @@ html.qarip-stories .leto-hint-card button{
   border-radius:999px;
   background:var(--lg-tint);
   color:#fff;
-  font:700 12px/1 Arial,sans-serif;
+  font:700 12px/1 var(--lg-sans);
   cursor:pointer;
 }
 @media (max-width:360px){
