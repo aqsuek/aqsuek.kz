@@ -2,26 +2,26 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Бет табылмады | AQSUEK</title>
 <link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml"/>
+<link rel="stylesheet" href="/liquid-glass.css?v=lg20"/>
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f5f0;font-family:system-ui,sans-serif;color:#121212}
+  body{margin:0;min-height:100dvh;display:grid;place-items:center;font-family:system-ui,sans-serif;color:#0d1526}
   .box{max-width:420px;padding:32px 20px;text-align:center}
-  h1{font-size:28px;margin:0 0 12px}
-  p{color:#5c5a55;line-height:1.5}
-  a{display:inline-flex;margin:8px 6px 0;padding:12px 20px;border-radius:999px;background:#121212;color:#fff;font-weight:700;text-decoration:none}
-  a.secondary{background:#fff;color:#121212;border:1px solid #e5e1d8}
+  h1{font-size:28px;margin:0 0 12px;letter-spacing:-.03em}
+  p{color:#5a6378;line-height:1.5;margin:0 0 20px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:#0a56ff;color:#fff;font-weight:700;text-decoration:none}
+  a.secondary{background:rgba(255,255,255,.55);color:#0d1526;backdrop-filter:blur(16px)}
 </style>
 <script>
 (function () {
   var path = location.pathname || "";
-  // Legacy font URLs under /tanba/font/ → /qarip/font/
   if (path === "/tanba/font" || path.indexOf("/tanba/font/") === 0) {
     location.replace("/qarip" + path.slice("/tanba".length) + location.search + location.hash);
     return;
   }
-  // Legacy /qarip/stories|reels → Tañba Stories
   if (path === "/qarip/stories" || path.indexOf("/qarip/stories/") === 0 ||
       path === "/qarip/reels" || path.indexOf("/qarip/reels/") === 0) {
     location.replace("/tanba/stories/" + location.search + location.hash);
@@ -30,11 +30,15 @@
 </script>
 </head>
 <body>
+  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i></div>
   <div class="box">
     <h1>Бұл бет жоқ</h1>
-    <p>Қаріптер — Qarip, Stories — Tañba.</p>
-    <a href="/qarip/">Qarip</a>
-    <a class="secondary" href="/tanba/">Tañba</a>
+    <p>Қаріптер — Qarip. Stories — Tañba. Басты бет — AQSUEK.</p>
+    <div class="row">
+      <a href="/qarip/">Қаріптерді көру</a>
+      <a class="secondary" href="/tanba/stories/">Story жасау</a>
+      <a class="secondary" href="/">AQSUEK</a>
+    </div>
   </div>
 </body>
 </html>

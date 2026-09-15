@@ -45,7 +45,7 @@
     if (!fav || !name) return;
     const on = Q.savedNames().has(name);
     fav.setAttribute("aria-pressed", String(on));
-    fav.textContent = on ? "♥" : "♡";
+    fav.textContent = "";
   }
 
   function paintPreview() {

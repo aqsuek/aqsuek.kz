@@ -47,10 +47,7 @@ body {
   font-size: 16px;
   line-height: 1.55;
   color: var(--ink);
-  background:
-    radial-gradient(ellipse 80% 50% at 100% -10%, #dde4ff55 0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at -10% 30%, #f0ebe355 0%, transparent 50%),
-    var(--bg);
+  background: transparent;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
@@ -193,21 +190,29 @@ html.nav-open .nav-toggle span:nth-child(3) {
   text-transform: uppercase;
 }
 
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
 .hero h1 {
   margin: 0 0 20px;
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(2.35rem, 7.2vw, 4.75rem);
-  line-height: 1.02;
+  font-size: clamp(2.2rem, 7vw, 4.4rem);
+  line-height: 1.04;
   letter-spacing: -0.045em;
-  max-width: 12ch;
+  max-width: 14ch;
+  color: #0d1526;
 }
 
 .hero-lead {
   margin: 0 0 32px;
   max-width: 28em;
   font-size: clamp(1.05rem, 2vw, 1.25rem);
-  color: var(--muted);
+  color: #3d465c;
   font-weight: 500;
 }
 
@@ -694,6 +699,7 @@ html.nav-open .nav-toggle span:nth-child(3) {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+.hero [data-reveal],
 [data-reveal].is-visible {
   opacity: 1;
   transform: none;

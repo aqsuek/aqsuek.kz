@@ -16,6 +16,14 @@
     setNav(!root.classList.contains("nav-open"));
   });
 
+  document.addEventListener("click", (event) => {
+    if (!root.classList.contains("nav-open")) return;
+    const t = event.target;
+    if (!(t instanceof Element)) return;
+    if (t.closest(".nav-toggle") || t.closest(".site-nav")) return;
+    setNav(false);
+  });
+
   nav?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => setNav(false));
   });

@@ -1,0 +1,1726 @@
+/* ==========================================================================
+   AQSUEK — Apple Liquid Glass (v2)
+   Ref: Apple HIG / "Adopting Liquid Glass"
+
+   Layer model — the rule everything below follows:
+
+     wallpaper  →  calm, static. The glass reacts, the background does not.
+     content    →  opaque surfaces (cards, panels, lists). NEVER glass.
+     chrome     →  floating glass (nav bars, control containers, sheets,
+                   dock, buttons). Never stacked: no glass inside glass.
+
+   Also implemented: rim specular highlight (light catches the edge, not the
+   whole face), scroll edge effect, nav compaction on scroll, gel press,
+   concentric radii, single tinted action per view, and the three
+   accessibility settings Apple calls out (reduced transparency, increased
+   contrast, reduced motion).
+   ========================================================================== */
+
+:root{
+  --lg-ink:#0d1526;
+  --lg-muted:#5a6378;
+
+  /* System-blue-ish accent used for the one tinted action per view. */
+  --lg-tint:#0a56ff;
+  --lg-tint-deep:#0940c8;
+
+  /* Regular glass — adaptive, the default material for chrome. */
+  --lg-reg:rgba(255,255,255,.52);
+  --lg-reg-dense:rgba(255,255,255,.66);
+  /* Clear glass — for chrome floating over rich/!dark content. */
+  --lg-clear:rgba(255,255,255,.3);
+  /* Dark glass — Stories editor chrome. */
+  --lg-dark:rgba(18,20,30,.55);
+  --lg-dark-dense:rgba(16,18,28,.7);
+
+  --lg-blur:24px;
+  --lg-sat:1.8;
+
+  /* Content surfaces (paper, not glass). */
+  --lg-paper:rgba(255,255,255,.93);
+  --lg-paper-line:rgba(15,23,42,.07);
+  --lg-paper-shadow:0 8px 26px rgba(15,23,42,.06);
+
+  /* Concentric radii: container 26 → control inside (26 - 8 padding) = 18. */
+  --lg-r-bar:26px;
+  --lg-r-box:18px;
+  --lg-r-pill:999px;
+
+  --lg-ease:cubic-bezier(.22,1,.36,1);
+  --lg-spring:cubic-bezier(.32,1.4,.42,1);
+
+  /* Ambient separation only — glass separates by material, not by shadow. */
+  --lg-lift:0 6px 20px rgba(15,30,72,.10);
+  --lg-lift-2:0 14px 40px rgba(15,30,72,.14);
+
+  /* Pointer position, driven by liquid-glass.js, moves the rim highlight. */
+  --lg-mx:50%;
+  --lg-my:0%;
+  --lg-angle:150deg;
+
+  /* Public aliases — one design system, predictable names. */
+  --glass-bg:var(--lg-reg);
+  --glass-bg-strong:var(--lg-reg-dense);
+  --glass-border:rgba(255,255,255,.55);
+  --glass-highlight:rgba(255,255,255,.92);
+  --glass-shadow:var(--lg-lift);
+  --glass-blur:var(--lg-blur);
+  --glass-saturation:var(--lg-sat);
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --space-7:48px;
+  --space-8:64px;
+  --space-9:96px;
+}
+
+/* ==========================================================================
+   1. Wallpaper — static and calm on purpose. Every page, editor included.
+   ========================================================================== */
+html{ background:#eef1fa; }
+
+html::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(42% 34% at 14% 6%,  #cfdcff 0%, transparent 62%),
+    radial-gradient(36% 30% at 86% 4%,  #ffdcec 0%, transparent 62%),
+    radial-gradient(42% 36% at 94% 58%, #d3efff 0%, transparent 62%),
+    radial-gradient(40% 36% at 4% 64%,  #e5dcff 0%, transparent 62%),
+    radial-gradient(48% 40% at 52% 98%, #d9f4e8 0%, transparent 64%),
+    linear-gradient(180deg,#f5f7fd 0%, #eef1fa 100%);
+}
+
+/* Let the wallpaper through the legacy opaque page shell. */
+html.qarip-home:not(.qarip-stories),
+html.qarip-home:not(.qarip-stories) body,
+html.qarip-home:not(.qarip-stories) main,
+html.qarip-v2:not(.qarip-stories),
+html.qarip-v2:not(.qarip-stories) body{
+  background:transparent!important;
+}
+html.qarip-stories,
+html.qarip-stories body,
+html.qarip-stories main{
+  background:transparent!important;
+}
+body.qarip-font-page{ background:transparent; }
+html.qarip-home:not(.qarip-stories) .intro.qarip-hero,
+html.qarip-home:not(.qarip-stories) #catalog.workspace,
+.stories-page-hero{
+  background:transparent!important;
+}
+
+/* ==========================================================================
+   2. Glass material
+   ========================================================================== */
+.lg-glass,
+html:not(.qarip-stories) .site-header,
+html:not(.qarip-stories) .topbar,
+html.qarip-home #catalog .controls,
+html.qarip-home #catalog .sticky-tester.tester,
+.qarip-license-dialog{
+  position:relative;
+  background:var(--lg-reg);
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  border:0;
+  box-shadow:var(--lg-lift);
+}
+
+/* Rim specular: a 1px gradient edge, brightest where the pointer is.
+   Apple's glass catches light on the boundary, not across the face. */
+.lg-glass::after,
+html:not(.qarip-stories) .site-header::after,
+html:not(.qarip-stories) .topbar::after,
+html.qarip-home #catalog .controls::after,
+html.qarip-home #catalog .sticky-tester.tester::after,
+.qarip-license-dialog::after,
+.lg-rim::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  pointer-events:none;
+  background:linear-gradient(var(--lg-angle),
+    rgba(255,255,255,.95) 0%,
+    rgba(255,255,255,.28) 42%,
+    rgba(255,255,255,.75) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+
+/* ==========================================================================
+   3. Chrome — floating navigation bars
+   ========================================================================== */
+html:not(.qarip-stories) .site-header{
+  position:sticky;
+  top:10px;
+  z-index:60;
+  width:min(1120px, calc(100% - 24px));
+  margin:10px auto 0;
+  height:auto;
+  min-height:56px;
+  padding:4px 6px;
+  border-radius:var(--lg-r-pill);
+  transition:min-height .32s var(--lg-ease), background .32s var(--lg-ease),
+    box-shadow .32s var(--lg-ease);
+}
+html:not(.qarip-stories) .site-header .header-inner{
+  width:100%;
+  padding:0 14px;
+}
+html:not(.qarip-stories) .site-header.lg-scrolled{
+  min-height:48px;
+  background:var(--lg-reg-dense);
+  box-shadow:var(--lg-lift-2);
+}
+
+html.qarip-v2:not(.qarip-stories) .topbar,
+body.qarip-font-page .topbar{
+  position:sticky;
+  top:10px;
+  z-index:60;
+  width:min(1180px, calc(100% - 24px));
+  margin:10px auto 0;
+  min-height:56px;
+  height:auto;
+  padding:8px 10px 8px 18px;
+  border-radius:var(--lg-r-bar);
+  border-bottom:0!important;
+  background:var(--lg-reg)!important;
+  transition:min-height .32s var(--lg-ease), background .32s var(--lg-ease),
+    box-shadow .32s var(--lg-ease);
+}
+html.qarip-v2:not(.qarip-stories) .topbar.lg-scrolled,
+body.qarip-font-page .topbar.lg-scrolled{
+  min-height:50px;
+  background:var(--lg-reg-dense)!important;
+  box-shadow:var(--lg-lift-2);
+}
+
+/* In-page links must land below the floating bar, not under it. */
+html:not(.qarip-stories) :target,
+html:not(.qarip-stories) section[id],
+html:not(.qarip-stories) #catalog,
+html:not(.qarip-stories) #tester,
+html:not(.qarip-stories) #about,
+html:not(.qarip-stories) #projects,
+html:not(.qarip-stories) #manifesto{
+  scroll-margin-top:96px;
+}
+
+/* Scroll edge effect — content softens as it passes beneath the bar.
+   Off at rest, fades in once the page scrolls (Apple's bar edge treatment). */
+html:not(.qarip-stories) body::before{
+  content:"";
+  position:fixed;
+  inset:0 0 auto 0;
+  height:104px;
+  z-index:50;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .3s var(--lg-ease);
+  -webkit-backdrop-filter:blur(9px);
+  backdrop-filter:blur(9px);
+  -webkit-mask-image:linear-gradient(to bottom, #000 0, #000 42%, transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 0, #000 42%, transparent 100%);
+}
+html.lg-scrolled:not(.qarip-stories) body::before{ opacity:1; }
+
+/* Catalog tester bar is a second floating control: park it below the nav,
+   and keep it above the scroll edge band so it never reads as blurred. */
+html.qarip-home #catalog .sticky-tester.tester{
+  position:sticky;
+  top:80px;
+  z-index:55;
+  border-radius:var(--lg-r-bar);
+  border:0!important;
+}
+
+/* Control containers */
+html.qarip-home #catalog .controls{
+  border-radius:var(--lg-r-bar)!important;
+  border:0!important;
+}
+html.qarip-home #catalog .cat-carousel{
+  background:transparent!important;
+  border-top:1px solid rgba(255,255,255,.45)!important;
+}
+
+/* ==========================================================================
+   4. Content layer — paper, never glass.
+   ========================================================================== */
+.project-card,
+html.qarip-home .font-card,
+html.qarip-home #catalog .font-card,
+.qarip-step,
+.qarip-toolcta,
+.experiment-slot,
+body.qarip-font-page .font-detail-stage,
+body.qarip-font-page .font-detail-panel,
+body.qarip-font-page .similar-grid a,
+body.qarip-font-page .font-similar-card{
+  background:var(--lg-paper)!important;
+  border:1px solid var(--lg-paper-line)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:var(--lg-paper-shadow)!important;
+  transition:transform .25s var(--lg-ease), box-shadow .25s var(--lg-ease);
+}
+.project-card:hover,
+html.qarip-home .font-card:hover,
+html.qarip-home #catalog .font-card:hover,
+body.qarip-font-page .similar-grid a:hover,
+body.qarip-font-page .font-similar-card:hover{
+  box-shadow:0 14px 36px rgba(15,23,42,.10)!important;
+  border-color:rgba(15,23,42,.10)!important;
+}
+.experiment-slot{
+  background:rgba(255,255,255,.62)!important;
+  border-style:dashed!important;
+}
+
+/* Footer is content chrome, not glass. */
+html:not(.qarip-stories) .site-footer,
+html.qarip-home footer{
+  background:transparent;
+  border-top:1px solid rgba(15,23,42,.08);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  border-radius:0;
+}
+
+.manifesto{ position:relative; z-index:1; }
+
+/* ==========================================================================
+   5. Controls
+   Exactly one tinted action per view; everything else is regular glass.
+   ========================================================================== */
+.btn-primary,
+.qarip-cta-primary,
+html.qarip-home .intro-cta.qarip-cta-primary,
+html.qarip-v2 .qarip-nav-start,
+body.qarip-font-page .qarip-nav-start,
+html.qarip-home #catalog .catalog-more,
+body.qarip-font-page .font-download,
+.qarip-dl-go{
+  /* Specular blob (pointer-tracked via --bx/--by) over the blue fill. */
+  background-color:transparent!important;
+  background-image:
+    radial-gradient(160px 160px at var(--bx,50%) var(--by,50%),
+      rgba(255,255,255,.42), transparent 66%),
+    linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  border-radius:var(--lg-r-pill)!important;
+  color:#fff!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.4);
+  backdrop-filter:blur(12px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    0 6px 18px rgba(10,60,190,.22)!important;
+  transition:transform .22s var(--lg-spring), box-shadow .22s var(--lg-ease),
+    filter .22s var(--lg-ease);
+}
+.btn-primary:hover,
+.qarip-cta-primary:hover,
+html.qarip-home .intro-cta.qarip-cta-primary:hover,
+html.qarip-v2 .qarip-nav-start:hover,
+html.qarip-home #catalog .catalog-more:hover,
+body.qarip-font-page .font-download:hover,
+.qarip-dl-go:hover{
+  filter:brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    0 10px 26px rgba(10,60,190,.3)!important;
+}
+
+/* Per-row action inside a content card: light tinted pill with a tinted
+   label (the App Store "GET" pattern), so the grid stays calm.
+   Scoped to .font-card — qarip-site.js also puts .qarip-home on detail
+   pages, where the download button must stay the solid primary action. */
+html.qarip-home .font-card .font-download,
+html.qarip-home .font-card .card-bottom a[aria-label$="жүктеу"],
+html.qarip-home .font-card .card-bottom a[download],
+html.qarip-home #catalog .font-card .font-download,
+html.qarip-home #catalog .font-card .card-bottom a[aria-label$="жүктеу"],
+html.qarip-home #catalog .font-card .card-bottom a[download]{
+  background-color:rgba(10,86,255,.12)!important;
+  background-image:
+    radial-gradient(120px 120px at var(--bx,50%) var(--by,50%),
+      rgba(255,255,255,.7), transparent 70%)!important;
+  border:1px solid transparent!important;
+  border-radius:var(--lg-r-pill)!important;
+  color:var(--lg-tint)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+  transition:background .2s var(--lg-ease), transform .2s var(--lg-spring);
+}
+html.qarip-home .font-card .font-download:hover,
+html.qarip-home .font-card .card-bottom a[aria-label$="жүктеу"]:hover,
+html.qarip-home .font-card .card-bottom a[download]:hover,
+html.qarip-home #catalog .font-card .font-download:hover,
+html.qarip-home #catalog .font-card .card-bottom a[aria-label$="жүктеу"]:hover,
+html.qarip-home #catalog .font-card .card-bottom a[download]:hover{
+  background-color:rgba(10,86,255,.2)!important;
+  transform:none;
+}
+
+/* Detail page keeps a single solid primary action. */
+body.qarip-font-page .font-detail-actions .font-download{
+  background:linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    0 6px 18px rgba(10,60,190,.22)!important;
+}
+
+/* Regular-glass (untinted) text controls — icon discs live in §Icon buttons */
+.btn-ghost,
+.qarip-cta-secondary,
+.qarip-dl-info{
+  background:var(--lg-reg-dense)!important;
+  border:1px solid rgba(255,255,255,.6)!important;
+  color:var(--lg-ink)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);
+  backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 3px 10px rgba(15,30,72,.07);
+  transition:transform .22s var(--lg-spring), background .22s var(--lg-ease),
+    color .22s var(--lg-ease);
+}
+.btn-ghost:hover,
+.qarip-cta-secondary:hover{
+  background:rgba(255,255,255,.82)!important;
+  color:var(--lg-tint)!important;
+}
+
+/* Gel press: glass flexes, then settles. */
+.btn-primary:active,
+.btn-ghost:active,
+.qarip-cta-primary:active,
+.qarip-cta-secondary:active,
+html.qarip-v2 .qarip-nav-start:active,
+html.qarip-home #catalog .categories button:active,
+html.qarip-home .font-download:active,
+html.qarip-home #catalog .font-download:active,
+body.qarip-font-page .font-download:active{
+  transform:scale(.96);
+}
+
+/* Chips live inside a glass container → plain fills, no nested blur. */
+html.qarip-home #catalog .categories button,
+html.qarip-home #catalog .fav-filter,
+.categories button{
+  background:rgba(15,23,42,.05)!important;
+  border:1px solid transparent!important;
+  border-radius:var(--lg-r-pill)!important;
+  color:var(--lg-ink)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  transition:background .2s var(--lg-ease), color .2s var(--lg-ease),
+    transform .2s var(--lg-spring);
+}
+html.qarip-home #catalog .categories button:hover{
+  background:rgba(255,255,255,.7)!important;
+}
+html.qarip-home #catalog .categories button.active,
+html.qarip-home #catalog .fav-filter.active,
+.categories button.active{
+  background:var(--lg-tint)!important;
+  border-color:rgba(255,255,255,.35)!important;
+  color:#fff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 4px 12px rgba(10,60,190,.22);
+}
+html.qarip-home .workspace-heading .count{
+  background:var(--lg-tint)!important;
+  border-radius:var(--lg-r-pill);
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+input[type="range"]{ accent-color:var(--lg-tint); }
+
+/* Modal sheet = chrome, so it is glass; its scrim stays plain. */
+.qarip-license-dialog{
+  border-radius:28px!important;
+  color:var(--lg-ink)!important;
+}
+.qarip-license-modal{
+  background:rgba(9,14,28,.42)!important;
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+}
+
+/* ==========================================================================
+   6. Stories editor — light glass chrome over the untouched artboard.
+   ========================================================================== */
+/* Stories chrome icons — filled by the shared disc system below */
+html.qarip-stories .leto-export{
+  background:linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+  color:#fff!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.4);
+  backdrop-filter:blur(12px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:var(--lg-r-pill);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42), 0 6px 18px rgba(10,60,190,.26);
+}
+html.qarip-stories .leto-dock,
+html.qarip-stories .leto-textbar{
+  background:var(--lg-reg)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(1.8);
+  backdrop-filter:blur(28px) saturate(1.8);
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:26px;
+  box-shadow:0 12px 34px rgba(15,30,72,.16);
+}
+/* Buttons inside the dock are plain fills — no glass inside glass. */
+html.qarip-stories .leto-dock-btn{
+  background:rgba(15,23,42,.05)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border-radius:18px;
+}
+html.qarip-stories .leto-dock-btn.on,
+html.qarip-stories .leto-dock-btn.leto-dock-add,
+html.qarip-stories .leto-dock-btn:active{
+  background:var(--lg-tint)!important;
+  color:#fff!important;
+}
+html.qarip-stories .leto-sheet{
+  background:rgba(255,255,255,.82)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(1.7);
+  backdrop-filter:blur(30px) saturate(1.7);
+  border-color:rgba(255,255,255,.6)!important;
+}
+
+/* ==========================================================================
+   6b. Liquid button behaviour
+   Three things every glass control does, in the spirit of the reference
+   gallery: a specular blob that follows the pointer inside the surface,
+   a sheen that sweeps across on hover, and a gel squash on press.
+   --bx / --by are written per button by liquid-glass.js.
+   ========================================================================== */
+.btn-primary,
+.btn-ghost,
+.qarip-cta-primary,
+.qarip-cta-secondary,
+html.qarip-v2 .qarip-nav-start,
+body.qarip-font-page .qarip-nav-start,
+html.qarip-home #catalog .catalog-more,
+body.qarip-font-page .font-detail-actions .font-download,
+.qarip-dl-go,
+.qarip-dl-info,
+html.qarip-home .font-card .font-download,
+html.qarip-home .font-card .card-bottom a[download],
+html.qarip-home #catalog .categories button,
+html.qarip-stories .leto-export,
+html.qarip-stories .leto-dock-btn{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+/* Icon discs must stay overflow:visible — hidden clips the halo/rim,
+   and Apple Color Emoji ignores font-size:0 when a ♡ is still in the DOM. */
+html.qarip-home .font-favorite,
+html.qarip-home #catalog .font-favorite,
+body.qarip-font-page .font-favorite,
+html.qarip-stories .leto-topbar .leto-icon,
+html.qarip-v2 .qarip-nav-search,
+html.qarip-v2 .qarip-nav-toggle,
+html:not(.qarip-stories) .nav-toggle{
+  position:relative;
+  overflow:visible;
+}
+/* Choice cards must stay overflow:visible so icon disc halos aren't clipped */
+html.qarip-stories .leto-choice-card{
+  position:relative;
+  overflow:visible;
+  isolation:auto;
+}
+
+/* Tinted controls whose fill is declared elsewhere with higher specificity
+   still need the blob folded into the same declaration. */
+body.qarip-font-page .font-detail-actions .font-download,
+html.qarip-stories .leto-export{
+  background-color:transparent!important;
+  background-image:
+    radial-gradient(160px 160px at var(--bx,50%) var(--by,50%),
+      rgba(255,255,255,.42), transparent 66%),
+    linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+}
+
+/* Untinted glass + plain fills: blob only, so their own colour shows. */
+.btn-ghost,
+.qarip-cta-secondary,
+.qarip-dl-info,
+html.qarip-home .font-card .font-download,
+html.qarip-home .font-card .card-bottom a[download],
+html.qarip-home #catalog .categories button:not(.active),
+html.qarip-stories .leto-dock-btn:not(.on):not(.leto-dock-add),
+html.qarip-stories .leto-choice-card{
+  background-image:
+    radial-gradient(150px 150px at var(--bx,50%) var(--by,50%),
+      rgba(255,255,255,.55), transparent 70%)!important;
+  background-repeat:no-repeat!important;
+}
+
+/* Sheen sweep — ::before only, because several of these controls already
+   use ::after for their label text. */
+.btn-primary::before,
+.btn-ghost::before,
+.qarip-cta-primary::before,
+.qarip-cta-secondary::before,
+html.qarip-v2 .qarip-nav-start::before,
+body.qarip-font-page .qarip-nav-start::before,
+html.qarip-home #catalog .catalog-more::before,
+body.qarip-font-page .font-detail-actions .font-download::before,
+.qarip-dl-go::before,
+html.qarip-home .font-card .font-download::before,
+html.qarip-stories .leto-export::before,
+html.qarip-stories .leto-dock-btn::before,
+html.qarip-stories .leto-choice-card::before{
+  content:"";
+  position:absolute;
+  top:-40%;
+  bottom:-40%;
+  left:-60%;
+  width:45%;
+  z-index:-1;
+  pointer-events:none;
+  transform:translateX(0) skewX(-18deg);
+  background:linear-gradient(90deg,
+    transparent,
+    rgba(255,255,255,.55) 45%,
+    rgba(255,255,255,.75) 52%,
+    transparent);
+  opacity:0;
+  transition:opacity .18s var(--lg-ease);
+}
+.btn-primary:hover::before,
+.btn-ghost:hover::before,
+.qarip-cta-primary:hover::before,
+.qarip-cta-secondary:hover::before,
+html.qarip-v2 .qarip-nav-start:hover::before,
+body.qarip-font-page .qarip-nav-start:hover::before,
+html.qarip-home #catalog .catalog-more:hover::before,
+body.qarip-font-page .font-detail-actions .font-download:hover::before,
+.qarip-dl-go:hover::before,
+html.qarip-home .font-card .font-download:hover::before,
+html.qarip-stories .leto-export:hover::before,
+html.qarip-stories .leto-dock-btn:hover::before,
+html.qarip-stories .leto-choice-card:hover::before{
+  opacity:1;
+  animation:lg-sheen .72s var(--lg-ease);
+}
+@keyframes lg-sheen{
+  0%{ transform:translateX(0) skewX(-18deg); }
+  100%{ transform:translateX(360%) skewX(-18deg); }
+}
+
+/* Gel press — squash on the way down, slight overshoot on release. */
+.lg-press{ animation:lg-gel .34s var(--lg-ease); }
+@keyframes lg-gel{
+  0%{ transform:scale(.94); }
+  55%{ transform:scale(1.025); }
+  100%{ transform:scale(1); }
+}
+
+html.qarip-stories .leto-dock-btn,
+html.qarip-stories .leto-topbar .leto-icon,
+html.qarip-stories .leto-choice-card{
+  transition:transform .22s var(--lg-spring), background .22s var(--lg-ease),
+    box-shadow .22s var(--lg-ease);
+}
+html.qarip-stories .leto-dock-btn:active,
+html.qarip-stories .leto-topbar .leto-icon:active,
+html.qarip-stories .leto-choice-card:active{ transform:scale(.96); }
+
+/* ==========================================================================
+   6c. Menu — the page behind blurs while the menu is open, and the links
+   become comfortable glass rows instead of a cramped list.
+   The scrim element is created by liquid-glass.js.
+   ========================================================================== */
+.lg-scrim{
+  position:fixed;
+  inset:0;
+  z-index:55;
+  opacity:0;
+  pointer-events:none;
+  background:rgba(233,238,250,.38);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  backdrop-filter:blur(16px) saturate(1.2);
+  transition:opacity .28s var(--lg-ease);
+}
+.lg-scrim.on{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* --------------------------------------------------------------------------
+   Menu glyph — two hairlines in a glass circle. Opening converges them to
+   the centre, then crosses them into an ✕ (the rotate is delayed behind the
+   translate, which is what gives Apple's toggle its two-beat feel).
+   `display` is deliberately untouched so the button stays hidden on desktop.
+   -------------------------------------------------------------------------- */
+html:not(.qarip-stories) .nav-toggle,
+html.qarip-v2 .qarip-nav-toggle{
+  position:relative;
+  width:40px;
+  height:40px;
+  padding:0;
+  border-radius:var(--lg-r-pill)!important;
+  color:var(--lg-ink);
+}
+html:not(.qarip-stories) .nav-toggle span,
+html.qarip-v2 .qarip-nav-toggle span{
+  position:absolute;
+  left:50%;
+  top:50%;
+  z-index:1;
+  width:17px;
+  height:1.6px;
+  margin:0!important;
+  border-radius:2px;
+  background:transparent!important;
+  transition:transform .42s var(--lg-spring);
+}
+html:not(.qarip-stories) .nav-toggle span::before,
+html.qarip-v2 .qarip-nav-toggle span::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:currentColor;
+  transition:transform .34s var(--lg-spring) .1s;
+}
+/* Two bars only — the third span is the legacy middle line. */
+html:not(.qarip-stories) .nav-toggle span:nth-child(2),
+html.qarip-v2 .qarip-nav-toggle span:nth-child(2){ display:none; }
+html:not(.qarip-stories) .nav-toggle span:nth-child(1),
+html.qarip-v2 .qarip-nav-toggle span:nth-child(1){
+  transform:translate(-50%,calc(-50% - 3.5px));
+}
+html:not(.qarip-stories) .nav-toggle span:nth-child(3),
+html.qarip-v2 .qarip-nav-toggle span:nth-child(3){
+  transform:translate(-50%,calc(-50% + 3.5px));
+}
+html.nav-open .nav-toggle span:nth-child(1),
+html.nav-open .nav-toggle span:nth-child(3),
+html.qarip-nav-open .qarip-nav-toggle span:nth-child(1),
+html.qarip-nav-open .qarip-nav-toggle span:nth-child(3){
+  transform:translate(-50%,-50%);
+}
+html.nav-open .nav-toggle span:nth-child(1)::before,
+html.qarip-nav-open .qarip-nav-toggle span:nth-child(1)::before{
+  transform:rotate(45deg);
+}
+html.nav-open .nav-toggle span:nth-child(3)::before,
+html.qarip-nav-open .qarip-nav-toggle span:nth-child(3)::before{
+  transform:rotate(-45deg);
+}
+html.nav-open .nav-toggle span:nth-child(2){ opacity:0; }
+
+@media (prefers-reduced-motion: reduce){
+  html:not(.qarip-stories) .nav-toggle span,
+  html.qarip-v2 .qarip-nav-toggle span,
+  html:not(.qarip-stories) .nav-toggle span::before,
+  html.qarip-v2 .qarip-nav-toggle span::before{ transition:none; }
+}
+
+/* --------------------------------------------------------------------------
+   Icon buttons — Apple iOS 26 Liquid Glass discs, sitewide.
+   Frosted circle + luminous violet/pink halo + specular rim + SF mask glyph.
+   Text glyphs (♡ × ← ↶ +) are replaced by CSS masks; meaning stays in
+   aria-label / visible labels.
+   -------------------------------------------------------------------------- */
+:root{
+  --lg-icon:40px;
+  --lg-icon-sm:34px;
+  --lg-glyph:19px;
+  --lg-disc-fill:rgba(255,255,255,.34);
+  --lg-disc-blur:blur(22px) saturate(1.9) brightness(1.06);
+  --lg-disc-shadow:
+    inset 0 1px 1px rgba(255,255,255,.92),
+    inset 0 -1px 1px rgba(80,100,150,.16),
+    0 4px 12px rgba(124,92,255,.16),
+    0 10px 26px rgba(255,110,190,.12);
+  --lg-disc-rim:linear-gradient(var(--lg-angle),
+    rgba(255,255,255,1) 0%,
+    rgba(196,170,255,.55) 28%,
+    rgba(255,255,255,.28) 52%,
+    rgba(255,190,225,.6) 78%,
+    rgba(255,255,255,.95) 100%);
+  --lg-chevron-down:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 8.25 12 15.75 19.5 8.25'/%3E%3C/svg%3E");
+  --lg-chevron-left:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.75 4.5 8.25 12 15.75 19.5'/%3E%3C/svg%3E");
+  --lg-chevron-right:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.25 4.5 15.75 12 8.25 19.5'/%3E%3C/svg%3E");
+  --lg-xmark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 6 18 18M18 6 6 18'/%3E%3C/svg%3E");
+  --lg-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E");
+  --lg-minus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+  --lg-heart:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20.2C9.6 18.5 4.3 14.6 4.3 10.4A4.3 4.3 0 0 1 12 7.7a4.3 4.3 0 0 1 7.7 2.7c0 4.2-5.3 8.1-7.7 9.8Z'/%3E%3C/svg%3E");
+  --lg-heart-fill:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 20.4C9.5 18.6 4 14.6 4 10.3A4.5 4.5 0 0 1 12 7.5a4.5 4.5 0 0 1 8 2.8c0 4.3-5.5 8.3-8 10.1Z'/%3E%3C/svg%3E");
+  --lg-undo:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.75 8.7h6.75a4.75 4.75 0 0 1 0 9.5H7.75'/%3E%3Cpath d='M9.65 5.8 6.75 8.7l2.9 2.9'/%3E%3C/svg%3E");
+  --lg-redo:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.25 8.7H10.5a4.75 4.75 0 0 0 0 9.5h5.75'/%3E%3Cpath d='M14.35 5.8 17.25 8.7l-2.9 2.9'/%3E%3C/svg%3E");
+  --lg-search:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='6.25'/%3E%3Cpath d='m16 16 4.2 4.2'/%3E%3C/svg%3E");
+  --lg-ellipsis:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Ccircle cx='6' cy='12' r='1.7'/%3E%3Ccircle cx='12' cy='12' r='1.7'/%3E%3Ccircle cx='18' cy='12' r='1.7'/%3E%3C/svg%3E");
+  --lg-help:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.25'/%3E%3Cpath d='M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1.9-1.1 1.8'/%3E%3Cpath d='M12 17.2h.01'/%3E%3C/svg%3E");
+}
+
+/* Shared disc shell */
+html.qarip-home #catalog .cat-more,
+.cat-more,
+html.qarip-home .font-favorite,
+html.qarip-home #catalog .font-favorite,
+body.qarip-font-page .font-favorite,
+.qarip-dl-close,
+html.qarip-stories .leto-icon,
+html.qarip-stories .leto-fab,
+html.qarip-stories .leto-choice-back,
+html.qarip-stories .leto-sheet-head button,
+html.qarip-stories .leto-track-row button,
+html.qarip-stories .leto-font-grid .heart,
+html.qarip-stories .leto-pair-grid .heart,
+html:not(.qarip-stories) .nav-toggle,
+html.qarip-v2 .qarip-nav-toggle,
+html.qarip-v2 .qarip-nav-search,
+html.qarip-stories .leto-choice-card .cc-ico,
+.qarip-ico,
+.qarip-step-ico,
+html.qarip-stories .leto-add-grid button .ico{
+  position:relative;
+  display:inline-grid;
+  place-items:center;
+  width:var(--lg-icon);
+  height:var(--lg-icon);
+  padding:0!important;
+  border-radius:var(--lg-r-pill)!important;
+  border:0!important;
+  background-color:var(--lg-disc-fill)!important;
+  background-image:
+    radial-gradient(120px 120px at var(--bx,42%) var(--by,32%),
+      rgba(255,255,255,.72), transparent 62%)!important;
+  -webkit-backdrop-filter:var(--lg-disc-blur);
+  backdrop-filter:var(--lg-disc-blur);
+  box-shadow:var(--lg-disc-shadow)!important;
+  color:var(--lg-ink);
+  font-size:0!important;
+  line-height:0;
+  overflow:visible;
+  transition:transform .2s var(--lg-spring), background .2s var(--lg-ease),
+    color .2s var(--lg-ease), box-shadow .2s var(--lg-ease);
+}
+
+/* Specular rim */
+html.qarip-home #catalog .cat-more::after,
+.cat-more::after,
+html.qarip-home .font-favorite::after,
+html.qarip-home #catalog .font-favorite::after,
+body.qarip-font-page .font-favorite::after,
+.qarip-dl-close::after,
+html.qarip-stories .leto-icon::after,
+html.qarip-stories .leto-fab::after,
+html.qarip-stories .leto-choice-back::after,
+html.qarip-stories .leto-sheet-head button::after,
+html.qarip-stories .leto-track-row button::after,
+html.qarip-stories .leto-font-grid .heart::after,
+html.qarip-stories .leto-pair-grid .heart::after,
+html:not(.qarip-stories) .nav-toggle::after,
+html.qarip-v2 .qarip-nav-toggle::after,
+html.qarip-v2 .qarip-nav-search::after,
+html.qarip-stories .leto-choice-card .cc-ico::after,
+.qarip-ico::after,
+.qarip-step-ico::after,
+html.qarip-stories .leto-add-grid button .ico::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  pointer-events:none;
+  z-index:0;
+  background:var(--lg-disc-rim);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+
+/* SF-style glyph (mask) — not for hamburger / search (they keep own markup) */
+html.qarip-home #catalog .cat-more::before,
+.cat-more::before,
+html.qarip-home .font-favorite::before,
+html.qarip-home #catalog .font-favorite::before,
+body.qarip-font-page .font-favorite::before,
+.qarip-dl-close::before,
+html.qarip-stories .leto-icon::before,
+html.qarip-stories .leto-fab::before,
+html.qarip-stories .leto-choice-back::before,
+html.qarip-stories .leto-sheet-head button::before,
+html.qarip-stories .leto-track-row button::before,
+html.qarip-stories .leto-font-grid .heart::before,
+html.qarip-stories .leto-pair-grid .heart::before,
+html.qarip-stories .leto-choice-card .cc-ico::before,
+.qarip-ico::before,
+.qarip-step-ico::before,
+html.qarip-v2 .qarip-nav-search::before,
+html.qarip-stories .leto-add-grid button .ico::before{
+  content:""!important;
+  position:relative;
+  z-index:1;
+  width:var(--lg-glyph);
+  height:var(--lg-glyph);
+  background:currentColor;
+  -webkit-mask:var(--lg-mask) center/contain no-repeat;
+  mask:var(--lg-mask) center/contain no-repeat;
+  transition:transform .3s var(--lg-spring);
+}
+
+.qarip-dl-close{ position:absolute; }
+
+html.qarip-home #catalog .cat-more:active,
+html.qarip-home .font-favorite:active,
+html.qarip-home #catalog .font-favorite:active,
+body.qarip-font-page .font-favorite:active,
+.qarip-dl-close:active,
+html.qarip-stories .leto-icon:active,
+html.qarip-stories .leto-fab:active,
+html.qarip-stories .leto-choice-back:active,
+html.qarip-stories .leto-sheet-head button:active,
+html.qarip-stories .leto-track-row button:active,
+html.qarip-stories .leto-font-grid .heart:active,
+html.qarip-stories .leto-pair-grid .heart:active,
+html:not(.qarip-stories) .nav-toggle:active,
+html.qarip-v2 .qarip-nav-toggle:active,
+html.qarip-v2 .qarip-nav-search:active{ transform:scale(.92); }
+
+/* Glyph assignments */
+html.qarip-home #catalog .cat-more,
+.cat-more{ --lg-mask:var(--lg-chevron-down); }
+html.qarip-home #catalog .cat-more[aria-expanded="true"]::before,
+.cat-more[aria-expanded="true"]::before{ transform:rotate(180deg); }
+html.qarip-home #catalog .cat-more[aria-expanded="true"],
+.cat-more[aria-expanded="true"]{
+  background-color:var(--lg-tint)!important;
+  color:#fff!important;
+}
+
+html.qarip-home .font-favorite,
+html.qarip-home #catalog .font-favorite,
+body.qarip-font-page .font-favorite,
+html.qarip-stories .leto-font-grid .heart,
+html.qarip-stories .leto-pair-grid .heart{ --lg-mask:var(--lg-heart); }
+html.qarip-home .font-favorite[aria-pressed="true"],
+html.qarip-home #catalog .font-favorite[aria-pressed="true"],
+body.qarip-font-page .font-favorite[aria-pressed="true"],
+html.qarip-stories .leto-font-grid .heart.on,
+html.qarip-stories .leto-pair-grid .heart.on{
+  --lg-mask:var(--lg-heart-fill);
+  background-color:rgba(255,59,92,.18)!important;
+  color:#ff3b5c!important;
+}
+html.qarip-home #catalog .font-favorite{
+  width:var(--lg-icon-sm);
+  height:var(--lg-icon-sm);
+  --lg-glyph:17px;
+  background-color:rgba(255,255,255,.78)!important;
+  color:var(--lg-ink)!important;
+}
+body.qarip-font-page .font-favorite{ width:44px; height:44px; }
+
+.qarip-dl-close,
+html.qarip-stories .leto-sheet-head button{
+  --lg-mask:var(--lg-xmark);
+  width:var(--lg-icon-sm);
+  height:var(--lg-icon-sm);
+  --lg-glyph:15px;
+}
+
+html.qarip-stories .leto-icon[data-acto="back"],
+html.qarip-stories .leto-choice-back{ --lg-mask:var(--lg-chevron-left); }
+
+html.qarip-stories .leto-topbar .leto-icon{
+  width:38px;
+  height:38px;
+  --lg-glyph:17px;
+}
+html.qarip-stories .leto-top-center{ gap:10px!important; }
+html.qarip-stories .leto-icon[disabled],
+html.qarip-stories .leto-icon[aria-disabled="true"]{
+  opacity:.3;
+  pointer-events:none;
+}
+html.qarip-v2 .qarip-nav-search{ --lg-mask:var(--lg-search); }
+html.qarip-v2 .qarip-nav-search svg{ display:none!important; }
+html.qarip-stories .leto-icon[data-acto="undo"]{ --lg-mask:var(--lg-undo); }
+html.qarip-stories .leto-icon[data-acto="redo"]{ --lg-mask:var(--lg-redo); }
+html.qarip-stories .leto-fab{ --lg-mask:var(--lg-plus); }
+html.qarip-stories .leto-track-row button[data-track-step^="-"]{ --lg-mask:var(--lg-minus); }
+html.qarip-stories .leto-track-row button:not([data-track-step^="-"]){ --lg-mask:var(--lg-plus); }
+html.qarip-stories .leto-track-row button{ flex:0 0 var(--lg-icon)!important; }
+html.qarip-stories .leto-font-grid .heart,
+html.qarip-stories .leto-pair-grid .heart{
+  width:30px;
+  height:30px;
+  --lg-glyph:15px;
+  color:#64748b;
+}
+
+/* Weight picker back = glass pill with leading chevron */
+html.qarip-stories .leto-weight-back{
+  position:relative;
+  display:inline-flex!important;
+  align-items:center;
+  gap:8px;
+  min-height:40px;
+  padding:0 16px 0 12px!important;
+  border-radius:var(--lg-r-pill)!important;
+  border:0!important;
+  background-color:var(--lg-disc-fill)!important;
+  background-image:
+    radial-gradient(140px 140px at var(--bx,40%) var(--by,30%),
+      rgba(255,255,255,.7), transparent 65%)!important;
+  -webkit-backdrop-filter:var(--lg-disc-blur);
+  backdrop-filter:var(--lg-disc-blur);
+  box-shadow:var(--lg-disc-shadow)!important;
+  color:var(--lg-ink)!important;
+  font:700 13px/1 Arial,sans-serif!important;
+}
+html.qarip-stories .leto-weight-back::before{
+  content:"";
+  flex:0 0 auto;
+  width:16px;
+  height:16px;
+  background:currentColor;
+  -webkit-mask:var(--lg-chevron-left) center/contain no-repeat;
+  mask:var(--lg-chevron-left) center/contain no-repeat;
+}
+html.qarip-stories .leto-weight-back::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  pointer-events:none;
+  background:var(--lg-disc-rim);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+
+/* Choice screen icons — forced iOS 26 Liquid Glass discs (back / cc-ico / cc-arrow) */
+html.qarip-stories .leto-choice-back,
+html.qarip-stories .leto-choice-card .cc-ico,
+html.qarip-stories .leto-choice-card .cc-arrow{
+  position:relative!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  flex:0 0 auto;
+  width:44px!important;
+  height:44px!important;
+  padding:0!important;
+  margin:0;
+  border:1.5px solid transparent!important;
+  border-radius:999px!important;
+  font-size:0!important;
+  line-height:0!important;
+  color:var(--lg-ink)!important;
+  /* Gradient border = always-visible specular rim (works even if blur is weak) */
+  background:
+    radial-gradient(ellipse 80% 65% at 30% 20%, rgba(255,255,255,.7), transparent 60%),
+    linear-gradient(160deg, rgba(255,255,255,.45), rgba(220,205,255,.32) 50%, rgba(255,210,230,.28)) padding-box,
+    linear-gradient(var(--lg-angle, 125deg),
+      #fff 0%,
+      #d4b8ff 24%,
+      rgba(255,255,255,.25) 50%,
+      #ffb6d9 76%,
+      #fff 100%) border-box!important;
+  -webkit-backdrop-filter:blur(36px) saturate(2.3) brightness(1.12)!important;
+  backdrop-filter:blur(36px) saturate(2.3) brightness(1.12)!important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255,255,255,.95),
+    inset 0 -2px 3px rgba(90,110,160,.22),
+    0 4px 16px rgba(124,92,255,.32),
+    0 14px 32px rgba(255,110,190,.24)!important;
+  overflow:visible;
+  isolation:auto;
+  -webkit-transform:translateZ(0);
+  transform:translateZ(0);
+  transition:transform .2s var(--lg-spring), background .2s var(--lg-ease),
+    box-shadow .2s var(--lg-ease);
+}
+html.qarip-stories .leto-choice-card .cc-arrow{
+  width:34px!important;
+  height:34px!important;
+}
+html.qarip-stories .leto-choice-card .cc-ico{
+  width:50px!important;
+  height:50px!important;
+  color:var(--lg-tint)!important;
+}
+html.qarip-stories .leto-choice-back::before,
+html.qarip-stories .leto-choice-card .cc-ico::before,
+html.qarip-stories .leto-choice-card .cc-arrow::before{
+  content:""!important;
+  position:relative;
+  z-index:2;
+  display:block;
+  width:18px;
+  height:18px;
+  background:currentColor!important;
+  -webkit-mask:var(--lg-mask) center / contain no-repeat;
+  mask:var(--lg-mask) center / contain no-repeat;
+}
+html.qarip-stories .leto-choice-card .cc-ico::before{ width:22px; height:22px; }
+html.qarip-stories .leto-choice-card .cc-arrow::before{ width:15px; height:15px; }
+/* Soft outer glow ring — complements the gradient rim */
+html.qarip-stories .leto-choice-back::after,
+html.qarip-stories .leto-choice-card .cc-ico::after,
+html.qarip-stories .leto-choice-card .cc-arrow::after{
+  content:""!important;
+  position:absolute;
+  inset:-6px;
+  z-index:-1;
+  border-radius:inherit;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 55%,
+    rgba(160,120,255,.35) 0%,
+    rgba(255,120,190,.18) 42%,
+    transparent 70%);
+  filter:blur(2px);
+}
+html.qarip-stories .leto-choice-back{ --lg-mask:var(--lg-chevron-left); }
+html.qarip-stories .leto-choice-card .cc-arrow{ --lg-mask:var(--lg-chevron-right); color:var(--lg-ink)!important; }
+html.qarip-stories .leto-choice-card[data-choice="editor"] .cc-ico{ --lg-mask:var(--lg-brush); }
+html.qarip-stories .leto-choice-card[data-choice="sticker"] .cc-ico{ --lg-mask:var(--lg-tag); }
+html.qarip-stories .leto-choice-back:active,
+html.qarip-stories .leto-choice-card .cc-ico:active,
+html.qarip-stories .leto-choice-card .cc-arrow:active{
+  transform:scale(.92) translateZ(0);
+}
+
+/* --------------------------------------------------------------------------
+   Inline glyphs — the same SF-style language for icons that sit inside
+   tiles, dock buttons and feature rows (previously emoji and stray
+   typographic characters: 🎨 🏷️ Aa ⛰ ✦ ⇩ ⚡ ♡ ▣ ✎ ◐).
+   Labels stay in the markup, so meaning is unchanged.
+   -------------------------------------------------------------------------- */
+:root{
+  --lg-text:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 6.5V5h14v1.5M12 5v14M9 19h6'/%3E%3C/svg%3E");
+  --lg-font:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 19 6-14 6 14M6.4 14.2h7.2M17.5 19h2.5'/%3E%3C/svg%3E");
+  --lg-pairs:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='3.5' y='7.5' width='11' height='11' rx='2.5'/%3E%3Cpath d='M8 5.5h9A3.5 3.5 0 0 1 20.5 9v8'/%3E%3C/svg%3E");
+  --lg-photo:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='14' rx='3'/%3E%3Cpath d='m4.5 16.5 4.2-4.2a2 2 0 0 1 2.8 0l3 3M14 14l1.6-1.6a2 2 0 0 1 2.8 0l1.1 1.1'/%3E%3Ccircle cx='9' cy='9.5' r='1.4'/%3E%3C/svg%3E");
+  --lg-sparkle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M13 3.5l1.7 4.3 4.3 1.7-4.3 1.7L13 15.5l-1.7-4.3L7 9.5l4.3-1.7z'/%3E%3Cpath d='M6 16.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z'/%3E%3C/svg%3E");
+  --lg-image-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.5 12.5V8a3 3 0 0 0-3-3h-11a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h6'/%3E%3Cpath d='m4.5 16 3.7-3.7a2 2 0 0 1 2.8 0l2.5 2.5'/%3E%3Cpath d='M17.5 15v6M14.5 18h6'/%3E%3C/svg%3E");
+  --lg-layout:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='3.5' y='4.5' width='17' height='6' rx='2'/%3E%3Crect x='3.5' y='13.5' width='7.5' height='6' rx='2'/%3E%3Crect x='13' y='13.5' width='7.5' height='6' rx='2'/%3E%3C/svg%3E");
+  --lg-download:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v10.5M7.5 10.5 12 15l4.5-4.5M4.5 19h15'/%3E%3C/svg%3E");
+  --lg-transparent:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='16' height='16' rx='3'/%3E%3Cpath d='M4 12h8v8M12 4v8h8' stroke-width='1.2'/%3E%3C/svg%3E");
+  --lg-brush:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.5 4.5 19.5 8.5 10 18H6v-4z'/%3E%3Cpath d='M13.5 6.5 17.5 10.5'/%3E%3C/svg%3E");
+  --lg-tag:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M11.2 4H19a1 1 0 0 1 1 1v7.8a2 2 0 0 1-.6 1.4l-5.2 5.2a2 2 0 0 1-2.8 0l-6-6a2 2 0 0 1 0-2.8l5.4-5.4A2 2 0 0 1 11.2 4Z'/%3E%3Ccircle cx='15.5' cy='8.5' r='1.4'/%3E%3C/svg%3E");
+  --lg-bolt:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M13 3 5.5 13.5H11L10.5 21 18.5 10.5H13z'/%3E%3C/svg%3E");
+  --lg-pencil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4.5 19.5 8 9 18.5l-4.5 1 1-4.5z'/%3E%3Cpath d='M14 6.5 17.5 10'/%3E%3C/svg%3E");
+  --lg-palette:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 4a8 8 0 1 0 0 16c1.2 0 1.8-.8 1.8-1.7 0-1.4-1-1.8-1-2.8 0-.8.7-1.5 1.6-1.5h1.4A4.2 4.2 0 0 0 20 9.8C20 6.6 16.4 4 12 4Z'/%3E%3Ccircle cx='8.2' cy='10' r='1.1'/%3E%3Ccircle cx='12' cy='7.8' r='1.1'/%3E%3C/svg%3E");
+  --lg-arrow-right:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M12.5 6 18.5 12l-6 6'/%3E%3C/svg%3E");
+  --lg-arrow-down:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v13M6 11.5 12 17.5l6-6'/%3E%3C/svg%3E");
+}
+
+/* Tiles in the add / export sheets — glyph drawn by the shared disc */
+html.qarip-stories .leto-add-grid button .ico{
+  width:44px;
+  height:44px;
+  --lg-glyph:22px;
+  margin:0 auto 8px;
+}
+html.qarip-stories .leto-add-grid button[data-add="text"] .ico{ --lg-mask:var(--lg-text); }
+html.qarip-stories .leto-add-grid button[data-add="fonts"] .ico{ --lg-mask:var(--lg-font); }
+html.qarip-stories .leto-add-grid button[data-add="pairs"] .ico{ --lg-mask:var(--lg-pairs); }
+html.qarip-stories .leto-add-grid button[data-add="bg"] .ico{ --lg-mask:var(--lg-photo); }
+html.qarip-stories .leto-add-grid button[data-add="stickers"] .ico{ --lg-mask:var(--lg-sparkle); }
+html.qarip-stories .leto-add-grid button[data-add="gallery"] .ico{ --lg-mask:var(--lg-image-plus); }
+html.qarip-stories .leto-add-grid button[data-add="layout"] .ico{ --lg-mask:var(--lg-layout); }
+html.qarip-stories .leto-add-grid button[data-more="png"] .ico{ --lg-mask:var(--lg-download); }
+html.qarip-stories .leto-add-grid button[data-more="transparent"] .ico{ --lg-mask:var(--lg-transparent); }
+html.qarip-stories .leto-add-grid button[data-more="new"] .ico{ --lg-mask:var(--lg-plus); }
+html.qarip-stories .leto-add-grid button[data-more="help"] .ico{ --lg-mask:var(--lg-help); }
+html.qarip-stories .leto-add-grid button[data-more="sticker"] .ico{ --lg-mask:var(--lg-tag); }
+
+/* Dock, export and the inline add button get a leading glyph. */
+html.qarip-stories .leto-dock-btn,
+html.qarip-stories .leto-export,
+html.qarip-stories .leto-text-add{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+html.qarip-stories .leto-dock-btn::after,
+html.qarip-stories .leto-export::after,
+html.qarip-stories .leto-text-add::after{
+  content:"";
+  order:-1;
+  flex:0 0 auto;
+  width:19px;
+  height:19px;
+  background:currentColor;
+  -webkit-mask:var(--lg-mask) center/contain no-repeat;
+  mask:var(--lg-mask) center/contain no-repeat;
+}
+html.qarip-stories .leto-dock-btn[data-acto="text"],
+html.qarip-stories .leto-text-add{ --lg-mask:var(--lg-text); }
+html.qarip-stories .leto-dock-btn[data-acto="bg"]{ --lg-mask:var(--lg-photo); }
+html.qarip-stories .leto-dock-btn[data-acto="gallery"]{ --lg-mask:var(--lg-image-plus); }
+html.qarip-stories .leto-dock-btn[data-acto="more"]{ --lg-mask:var(--lg-ellipsis); }
+html.qarip-stories .leto-export{ --lg-mask:var(--lg-download); }
+
+/* Mode picker — sizes/masks handled in the Choice screen block above */
+html.qarip-stories .leto-choice-card[data-choice="editor"] .cc-ico{ --lg-mask:var(--lg-brush); }
+html.qarip-stories .leto-choice-card[data-choice="sticker"] .cc-ico{ --lg-mask:var(--lg-tag); }
+
+/* Marketing pages: feature / step icons as glass discs */
+.qarip-ico,
+.qarip-step-ico{
+  color:var(--lg-tint);
+  flex:0 0 auto;
+}
+.qarip-ico{ width:36px; height:36px; --lg-glyph:16px; }
+.qarip-step-ico{ width:48px; height:48px; --lg-glyph:22px; }
+.qarip-ico-bolt{ --lg-mask:var(--lg-bolt); }
+.qarip-ico-heart{ --lg-mask:var(--lg-heart); color:#ff3b5c; }
+.qarip-ico-frame{ --lg-mask:var(--lg-photo); }
+.qarip-step-ico-1{ --lg-mask:var(--lg-pencil); }
+.qarip-step-ico-2{ --lg-mask:var(--lg-palette); }
+.qarip-step-ico-3{ --lg-mask:var(--lg-download); }
+
+.btn .arrow{
+  display:inline-grid;
+  place-items:center;
+  width:16px;
+  height:16px;
+  font-size:0;
+}
+.btn .arrow::before{
+  content:"";
+  width:16px;
+  height:16px;
+  background:currentColor;
+  -webkit-mask:var(--lg-arrow-right) center/contain no-repeat;
+  mask:var(--lg-arrow-right) center/contain no-repeat;
+}
+
+/* Trailing SF arrow on primary CTAs (sheen already occupies ::before). */
+.qarip-cta-primary,
+html.qarip-home .intro-cta.qarip-cta-primary,
+html.qarip-v2 .qarip-nav-start,
+body.qarip-font-page .qarip-nav-start{
+  display:inline-flex!important;
+  align-items:center;
+  gap:8px;
+}
+.qarip-cta-primary::after,
+html.qarip-home .intro-cta.qarip-cta-primary::after,
+html.qarip-v2 .qarip-nav-start::after,
+body.qarip-font-page .qarip-nav-start::after{
+  content:"";
+  flex:0 0 auto;
+  width:14px;
+  height:14px;
+  background:currentColor;
+  -webkit-mask:var(--lg-arrow-right) center/contain no-repeat;
+  mask:var(--lg-arrow-right) center/contain no-repeat;
+}
+
+/* Catalog / detail download: label only, SF download glyph via extra layer. */
+html.qarip-home #catalog .font-download::after,
+html.qarip-home #catalog .card-bottom a[aria-label$="жүктеу"]::after,
+html.qarip-home #catalog .card-bottom a[download]::after,
+html.qarip-home .font-card .font-download::after,
+.card-bottom a[aria-label$="жүктеу"]::after,
+.card-bottom a[download]::after{
+  content:"Жүктеу"!important;
+}
+body.qarip-font-page .font-download::after{
+  content:none!important;
+}
+body.qarip-font-page .font-download[href*="fonts.google.com"]::after{
+  content:""!important;
+  flex:0 0 auto;
+  width:14px;
+  height:14px;
+  background:currentColor;
+  -webkit-mask:var(--lg-arrow-right) center/contain no-repeat;
+  mask:var(--lg-arrow-right) center/contain no-repeat;
+}
+html.qarip-home #catalog .font-download,
+html.qarip-home #catalog .card-bottom a[aria-label$="жүктеу"],
+html.qarip-home #catalog .card-bottom a[download],
+body.qarip-font-page .font-download{
+  display:inline-flex!important;
+  align-items:center;
+  gap:6px;
+}
+.lg-btn-ico{
+  flex:0 0 auto;
+  width:14px;
+  height:14px;
+  background:currentColor;
+  -webkit-mask:var(--lg-download) center/contain no-repeat;
+  mask:var(--lg-download) center/contain no-repeat;
+}
+.lg-btn-ico-arrow{
+  -webkit-mask-image:var(--lg-arrow-right);
+  mask-image:var(--lg-arrow-right);
+}
+
+/* Step connectors and catalog search field — same stroke language. */
+.qarip-step-arrow{
+  font-size:0!important;
+  color:#9aa3b5;
+}
+.qarip-step-arrow::before{
+  content:""!important;
+  display:block;
+  width:18px;
+  height:18px;
+  background:currentColor;
+  -webkit-mask:var(--lg-arrow-right) center/contain no-repeat;
+  mask:var(--lg-arrow-right) center/contain no-repeat;
+}
+html.qarip-home #catalog .search svg{ display:none!important; }
+html.qarip-home #catalog .search::before{
+  content:"";
+  flex:0 0 auto;
+  width:18px;
+  height:18px;
+  background:currentColor;
+  opacity:.55;
+  -webkit-mask:var(--lg-search) center/contain no-repeat;
+  mask:var(--lg-search) center/contain no-repeat;
+}
+
+/* Kill leftover emoji glyphs from catalog-pages.css. */
+.qarip-ico-bolt::before,
+.qarip-ico-heart::before,
+.qarip-ico-frame::before,
+.qarip-step-ico-1::before,
+.qarip-step-ico-2::before,
+.qarip-step-ico-3::before{
+  content:""!important;
+  font-size:0!important;
+}
+
+html.qarip-v2 .qarip-nav-search{
+  width:var(--lg-icon);
+  height:var(--lg-icon);
+  border-radius:var(--lg-r-pill)!important;
+}
+
+/* Qarip ships a text wordmark instead of a logo image, and the legacy CSS
+   hides both — leaving the bar's left side empty. Bring it back when no
+   image logo is present. */
+html.qarip-v2 .topbar .brand:not(:has(.brand-logo)){
+  line-height:1;
+  gap:6px;
+}
+html.qarip-v2 .topbar .brand:not(:has(.brand-logo)) > span:last-child{
+  display:inline;
+  font:800 17px/1 Arial,sans-serif;
+  letter-spacing:-.03em;
+  color:var(--lg-ink);
+}
+html.qarip-v2 .topbar .brand:not(:has(.brand-logo)) .brand-dot{
+  color:var(--lg-tint);
+}
+
+/* Qarip / Tañba / font pages: the bar itself grows into a menu sheet. */
+html.qarip-nav-open .topbar{
+  background:var(--lg-reg-dense)!important;
+  box-shadow:var(--lg-lift-2);
+}
+html.qarip-nav-open .topbar nav{
+  flex-direction:column;
+  align-items:stretch!important;
+  gap:2px!important;
+  width:100%;
+  padding:6px 0 2px!important;
+  animation:lg-menu-in .26s var(--lg-ease);
+}
+html.qarip-nav-open .topbar nav a{
+  display:flex;
+  align-items:center;
+  min-height:46px;
+  padding:0 14px;
+  border-radius:var(--lg-r-box);
+  color:var(--lg-ink)!important;
+  opacity:1!important;
+  font-size:15px;
+  transition:background .18s var(--lg-ease);
+}
+html.qarip-nav-open .topbar nav a:active{
+  background:rgba(15,23,42,.06);
+}
+
+/* Home page: the menu is a floating glass sheet under the nav pill. */
+html.nav-open .site-nav{
+  top:auto;
+  /* Aligned with the nav pill: 8px gutters, parked just below it. */
+  inset:68px 8px auto 8px;
+  padding:8px!important;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:var(--lg-r-bar);
+  background:var(--lg-reg-dense)!important;
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  box-shadow:var(--lg-lift-2);
+  z-index:60;
+  animation:lg-menu-in .26s var(--lg-ease);
+}
+html.nav-open .site-nav a{
+  min-height:48px;
+  padding:0 14px;
+  border:0!important;
+  border-radius:var(--lg-r-box);
+  color:var(--lg-ink);
+  font-size:15px;
+}
+html.nav-open .site-nav a:active{
+  background:rgba(15,23,42,.06);
+}
+
+@keyframes lg-menu-in{
+  from{ opacity:0; transform:translateY(-6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+@media (prefers-reduced-transparency: reduce){
+  .lg-scrim{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:rgba(15,23,42,.35);
+  }
+  html.nav-open .site-nav{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:#fbfcfe!important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  html.qarip-nav-open .topbar nav,
+  html.nav-open .site-nav{ animation:none; }
+  .lg-scrim{ transition:none; }
+}
+
+/* ==========================================================================
+   7. Responsive
+   ========================================================================== */
+@media (max-width:900px){
+  html:not(.qarip-stories) .site-header,
+  html.qarip-v2:not(.qarip-stories) .topbar,
+  body.qarip-font-page .topbar{
+    top:8px;
+    width:calc(100% - 16px);
+    margin-top:8px;
+    min-height:52px;
+    border-radius:22px;
+    padding:6px 8px 6px 14px;
+  }
+  html:not(.qarip-stories) .site-header{ border-radius:var(--lg-r-pill); }
+  html.qarip-home #catalog .sticky-tester.tester{ top:72px; }
+  html:not(.qarip-stories) body::before{ height:84px; }
+}
+
+/* ==========================================================================
+   8. Accessibility — Apple's three switches.
+   ========================================================================== */
+@media (prefers-reduced-transparency: reduce){
+  html:not(.qarip-stories)::before{ background:#f2f4fa; }
+  html:not(.qarip-stories) body::before{ display:none; }
+  .lg-glass,
+  html:not(.qarip-stories) .site-header,
+  html:not(.qarip-stories) .topbar,
+  html.qarip-home #catalog .controls,
+  html.qarip-home #catalog .sticky-tester.tester,
+  .qarip-license-dialog,
+  .btn-ghost,
+  .qarip-cta-secondary,
+  html.qarip-v2 .qarip-nav-search,
+  html.qarip-v2 .qarip-nav-toggle,
+  html:not(.qarip-stories) .nav-toggle,
+  html.qarip-home .font-favorite,
+  html.qarip-home #catalog .font-favorite,
+  body.qarip-font-page .font-favorite{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:#fbfcfe!important;
+    border:1px solid rgba(15,23,42,.12)!important;
+  }
+  .btn-primary,
+  .qarip-cta-primary,
+  html.qarip-v2 .qarip-nav-start,
+  html.qarip-home .font-download,
+  html.qarip-home #catalog .font-download,
+  body.qarip-font-page .font-download,
+  html.qarip-stories .leto-export,
+  html.qarip-stories .leto-topbar .leto-icon,
+  html.qarip-stories .leto-fab,
+  html.qarip-stories .leto-dock,
+  html.qarip-stories .leto-sheet{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  html.qarip-stories .leto-dock{ background:#15171f!important; }
+  html.qarip-stories .leto-sheet{ background:#12141c!important; }
+}
+
+@media (prefers-contrast: more){
+  :root{
+    --lg-reg:rgba(255,255,255,.82);
+    --lg-reg-dense:rgba(255,255,255,.92);
+    --lg-paper:#fff;
+    --lg-paper-line:rgba(15,23,42,.22);
+    --lg-muted:#3a4256;
+  }
+  .lg-glass,
+  html:not(.qarip-stories) .site-header,
+  html:not(.qarip-stories) .topbar,
+  html.qarip-home #catalog .controls,
+  html.qarip-home #catalog .sticky-tester.tester{
+    border:1px solid rgba(15,23,42,.24)!important;
+  }
+  html.qarip-home #catalog .categories button{
+    border-color:rgba(15,23,42,.28)!important;
+  }
+}
+
+html.lg-solid::before{ background:#f2f4fa; }
+html.lg-solid body::before{ display:none; }
+
+@media (prefers-reduced-motion: reduce){
+  html:not(.qarip-stories) .site-header,
+  html:not(.qarip-stories) .topbar,
+  .btn-primary,
+  .btn-ghost,
+  .qarip-cta-primary,
+  .qarip-cta-secondary,
+  .project-card,
+  html.qarip-home #catalog .font-card{
+    transition:none!important;
+  }
+  html:not(.qarip-stories) body::before{ transition:none; }
+  .lg-blobs i{ animation:none!important; }
+  .leto-dock-pill{ transition:none!important; }
+}
+
+html.nav-open,
+html.qarip-nav-open{ overflow:hidden; }
+
+/* Organic wallpaper drops — transform only, never blur. */
+.lg-blobs{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.lg-blobs i{
+  position:absolute;
+  display:block;
+  border-radius:42% 58% 56% 44% / 48% 42% 58% 52%;
+  filter:blur(2px);
+  opacity:.55;
+  will-change:transform,border-radius;
+  animation:lg-drop 18s var(--lg-ease) infinite alternate;
+}
+.lg-blobs .lg-blob-a{
+  width:min(52vw,420px); height:min(52vw,420px);
+  left:-8%; top:-6%;
+  background:radial-gradient(circle at 35% 30%, rgba(180,205,255,.7), rgba(180,205,255,.08) 70%);
+}
+.lg-blobs .lg-blob-b{
+  width:min(44vw,340px); height:min(44vw,340px);
+  right:-6%; top:12%;
+  background:radial-gradient(circle at 60% 40%, rgba(255,190,220,.65), rgba(255,190,220,.06) 72%);
+  animation-duration:22s; animation-delay:-4s;
+}
+.lg-blobs .lg-blob-c{
+  width:min(38vw,280px); height:min(38vw,280px);
+  left:28%; bottom:-10%;
+  background:radial-gradient(circle at 40% 40%, rgba(190,240,220,.5), rgba(190,240,220,.05) 70%);
+  animation-duration:16s; animation-delay:-8s;
+}
+@keyframes lg-drop{
+  0%{ transform:translate3d(0,0,0) scale(1); border-radius:42% 58% 56% 44% / 48% 42% 58% 52%; }
+  50%{ transform:translate3d(3%,2%,0) scale(1.06); border-radius:58% 42% 44% 56% / 42% 58% 48% 52%; }
+  100%{ transform:translate3d(-2%,4%,0) scale(.96); border-radius:48% 52% 42% 58% / 56% 44% 58% 42%; }
+}
+@media (max-width:720px){
+  .lg-blobs .lg-blob-c{ display:none; }
+  .lg-blobs i{ opacity:.4; }
+}
+
+/* Catalog → Stories deep-link */
+html.qarip-home .font-story-link,
+body.qarip-font-page .font-detail-stories{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 14px;
+  border-radius:var(--lg-r-pill);
+  font:700 13px/1 Arial,sans-serif;
+  color:var(--lg-ink)!important;
+  background:var(--lg-reg)!important;
+  text-decoration:none;
+}
+html.qarip-home .card-actions-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-left:auto;
+}
+html.qarip-home .card-bottom{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* Stories first screen + dock pill + saved */
+html.qarip-stories .leto-choice-steps{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  max-width:420px;
+  margin:0 auto 18px;
+  padding:0;
+  list-style:none;
+}
+html.qarip-stories .leto-choice-steps li{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:40px;
+  padding:8px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.55);
+  font:600 13px/1.25 Arial,sans-serif;
+  color:var(--lg-ink);
+}
+html.qarip-stories .leto-choice-steps li b{
+  flex:0 0 22px;
+  height:22px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:var(--lg-tint);
+  color:#fff;
+  font:800 11px/1 Arial,sans-serif;
+}
+html.qarip-stories .leto-choice-steps li::before{ content:none; }
+html.qarip-stories .leto-tpl-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  max-width:420px;
+  margin:0 auto 18px;
+}
+html.qarip-stories .leto-tpl{
+  min-height:88px;
+  border:0;
+  border-radius:18px;
+  padding:10px;
+  color:#fff;
+  font:800 12px/1.2 Arial,sans-serif;
+  text-align:left;
+  cursor:pointer;
+  box-shadow:var(--lg-lift);
+}
+html.qarip-stories .leto-choice-start,
+html.qarip-stories .leto-choice-alt{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:min(420px,100%);
+  margin:0 auto 10px;
+  min-height:48px;
+  border:0;
+  border-radius:var(--lg-r-pill);
+  font:800 15px/1 Arial,sans-serif;
+  cursor:pointer;
+}
+html.qarip-stories .leto-choice-start{
+  background:linear-gradient(180deg,rgba(38,110,255,.96),rgba(9,64,200,.96));
+  color:#fff;
+}
+html.qarip-stories .leto-choice-alt{
+  background:var(--lg-reg);
+  color:var(--lg-ink);
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);
+  backdrop-filter:blur(16px) saturate(1.6);
+}
+html.qarip-stories .leto-dock{
+  padding-bottom:max(10px, env(safe-area-inset-bottom));
+  gap:6px;
+}
+html.qarip-stories .leto-dock-btn{
+  flex:1;
+  min-width:0;
+  min-height:44px;
+  font-size:12px;
+}
+html.qarip-stories .leto-dock-btn.leto-dock-add{ min-width:0; }
+html.qarip-stories .leto-saved{
+  position:absolute;
+  left:50%;
+  top:100%;
+  transform:translate(-50%,6px);
+  font:600 11px/1 Arial,sans-serif;
+  color:var(--lg-muted);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s var(--lg-ease);
+}
+html.qarip-stories .leto-saved.on{ opacity:1; }
+html.qarip-stories .leto-hint-card{
+  position:fixed;
+  left:12px; right:12px;
+  bottom:calc(88px + env(safe-area-inset-bottom));
+  z-index:40;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:var(--lg-reg-dense);
+  -webkit-backdrop-filter:blur(20px) saturate(1.7);
+  backdrop-filter:blur(20px) saturate(1.7);
+  box-shadow:var(--lg-lift-2);
+  color:var(--lg-ink);
+  font:600 14px/1.35 Arial,sans-serif;
+}
+html.qarip-stories .leto-hint-card button{
+  margin-left:auto;
+  min-height:36px;
+  padding:0 12px;
+  border:0;
+  border-radius:999px;
+  background:var(--lg-tint);
+  color:#fff;
+  font:700 12px/1 Arial,sans-serif;
+  cursor:pointer;
+}
+@media (max-width:360px){
+  html.qarip-stories .leto-tpl-grid{ grid-template-columns:repeat(2,1fr); }
+  html.qarip-stories .leto-choice-steps{ grid-template-columns:1fr; }
+}

@@ -16,7 +16,7 @@
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =
-    '.font-sticker,.qarip-sticker-toast{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #0040dc;background:#0040dc;color:#fff;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#0e1a33;color:#fff}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.font-favorite{border:1px solid #0e1a33;background:transparent;color:#0e1a33;border-radius:99px;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer}.font-favorite[aria-pressed="true"]{background:#f06848;color:#fff}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#0e1a33;white-space:nowrap}.fav-filter.active{background:#0040dc;color:#fff}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5b6780;font:600 14px/1.45 Arial,sans-serif;text-align:center}.intro-cta-row{position:relative;z-index:2;margin-top:22px}.intro-cta{display:inline-flex;align-items:center;padding:14px 22px;border:1px solid #0040dc;border-radius:999px;background:#0040dc;color:#fff;font:800 14px/1 Arial,sans-serif;letter-spacing:.03em;text-decoration:none}.intro-cta:hover{background:#0036c4;color:#fff}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.intro-cta{min-height:44px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
+    '.font-sticker,.qarip-sticker-toast{display:none!important}.catalog-more{display:block;width:min(100%,520px);margin:32px auto 0;padding:16px 22px;border:1px solid #0040dc;background:#0040dc;color:#fff;font:700 14px/1.2 Arial,sans-serif;cursor:pointer}.catalog-more:hover{background:#0e1a33;color:#fff}.categories button small,.fav-filter small{margin-left:5px;opacity:.55;font:inherit}.meta .license-check{color:#8b4a14}.meta .license-open{color:#286332}.fav-filter{cursor:pointer;background:transparent;border:0;align-items:center;gap:8px;padding:0 18px;font:700 13px/1 Arial,sans-serif;color:#0e1a33;white-space:nowrap}.fav-filter.active{background:#0040dc;color:#fff}.catalog-empty{width:min(100%,520px);margin:28px auto 0;color:#5b6780;font:600 14px/1.45 Arial,sans-serif;text-align:center}html{scroll-padding-top:16px}@media(max-width:900px){.topbar{height:auto!important;min-height:76px;padding-top:12px;padding-bottom:12px;grid-template-columns:1fr auto;grid-template-areas:"brand social" "nav nav";row-gap:8px}.topbar .brand{grid-area:brand}.topbar .header-end{grid-area:social}.topbar nav{grid-area:nav;display:flex!important;flex-wrap:wrap;gap:10px 16px;font-size:13px}.fav-filter{min-height:44px;padding:0 12px}}@media(max-width:640px){.catalog-more{margin-top:20px;padding:15px 16px;font-size:13px}}';
   document.head.appendChild(styleSheet);
 
   function slugify(name, download) {
@@ -191,11 +191,11 @@
     empty.replaceChildren();
     const message = document.createElement("p");
     message.textContent = mode === "fav" && !query()
-      ? "Ұнаған қаріп жоқ. Карточкадағы ♡ белгісін басыңыз."
-      : "Қаріп табылмады. Басқа атауды көріңіз немесе сүзгілерді тазалаңыз.";
+      ? "Ұнаған қаріп жоқ. Карточкадағы жүрекшені басыңыз."
+      : "Бұл атаумен қаріп табылмады.";
     const reset = document.createElement("button");
     reset.type = "button";
-    reset.textContent = "Іздеу мен сүзгілерді тазалау";
+    reset.textContent = "Іздеуді тазалау";
     reset.onclick = () => {
       const search = document.querySelector(".search input");
       if (search) search.value = "";
@@ -387,7 +387,7 @@
       button.title = "Ұнағандарға сақтау";
       button.setAttribute("aria-label", `${name} қаріпін ұнағандарға сақтау`);
       button.setAttribute("aria-pressed", String(saved.has(name)));
-      button.textContent = saved.has(name) ? "♥" : "♡";
+      button.textContent = "";
       button.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -396,7 +396,7 @@
         else next.add(name);
         localStorage.setItem("qarip-favorites", JSON.stringify([...next]));
         button.setAttribute("aria-pressed", String(next.has(name)));
-        button.textContent = next.has(name) ? "♥" : "♡";
+        button.textContent = "";
         updateFavCount();
         if (mode === "fav") apply();
       });
@@ -633,13 +633,14 @@
     const source = row.source === "google" ? "google" : "local";
     const sample = window.Qarip?.PREVIEW_TEXT || "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І";
     const dl = download
-      ? `<a href="${esc(download)}" download aria-label="${esc(name)} жүктеу"></a>`
+      ? `<a href="${esc(download)}" download aria-label="${esc(name)} жүктеу"><i class="lg-btn-ico" aria-hidden="true"></i></a>`
       : "";
+    const story = `<a class="font-story-link" href="/tanba/stories/?font=${encodeURIComponent(name)}">Story-де қолдану</a>`;
     return `<article class="font-card" data-slug="${esc(slug)}" data-family="${esc(family)}" data-preview="${esc(preview)}" data-download="${esc(download)}" data-style="${esc(style)}" data-license="${esc(row.license || "check")}" data-source="${source}"${row.useCase ? ` data-usecase="${esc(row.useCase)}"` : ""}${row.category ? ` data-category="${esc(row.category)}"` : ""}>
       <div class="card-top"><div><h3>${esc(name)}</h3>${author ? `<p>${esc(author)}</p>` : "<p hidden></p>"}</div></div>
       <div class="font-preview" style="font-family:&quot;${esc(family)}&quot;;font-size:34px">${esc(sample)}</div>
       <div class="letters" style="font-family:&quot;${esc(family)}&quot;">Әә · Ғғ · Ққ · Ңң · Өө · Ұұ · Үү · Һһ · Іі</div>
-      <div class="card-bottom"><div class="meta"><span>${esc(style)}</span><span></span></div>${dl}</div>
+      <div class="card-bottom"><div class="meta"><span>${esc(style)}</span><span></span></div><div class="card-actions-row">${dl}${story}</div></div>
     </article>`;
   }
 

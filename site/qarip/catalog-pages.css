@@ -25,7 +25,7 @@
 .card-bottom a[aria-label$="жүктеу"]::after,
 .card-bottom a[download]::after,
 .font-download::after{
-  content:"Жүктеу ↓"!important;
+  content:"Жүктеу"!important;
   font:800 11px/1 Arial,sans-serif;
   letter-spacing:.03em;
 }
@@ -664,11 +664,8 @@ html.qarip-home .qarip-features li{
   display:inline-grid;place-items:center;font-style:normal;
 }
 .qarip-ico-bolt{background:#fff1b8}
-.qarip-ico-bolt::before{content:"⚡";font-size:14px}
 .qarip-ico-heart{background:#ffe3ea}
-.qarip-ico-heart::before{content:"♡";font-size:14px;color:#e2557a}
 .qarip-ico-frame{background:#e7f0ff}
-.qarip-ico-frame::before{content:"▣";font-size:13px;color:#3b6fd8}
 
 /* Landing */
 .qarip-landing{
@@ -721,11 +718,8 @@ html.qarip-home .qarip-features li{
   font-size:20px;
 }
 .qarip-step-ico-1{background:#ffe3c4}
-.qarip-step-ico-1::before{content:"✎"}
 .qarip-step-ico-2{background:#ffe0ec}
-.qarip-step-ico-2::before{content:"◐"}
 .qarip-step-ico-3{background:#dde8ff}
-.qarip-step-ico-3::before{content:"⇩"}
 
 .qarip-toolcta{
   display:flex;align-items:center;justify-content:space-between;gap:20px;

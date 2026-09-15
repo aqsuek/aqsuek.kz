@@ -43,6 +43,10 @@
       }
       if (label === "Жоба туралы") {
         link.setAttribute("href", isFontDetailPage() ? "/qarip/#about" : "#about");
+        return;
+      }
+      if (label === "AQSUEK") {
+        link.setAttribute("href", "/");
       }
     });
 
@@ -67,7 +71,7 @@
       search.className = "qarip-nav-search";
       search.href = isFontDetailPage() ? "/qarip/#catalog" : "#catalog";
       search.setAttribute("aria-label", "Қаріптерді іздеу");
-      search.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`;
+      search.innerHTML = "";
       actions.append(search);
     } else {
       actions.querySelector(".qarip-nav-search").href = isFontDetailPage()
@@ -79,12 +83,12 @@
       const start = document.createElement("a");
       start.className = "qarip-nav-start";
       start.href = "/tanba/stories/";
-      start.textContent = "Stories →";
+      start.textContent = "Stories";
       actions.append(start);
     } else {
       const start = actions.querySelector(".qarip-nav-start");
       start.href = "/tanba/stories/";
-      start.textContent = "Stories →";
+      start.textContent = "Stories";
     }
 
     if (!actions.querySelector(".qarip-nav-toggle")) {
@@ -152,10 +156,10 @@
     landing.innerHTML = `
       <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
         <div class="qarip-toolcta-copy">
-          <h2 id="qarip-toolcta-title">Stories керек пе?</h2>
-          <p>Қаріпті таңдап, Tañba редакторында 9:16 PNG жасаңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
+          <h2 id="qarip-toolcta-title">Story-де қолдану</h2>
+          <p>Ұнаған қаріпті Tañba редакторында ашып, 9:16 Story жасаңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
         </div>
-        <a class="qarip-cta-primary" href="/tanba/stories/">Tañba Stories →</a>
+        <a class="qarip-cta-primary" href="/tanba/stories/">Story жасау</a>
       </section>
     `;
     catalog.after(landing);

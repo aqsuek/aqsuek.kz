@@ -79,7 +79,7 @@
       search.className = "qarip-nav-search";
       search.href = "/qarip/#catalog";
       search.setAttribute("aria-label", "Қаріптерді іздеу");
-      search.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`;
+      search.innerHTML = "";
       actions.append(search);
     } else {
       actions.querySelector(".qarip-nav-search").href = "/qarip/#catalog";
@@ -89,7 +89,7 @@
       const start = document.createElement("a");
       start.className = "qarip-nav-start";
       start.href = "/tanba/stories/";
-      start.textContent = "Бастау →";
+      start.textContent = "Бастау";
       actions.append(start);
     } else {
       actions.querySelector(".qarip-nav-start").href = "/tanba/stories/";

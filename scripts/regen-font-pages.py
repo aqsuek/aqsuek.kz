@@ -93,11 +93,11 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     if is_google:
         dl_btn = (
             f'<a class="font-download" href="{escape(download)}" target="_blank" rel="noreferrer">'
-            f"Google Fonts →</a>"
+            f"Google Fonts</a>"
         )
         kicker = "GOOGLE FONTS · ҚАЗАҚША"
     else:
-        dl_btn = f'<a class="font-download" href="{escape(download)}" download>Жүктеу ↓</a>'
+        dl_btn = f'<a class="font-download" href="{escape(download)}" download><i class="lg-btn-ico" aria-hidden="true"></i>Жүктеу</a>'
         kicker = "ҚАЗАҚША ҚАРІП"
 
     json_ld = {
@@ -153,8 +153,10 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <meta name="twitter:description" content="{escape(description)}"/>
 <meta name="twitter:image" content="{OG_IMAGE}"/>
 <link rel="stylesheet" href="/qarip/catalog-pages.css?v={ASSET_V}"/>
+<link rel="stylesheet" href="/liquid-glass.css?v=lg20"/>
 {google_link}<script type="application/ld+json">{ld}</script>
 <script defer src="/qarip/qarip-site.js?v={ASSET_V}"></script>
+<script defer src="/liquid-glass.js?v=lg20"></script>
 </head>
 <body class="qarip-font-page">
 <header class="topbar">
@@ -166,7 +168,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     <a href="/qarip/#about">Жоба туралы</a>
   </nav>
   <div class="qarip-nav-actions">
-    <a class="qarip-nav-start" href="/tanba/stories/">Stories →</a>
+    <a class="qarip-nav-start" href="/tanba/stories/">Stories</a>
     <button type="button" class="qarip-nav-toggle" aria-label="Мәзір" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -204,8 +206,8 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     <p class="license-copy">{escape(license_copy)}</p>
     <div class="font-detail-actions">
       {dl_btn}
-      <button type="button" class="font-favorite" aria-pressed="false" aria-label="Ұнағандарға қосу">♡</button>
-      <a class="qarip-cta-secondary font-detail-stories" href="/tanba/stories/">Stories жасап көру</a>
+      <button type="button" class="font-favorite" aria-pressed="false" aria-label="Ұнағандарға қосу"></button>
+      <a class="qarip-cta-secondary font-detail-stories" href="/tanba/stories/?font={quote_plus(name)}">Story-де қолдану</a>
     </div>
   </section>
 
@@ -217,6 +219,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     <a href="/qarip/#catalog">Қаріптер</a>
     <a href="/tanba/stories/">Stories</a>
     <a href="/qarip/#about">Жоба туралы</a>
+    <a href="/">AQSUEK</a>
   </nav>
 </footer>
 <script src="/qarip/qarip-lib.js?v={ASSET_V}"></script>
