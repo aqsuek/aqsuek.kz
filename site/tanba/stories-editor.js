@@ -98,6 +98,7 @@
   }
 
   const SOLID = ["#07102a", "#ffffff", "#0040dc", "#f06848", "#64b5ff", "#0f3d2e", "#7c3aed", "#1e293b", "#f97316", "#000000"];
+  const STYLE_SWATCHES = ["#ffffff", "#000000", "#0040dc", "#f06848", "#d9ff47", "#64b5ff", "#7c3aed"];
   const GRADS = [
     { id: "night", label: "Түн", css: "linear-gradient(160deg,#0b1020,#1a1030 55%,#101014)" },
     { id: "warm", label: "Жылы", css: "linear-gradient(160deg,#3a2218,#8b5a2b 50%,#1a120e)" },
@@ -125,19 +126,20 @@
     { name: "Forum × Oswald", group: "Travel", sampleA: "GO", sampleB: "travel mood" },
   ];
   const STICKERS = ["✨", "♡", "★", "🔥", "✦", "✿", "●", "▲", "■", "♪", "✧", "❖"];
-  const STARTERS = [
-    { id: "minimal", title: "Қарапайым", css: "linear-gradient(180deg,#f4f1ea,#ddd6c8)", bg: { type: "grad", value: "linear-gradient(180deg,#f4f1ea,#ddd6c8)" } },
-    { id: "quote", title: "Дәйексөз", css: "linear-gradient(160deg,#0b1020,#1a1030 55%,#101014)", bg: { type: "grad", value: "linear-gradient(160deg,#0b1020,#1a1030 55%,#101014)" } },
-    { id: "announce", title: "Хабарлама", css: "linear-gradient(160deg,#0b2a40,#1f6f8b 50%,#062018)", bg: { type: "grad", value: "linear-gradient(160deg,#0b2a40,#1f6f8b 50%,#062018)" } },
-    { id: "photo", title: "Фото", css: "linear-gradient(160deg,#2a241c,#6a5340)", bg: { type: "photo", value: `/tanba/assets/story-bg/lifestyle.jpg?v=${ASSET_V}` } },
-    { id: "editorial", title: "Редакция", css: "linear-gradient(160deg,#4a1830,#d96b8a 55%,#2a1020)", bg: { type: "grad", value: "linear-gradient(160deg,#4a1830,#d96b8a 55%,#2a1020)" } },
-    { id: "sale", title: "Жеңілдік", css: "linear-gradient(160deg,#f06848,#c43d28)", bg: { type: "solid", value: "#f06848" } },
-  ];
   const LAYOUTS = {
     center: { hook: 42, mark: 58, extra: 72 },
     top: { hook: 22, mark: 34, extra: 46 },
     bottom: { hook: 58, mark: 70, extra: 82 },
     promo: { hook: 28, mark: 68, extra: 80 },
+  };
+  const LOGO_POS = {
+    "top-left": { x: 14, y: 10 },
+    "top-center": { x: 50, y: 10 },
+    "top-right": { x: 86, y: 10 },
+    center: { x: 50, y: 50 },
+    "bottom-left": { x: 14, y: 88 },
+    "bottom-center": { x: 50, y: 88 },
+    "bottom-right": { x: 86, y: 88 },
   };
 
   const defaultState = () => ({
@@ -171,6 +173,7 @@
   const history = [];
   let histIdx = -1;
   let activeSheet = "";
+  const colorPop = { on: false, mode: "text", h: 0, s: 1, v: 1 };
   let fontCat = "all";
   let fontQuery = "";
   let pairGroup = "all";
@@ -179,6 +182,25 @@
   let fontWeightStep = null;
   function faceLabel(label) {
     return ({ Thin: "Өте жұқа", Light: "Жұқа", Regular: "Қалыпты", Medium: "Орташа", Semibold: "Жартылай қалың", Bold: "Қалың", Black: "Өте қалың", Italic: "Курсив" })[label] || label;
+  }
+  function faceIcon(f) {
+    const italic = (f.style || "normal") === "italic" || /italic|курсив/i.test(`${f.id || ""} ${f.label || ""}`);
+    const w = Number(f.weight || 400);
+    if (italic) {
+      return `<svg class="tb-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 4v3h2.21L8.79 15H6v3h8v-3h-2.21L15.21 7H18V4z"/></svg>`;
+    }
+    if (w >= 600) {
+      return `<svg class="tb-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/></svg>`;
+    }
+    const stem = w <= 350 ? 2 : 2.6;
+    const inset = (14 - stem) / 2;
+    return `<svg class="tb-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 4h14v2.8h-${inset}V20h-${stem}V6.8H5z"/></svg>`;
+  }
+  function faceIconClass(f) {
+    if ((f.style || "normal") === "italic") return "tb-italic";
+    if (Number(f.weight || 400) >= 600) return "tb-bold";
+    if (Number(f.weight || 400) <= 350) return "tb-thin";
+    return "tb-regular";
   }
   const DEFAULT_FACES = [
     { id: "regular", label: "Қалыпты", weight: "400", style: "normal" },
@@ -330,7 +352,7 @@
       <button type="button" class="leto-dock-btn leto-dock-add" data-acto="text" aria-label="Мәтін қосу">Мәтін</button>
       <button type="button" class="leto-dock-btn" data-acto="bg">Фон</button>
       <button type="button" class="leto-dock-btn" data-acto="gallery">Фото</button>
-      <button type="button" class="leto-dock-btn" data-acto="more">Қосымша</button>
+      <button type="button" class="leto-dock-btn" data-acto="grad">Градиент</button>
     `;
     document.body.append(dock);
 
@@ -338,8 +360,6 @@
     const textbar = document.createElement("div");
     textbar.className = "leto-textbar";
     textbar.innerHTML = `
-      <button type="button" data-text-tool="size-down">A−</button>
-      <button type="button" data-text-tool="size-up">A+</button>
       <button type="button" data-text-tool="font" class="tb-font">Қаріп</button>
       <button type="button" data-text-tool="style" class="tb-style">Стиль</button>
     `;
@@ -351,7 +371,7 @@
     scrim.dataset.acto = "close";
     document.body.append(scrim);
 
-    ["add", "text", "fonts", "pairs", "bg", "stickers", "gallery", "layers", "more", "style", "layout", "help"].forEach((id) => {
+    ["add", "text", "fonts", "pairs", "bg", "stickers", "gallery", "layers", "grad", "style", "layout", "help"].forEach((id) => {
       const sheet = document.createElement("div");
       sheet.className = "leto-sheet";
       sheet.dataset.sheet = id;
@@ -392,12 +412,13 @@
 
   function openSheet(id) {
     activeSheet = id;
-    qs(".leto-scrim")?.classList.add("on");
+    qs(".leto-scrim")?.classList.add("on", "pass-stage");
     qsa(".leto-sheet").forEach((el) => el.classList.toggle("on", el.dataset.sheet === id));
     syncSheetA11y();
     renderSheet(id);
+    syncDock(["bg", "gallery", "grad", "text"].includes(id) ? id : "");
     if (id === "bg") setBgEdit(hasBgPhoto());
-    else if (id === "text" || id === "fonts" || id === "style" || id === "pairs") setBgEdit(false);
+    else if (id === "text" || id === "fonts" || id === "style" || id === "pairs" || id === "grad") setBgEdit(false);
     if (id === "fonts") {
       loadFontData().then(() => {
         if (activeSheet === "fonts") renderSheet("fonts");
@@ -406,13 +427,16 @@
   }
   function closeSheets() {
     activeSheet = "";
-    qs(".leto-scrim")?.classList.remove("on");
+    qs(".leto-scrim")?.classList.remove("on", "pass-stage");
     qsa(".leto-sheet").forEach((el) => el.classList.remove("on"));
     syncSheetA11y();
     unmountTextInputs();
+    syncDock("");
+    closeColorPop(false);
   }
 
   function bindChrome(app, dock, textbar) {
+    bindColorPop();
     const onAct = (e) => {
       const btn = e.target.closest("[data-acto]");
       if (!btn) return;
@@ -446,7 +470,7 @@
       }
       if (act === "bg") openSheet("bg");
       if (act === "gallery") openSheet("gallery");
-      if (act === "more") openSheet("more");
+      if (act === "grad") openSheet("grad");
       if (act === "help") openSheet("help");
       if (act === "close") closeSheets();
     };
@@ -463,8 +487,6 @@
         state.text.align = t.replace("align-", "");
         textbar.querySelectorAll("[data-text-tool^=align-]").forEach((b) => b.classList.toggle("active", b === btn));
       }
-      if (t === "size-up") state.text.size = Math.min(140, (state.text.size || 100) + 8);
-      if (t === "size-down") state.text.size = Math.max(70, (state.text.size || 100) - 8);
       if (t.startsWith("face-")) {
         applyFace(t.replace("face-", ""));
         return;
@@ -488,7 +510,12 @@
       (e) => {
         if (e.target.closest(".sub-hook, .sub-mark, .sub-extra")) {
           setBgEdit(false);
+          clearLogoSelect();
           showTextbar();
+          return;
+        }
+        if (e.target.closest(".stories-logo, .leto-sticker, .stories-bg-hit, .stories-scale-handle")) {
+          textbar.classList.remove("on");
           return;
         }
         if (e.target.closest(".leto-textbar, .leto-sheet, .leto-dock")) return;
@@ -497,6 +524,11 @@
       },
       true
     );
+    qs(".leto-stage")?.addEventListener("pointerdown", (e) => {
+      if (!activeSheet) return;
+      if (e.target.closest(".phone-preview")) return;
+      closeSheets();
+    });
 
     const stack = qs(".subtitle-stack");
     if (stack && stack.dataset.faceObserve !== "1") {
@@ -522,7 +554,7 @@
       stickers: "Стикерлер",
       gallery: "Фото / логотип",
       layers: "Қабаттар",
-      more: "Қосымша",
+      grad: "Градиент",
       style: "Стиль",
       layout: "Макет",
       help: "Көмек",
@@ -538,7 +570,7 @@
     if (id === "stickers") body.innerHTML = renderStickers();
     if (id === "gallery") body.innerHTML = renderGallery();
     if (id === "layers") body.innerHTML = renderLayers();
-    if (id === "more") body.innerHTML = renderMore();
+    if (id === "grad") body.innerHTML = renderGrad();
     if (id === "help") body.innerHTML = renderHelp();
     if (id === "style") body.innerHTML = renderStyleSheet();
     if (id === "layout") body.innerHTML = renderLayoutSheet();
@@ -809,28 +841,15 @@
   function renderBg() {
     const tabs = [
       ["photos", "Фото"],
-      ["colors", "Стиль"],
-      ["upload", "Өз сурет"],
+      ["colors", "Түс"],
+      ["upload", "Жүктеу"],
+      ["clear", "Мөлдір"],
     ];
     const current = currentBgPhotoCard();
     let pane = "";
     if (bgTab === "colors") {
       pane = `<div class="leto-swatches">${SOLID.map((c) => `<button type="button" data-solid="${c}" style="background:${c}"></button>`).join("")}
         <label class="leto-file" style="width:100%;margin-top:8px">Өз түс<input type="color" data-solid-custom value="#101014"></label></div>`;
-    } else if (bgTab === "grads") {
-      const cg = state.customGrad;
-      pane = `
-        <div class="leto-grad-grid">${GRADS.map((g) => `<button type="button" data-grad="${g.id}" style="background:${g.css}">${g.label}</button>`).join("")}</div>
-        <p class="leto-hint" style="margin-top:14px">Өз градиентіңді жаса</p>
-        <div class="leto-custom-grad">
-          <div class="leto-custom-grad-preview" data-grad-preview style="background:${customGradCss()}"></div>
-          <div class="leto-custom-grad-row">
-            <label class="leto-custom-swatch">Бастау<input type="color" data-grad-from value="${cg.from}"></label>
-            <label class="leto-custom-swatch">Аяғы<input type="color" data-grad-to value="${cg.to}"></label>
-          </div>
-          <input type="range" min="0" max="360" value="${cg.angle}" data-grad-angle style="width:100%;margin-top:10px">
-          <button type="button" class="leto-custom-apply" data-grad-apply>Осы градиентті қолдану</button>
-        </div>`;
     } else if (bgTab === "photos") {
       pane = `<div class="leto-chips">
         <button type="button" data-photo-tag="all" class="active">Барлығы</button>
@@ -846,7 +865,7 @@
       pane = `<label class="leto-file">${state.bg.type === "upload" ? "Басқа сурет жүктеу" : "Фон суретін жүктеу"}<input type="file" accept="image/*" data-bg-upload></label>
         <p class="leto-hint">${state.bg.type === "upload" ? "Жаңа файл ескі фонды ауыстырады." : "Жүктеген соң фотоны жылжытып, үлкейтіп, бұруға болады."}</p>`;
     } else {
-      pane = `<p class="leto-hint">Мөлдір фон — PNG экспортында фонсыз шығады. Алдын ала қарауда checkerboard көрінеді.</p>
+      pane = `<p class="leto-hint">Мөлдір фон — PNG экспортында фонсыз шығады. Алдын ала қарауда тор көрінеді.</p>
         <button type="button" data-transparent="1" style="min-height:44px;width:100%;border:0;border-radius:14px;background:#2a2a33;color:#fff;font:800 13px/1 Arial,sans-serif">Мөлдір қосу</button>`;
     }
     return `
@@ -855,6 +874,30 @@
       </div>
       ${current}
       ${pane}
+    `;
+  }
+
+  function renderGrad() {
+    const cg = state.customGrad;
+    const current = state.bg.type === "gradient" ? state.bg.value : "";
+    return `
+      <p class="leto-hint">Дайын градиент немесе өз екі түсің. Канваста бірден көрінеді.</p>
+      <div class="leto-grad-grid">
+        ${GRADS.map((g) => `<button type="button" data-grad="${g.id}" class="${current === g.css ? "is-current" : ""}" style="background:${g.css}">${g.label}</button>`).join("")}
+      </div>
+      <p class="leto-style-label">Өз градиент</p>
+      <div class="leto-custom-grad">
+        <div class="leto-custom-grad-preview" data-grad-preview style="background:${customGradCss()}"></div>
+        <div class="leto-custom-grad-row">
+          <label class="leto-custom-swatch">Бастау<input type="color" data-grad-from value="${cg.from}"></label>
+          <label class="leto-custom-swatch">Аяғы<input type="color" data-grad-to value="${cg.to}"></label>
+        </div>
+        <div class="leto-track-row" style="margin-top:10px">
+          <input type="range" min="0" max="360" value="${cg.angle}" data-grad-angle aria-label="Бұрыш" style="flex:1">
+          <span class="leto-style-val" data-grad-angle-val>${cg.angle}°</span>
+        </div>
+        <button type="button" class="leto-custom-apply" data-grad-apply>Қолдану</button>
+      </div>
     `;
   }
 
@@ -1032,6 +1075,58 @@
     syncShadowUi();
   }
 
+  function currentBgShadow() {
+    const native = qs(".text-color-tools [data-bg-shadow-toggle]");
+    if (native) return native.getAttribute("aria-pressed") !== "false";
+    const { el } = selectedLayerInfo();
+    if (!el) return true;
+    const shadow = getComputedStyle(el).boxShadow;
+    return !!shadow && shadow !== "none";
+  }
+
+  function currentBgShadowIntensity() {
+    const native = qs('.text-color-tools [data-native="bgShadowIntensity"]');
+    if (native && native.value !== "") {
+      const n = parseFloat(native.value);
+      if (Number.isFinite(n)) return Math.max(0, Math.min(1, n));
+    }
+    return 0.4;
+  }
+
+  function syncBgShadowUi(body) {
+    const root = body || sheetEl("style")?.querySelector(".leto-sheet-body");
+    if (!root) return;
+    const on = currentBgShadow();
+    const btn = root.querySelector("[data-style-bg-shadow-toggle]");
+    if (btn) {
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.textContent = on ? "Қосулы" : "Өшірулі";
+    }
+    const intensity = currentBgShadowIntensity();
+    const slider = root.querySelector("[data-style-bg-shadow-intensity]");
+    const val = root.querySelector("[data-style-bg-shadow-val]");
+    const row = root.querySelector(".leto-bg-shadow-intensity");
+    if (slider) slider.value = String(Math.round(intensity * 100));
+    if (val) val.textContent = `${Math.round(intensity * 100)}%`;
+    const hasBg = !root.querySelector("[data-style-bg-off]")?.classList.contains("active");
+    if (row) row.classList.toggle("is-off", !hasBg || !on);
+  }
+
+  function applyBgShadowIntensity(value) {
+    const pct = Math.max(0, Math.min(100, Math.round(Number(value))));
+    const n = pct / 100;
+    const native = qs('.text-color-tools [data-native="bgShadowIntensity"]');
+    if (native) setNative("bgShadowIntensity", String(n));
+    syncBgShadowUi();
+  }
+
+  function toggleBgShadow() {
+    const native = qs(".text-color-tools [data-bg-shadow-toggle]");
+    if (native) native.click();
+    syncBgShadowUi();
+  }
+
   function mountTextInputs(body) {
     const inputs = textInputEls();
     qsa(".row-slot", body).forEach((slot) => {
@@ -1066,6 +1161,250 @@
     const key = layerSelKey(selected);
     const el = selected || stack?.querySelector(".sub-hook") || null;
     return { stack, el, key };
+  }
+
+  function rgbToHex(color, fallback = "#ffffff") {
+    if (!color) return fallback;
+    const raw = String(color).trim();
+    if (raw[0] === "#") {
+      const h = raw.slice(1);
+      if (h.length === 3) return `#${h.split("").map((c) => c + c).join("")}`;
+      if (h.length >= 6) return `#${h.slice(0, 6).toLowerCase()}`;
+    }
+    const m = raw.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+    if (!m) return fallback;
+    return `#${[m[1], m[2], m[3]]
+      .map((n) => Math.max(0, Math.min(255, Math.round(Number(n))))
+        .toString(16)
+        .padStart(2, "0"))
+      .join("")}`;
+  }
+
+  function hexToHsv(hex) {
+    const full = rgbToHex(hex, "#ffffff").slice(1);
+    const r = parseInt(full.slice(0, 2), 16) / 255;
+    const g = parseInt(full.slice(2, 4), 16) / 255;
+    const b = parseInt(full.slice(4, 6), 16) / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const d = max - min;
+    let h = 0;
+    if (d) {
+      if (max === r) h = ((g - b) / d + 6) % 6;
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return { h, s: max === 0 ? 0 : d / max, v: max };
+  }
+
+  function hsvToHex(h, s, v) {
+    const hue = ((h % 360) + 360) % 360;
+    const c = v * s;
+    const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+    const m = v - c;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    if (hue < 60) [r, g, b] = [c, x, 0];
+    else if (hue < 120) [r, g, b] = [x, c, 0];
+    else if (hue < 180) [r, g, b] = [0, c, x];
+    else if (hue < 240) [r, g, b] = [0, x, c];
+    else if (hue < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    const to = (n) => Math.round((n + m) * 255).toString(16).padStart(2, "0");
+    return `#${to(r)}${to(g)}${to(b)}`;
+  }
+
+  function colorPopEl() {
+    return qs(".leto-color-pop");
+  }
+
+  function ensureColorPop() {
+    let pop = colorPopEl();
+    if (pop) return pop;
+    pop = document.createElement("div");
+    pop.className = "leto-color-pop";
+    pop.innerHTML = `
+      <button type="button" class="leto-color-pop-scrim" data-color-pop-close aria-label="Жабу"></button>
+      <div class="leto-color-pop-card" role="dialog" aria-modal="true" aria-label="Түс">
+        <div class="leto-color-pop-head">
+          <h3>Түс</h3>
+          <button type="button" class="leto-color-pop-x" data-color-pop-close aria-label="Жабу"></button>
+        </div>
+        <div class="leto-color-sv" data-color-sv>
+          <div class="leto-color-sv-fill"></div>
+          <div class="leto-color-knob" data-color-sv-knob></div>
+        </div>
+        <div class="leto-color-hue" data-color-hue>
+          <div class="leto-color-hue-track"></div>
+          <div class="leto-color-knob leto-color-hue-knob" data-color-hue-knob></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(pop);
+    const sv = pop.querySelector("[data-color-sv]");
+    const hue = pop.querySelector("[data-color-hue]");
+    const drag = (kind, ev) => {
+      const node = kind === "sv" ? sv : hue;
+      const rect = node.getBoundingClientRect();
+      const x = Math.max(0, Math.min(1, (ev.clientX - rect.left) / Math.max(1, rect.width)));
+      const y = Math.max(0, Math.min(1, (ev.clientY - rect.top) / Math.max(1, rect.height)));
+      if (kind === "sv") {
+        colorPop.s = x;
+        colorPop.v = 1 - y;
+      } else {
+        colorPop.h = x * 360;
+      }
+      applyColorPop(false);
+    };
+    [["sv", sv], ["hue", hue]].forEach(([kind, node]) => {
+      node.addEventListener("pointerdown", (ev) => {
+        if (ev.button != null && ev.button !== 0) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        try {
+          node.setPointerCapture(ev.pointerId);
+        } catch {}
+        drag(kind, ev);
+      });
+      node.addEventListener("pointermove", (ev) => {
+        if (!node.hasPointerCapture(ev.pointerId)) return;
+        drag(kind, ev);
+      });
+      node.addEventListener("pointerup", (ev) => {
+        if (node.hasPointerCapture(ev.pointerId)) node.releasePointerCapture(ev.pointerId);
+        applyColorPop(true);
+      });
+      node.addEventListener("pointercancel", () => applyColorPop(true));
+    });
+    pop.addEventListener("click", (e) => {
+      if (e.target.closest("[data-color-pop-close]")) closeColorPop(true);
+    });
+    return pop;
+  }
+
+  function paintColorPop() {
+    const pop = colorPopEl();
+    if (!pop) return;
+    const hex = hsvToHex(colorPop.h, colorPop.s, colorPop.v);
+    const sv = pop.querySelector("[data-color-sv]");
+    const svKnob = pop.querySelector("[data-color-sv-knob]");
+    const hueKnob = pop.querySelector("[data-color-hue-knob]");
+    sv.style.setProperty("--sv-hue", `hsl(${colorPop.h} 100% 50%)`);
+    svKnob.style.left = `${colorPop.s * 100}%`;
+    svKnob.style.top = `${(1 - colorPop.v) * 100}%`;
+    svKnob.style.background = hex;
+    hueKnob.style.left = `${(colorPop.h / 360) * 100}%`;
+    hueKnob.style.background = `hsl(${colorPop.h} 100% 50%)`;
+    const inputSel = colorPop.mode === "bg" ? "[data-style-bg-rgb]" : "[data-style-text-rgb]";
+    const input = sheetEl("style")?.querySelector(inputSel);
+    if (input) input.value = hex;
+  }
+
+  function applyColorPop(commit) {
+    const hex = hsvToHex(colorPop.h, colorPop.s, colorPop.v);
+    if (colorPop.mode === "bg") {
+      setNative("bg", hex);
+      const body = sheetEl("style")?.querySelector(".leto-sheet-body");
+      body?.querySelector("[data-style-bg-off]")?.classList.remove("active");
+      body?.querySelectorAll(".leto-bg-extra").forEach((el) => el.classList.remove("is-off"));
+      syncBgShadowUi(body);
+    } else {
+      setNative("text", hex);
+    }
+    paintColorPop();
+    if (commit) {
+      pushHistory();
+      save();
+    }
+  }
+
+  function openColorPop(mode, hex) {
+    const pop = ensureColorPop();
+    const hsv = hexToHsv(hex || (mode === "bg" ? currentBgHex() : currentTextHex()));
+    colorPop.on = true;
+    colorPop.mode = mode === "bg" ? "bg" : "text";
+    colorPop.h = hsv.h;
+    colorPop.s = hsv.s;
+    colorPop.v = hsv.v;
+    pop.classList.add("on");
+    paintColorPop();
+  }
+
+  function closeColorPop(commit) {
+    const pop = colorPopEl();
+    if (!colorPop.on) {
+      pop?.classList.remove("on");
+      return;
+    }
+    if (commit) applyColorPop(true);
+    colorPop.on = false;
+    pop?.classList.remove("on");
+  }
+
+  function bindColorPop() {
+    if (document.documentElement.dataset.colorPopBound === "1") return;
+    document.documentElement.dataset.colorPopBound = "1";
+    document.addEventListener(
+      "pointerdown",
+      (e) => {
+        const pick = e.target.closest(".leto-rgb-pick");
+        if (!pick) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const input = pick.querySelector("input[type=color]");
+        const mode = input?.hasAttribute("data-style-bg-rgb") ? "bg" : "text";
+        openColorPop(mode, input?.value);
+      },
+      true
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && colorPop.on) closeColorPop(true);
+    });
+  }
+
+  function currentTextHex() {
+    const native = qs('.text-color-tools [data-native="text"]');
+    if (native?.value) return rgbToHex(native.value, "#ffffff");
+    const { el } = selectedLayerInfo();
+    return rgbToHex(el ? getComputedStyle(el).color : "", "#ffffff");
+  }
+
+  function currentBgHex() {
+    const native = qs('.text-color-tools [data-native="bg"]');
+    if (native?.value) return rgbToHex(native.value, "#d9ff47");
+    const { el } = selectedLayerInfo();
+    return rgbToHex(el ? getComputedStyle(el).backgroundColor : "", "#d9ff47");
+  }
+
+  function currentRadiusUi() {
+    const native = qs('.text-color-tools [data-native="radius"]');
+    let n = native && native.value !== "" ? parseFloat(native.value) : NaN;
+    if (!Number.isFinite(n)) {
+      const { el } = selectedLayerInfo();
+      n = el ? parseFloat(getComputedStyle(el).borderRadius) : 40;
+    }
+    if (!Number.isFinite(n) || n >= 40) return 40;
+    return Math.max(0, Math.round(n));
+  }
+
+  function radiusLabel(n) {
+    return Number(n) >= 40 ? "макс" : `${n}px`;
+  }
+
+  function currentBgPad() {
+    const layer = window.__qaripGesture?.getSelectedLayer?.();
+    if (layer && layer.bgPad != null && layer.bgPad !== "") {
+      const n = Number(layer.bgPad);
+      if (Number.isFinite(n)) return Math.max(-20, Math.min(28, Math.round(n)));
+    }
+    const native = qs('.text-color-tools [data-native="bgPad"]');
+    if (native && native.value !== "") {
+      const n = parseFloat(native.value);
+      if (Number.isFinite(n)) return Math.max(-20, Math.min(28, n));
+    }
+    return 7;
   }
 
   function currentFace() {
@@ -1159,26 +1498,35 @@
     const track = currentTracking();
     const shadowOn = currentTextShadow();
     const shadowPct = Math.round(currentShadowIntensity() * 100);
+    const textHex = currentTextHex();
+    const bgHex = currentBgHex();
+    const radiusUi = currentRadiusUi();
+    const padUi = currentBgPad();
+    const bgShadowOn = currentBgShadow();
+    const bgShadowPct = Math.round(currentBgShadowIntensity() * 100);
     return `
       <p class="leto-style-label">Мәтін түсі</p>
       <div class="leto-swatches">
-        ${SOLID.map((c) => `<button type="button" data-style-text-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}
+        ${STYLE_SWATCHES.map((c) => `<button type="button" data-style-text-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}
+        <label class="leto-rgb-pick" title="RGB">
+          <input type="color" data-style-text-rgb value="${textHex}" aria-label="Мәтін түсі RGB">
+        </label>
       </div>
       <p class="leto-style-label">Жазу</p>
       <div class="leto-face-row" role="group" aria-label="Қаріп қалыңдығы">
         ${cuts
           .map((f) => {
-            const cls = f.style === "italic" ? "tb-italic" : Number(f.weight) >= 700 ? "tb-bold" : "";
-            return `<button type="button" data-face="${escapeAttr(f.id)}" class="${cls} ${face === f.id ? "active" : ""}"><span>${escapeHtml(faceLabel(f.label))}</span></button>`;
+            const name = faceLabel(f.label);
+            return `<button type="button" data-face="${escapeAttr(f.id)}" class="${faceIconClass(f)} ${face === f.id ? "active" : ""}" aria-label="${escapeAttr(name)}" title="${escapeAttr(name)}"><span aria-hidden="true">${faceIcon(f)}</span></button>`;
           })
           .join("")}
       </div>
       <div class="leto-track">
         <p class="leto-style-label">Интервал</p>
         <div class="leto-track-row">
-          <button type="button" data-track-step="-0.5" aria-label="Тығыздау">−</button>
+          <button type="button" data-track-step="-0.5" aria-label="Тығыздау"></button>
           <input type="range" min="-4" max="16" step="0.5" value="${track}" data-style-tracking aria-label="Интервал">
-          <button type="button" data-track-step="0.5" aria-label="Кеңейту">+</button>
+          <button type="button" data-track-step="0.5" aria-label="Кеңейту"></button>
           <span class="leto-style-val" data-style-tracking-val>${formatTrack(track)}</span>
         </div>
       </div>
@@ -1194,11 +1542,39 @@
         </div>
       </div>
       <div class="leto-style-row-head">
-        <p class="leto-style-label">Мәтін асты</p>
+        <p class="leto-style-label">Мәтін фоны</p>
         <button type="button" class="leto-style-bgoff${!hasBg ? " active" : ""}" data-style-bg-off>Жоқ</button>
       </div>
       <div class="leto-swatches">
-        ${SOLID.map((c) => `<button type="button" data-style-bg-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}
+        ${STYLE_SWATCHES.map((c) => `<button type="button" data-style-bg-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join("")}
+        <label class="leto-rgb-pick" title="RGB">
+          <input type="color" data-style-bg-rgb value="${bgHex}" aria-label="Мәтін фоны RGB">
+        </label>
+      </div>
+      <div class="leto-track leto-bg-extra${!hasBg ? " is-off" : ""}" data-style-bg-radius-wrap>
+        <p class="leto-style-label">Дөңгелектеу</p>
+        <div class="leto-track-row">
+          <input type="range" min="0" max="40" step="1" value="${radiusUi}" data-style-bg-radius aria-label="Дөңгелектеу">
+          <span class="leto-style-val" data-style-radius-val>${radiusLabel(radiusUi)}</span>
+        </div>
+      </div>
+      <div class="leto-track leto-bg-extra${!hasBg ? " is-off" : ""}" data-style-bg-size-wrap>
+        <p class="leto-style-label">Өлшем</p>
+        <div class="leto-track-row">
+          <input type="range" min="-20" max="28" step="1" value="${padUi}" data-style-bg-pad aria-label="Фон өлшемі">
+          <span class="leto-style-val" data-style-pad-val>${padUi}px</span>
+        </div>
+      </div>
+      <div class="leto-style-row-head leto-bg-extra${!hasBg ? " is-off" : ""}">
+        <p class="leto-style-label">Фон көлеңкесі</p>
+        <button type="button" class="leto-style-bgoff${bgShadowOn ? " active" : ""}" data-style-bg-shadow-toggle aria-pressed="${bgShadowOn ? "true" : "false"}">${bgShadowOn ? "Қосулы" : "Өшірулі"}</button>
+      </div>
+      <div class="leto-track leto-bg-extra leto-bg-shadow-intensity${!hasBg || !bgShadowOn ? " is-off" : ""}">
+        <p class="leto-style-label">Күш</p>
+        <div class="leto-track-row">
+          <input type="range" min="0" max="100" step="5" value="${bgShadowPct}" data-style-bg-shadow-intensity aria-label="Фон көлеңкесі">
+          <span class="leto-style-val" data-style-bg-shadow-val>${bgShadowPct}%</span>
+        </div>
       </div>
     `;
   }
@@ -1212,8 +1588,8 @@
           .map((p) => `<button type="button" data-logo-pos="${p}" class="${state.logo.pos === p ? "active" : ""}">${p}</button>`)
           .join("")}
       </div>
-      <p class="leto-hint">Өлшем: ${state.logo.size}% · Мөлдірлік: ${state.logo.opacity}%</p>
-      <input type="range" min="8" max="40" value="${state.logo.size}" data-logo-size style="width:100%">
+      <p class="leto-hint" data-logo-meta>Өлшем: ${state.logo.size}% · Мөлдірлік: ${state.logo.opacity}%</p>
+      <input type="range" min="8" max="90" value="${state.logo.size}" data-logo-size style="width:100%">
       <input type="range" min="20" max="100" value="${state.logo.opacity}" data-logo-opacity style="width:100%;margin-top:8px">
       ${state.logo.src ? `<button type="button" data-logo-clear style="margin-top:10px;min-height:42px;width:100%;border:0;border-radius:12px;background:#2a2a33;color:#fff">Логотипті өшіру</button>` : ""}
     `;
@@ -1231,20 +1607,6 @@
     return `<div class="leto-layer-list">${layers
       .map((l) => `<button type="button" data-layer-focus="${l.id}"><span>${l.label}</span><span>›</span></button>`)
       .join("")}</div>`;
-  }
-
-  function renderMore() {
-    return `
-      <div class="leto-add-grid" style="grid-template-columns:1fr 1fr">
-        <button type="button" data-more="png"><div class="ico"></div><small>Жүктеу</small></button>
-        <button type="button" data-more="transparent"><div class="ico"></div><small>Мөлдір PNG</small></button>
-        <button type="button" data-more="new"><div class="ico"></div><small>Жаңа Story</small></button>
-        <button type="button" data-more="help"><div class="ico"></div><small>Көмек</small></button>
-        <button type="button" data-more="sticker"><div class="ico"></div><small>Мәтін көшіру</small></button>
-        <a href="/qarip/#catalog" style="display:grid;place-items:center;text-decoration:none;color:inherit"><small>Барлық қаріптерді көру</small></a>
-      </div>
-      <p class="leto-hint" style="margin-top:12px">Фон → мәтін → қаріп → жүктеу.</p>
-    `;
   }
 
   function renderHelp() {
@@ -1297,6 +1659,12 @@
       }
       if (e.target.closest("[data-text-shadow-toggle]")) {
         toggleTextShadow();
+        pushHistory();
+        save();
+        return;
+      }
+      if (e.target.closest("[data-style-bg-shadow-toggle]")) {
+        toggleBgShadow();
         pushHistory();
         save();
         return;
@@ -1430,6 +1798,7 @@
         pushHistory();
         save();
         applyBackground();
+        if (id === "grad") renderSheet("grad");
         return;
       }
       const photo = e.target.closest("[data-photo]");
@@ -1483,6 +1852,9 @@
       const logoPos = e.target.closest("[data-logo-pos]");
       if (logoPos) {
         state.logo.pos = logoPos.dataset.logoPos;
+        const spot = LOGO_POS[state.logo.pos] || LOGO_POS["top-right"];
+        state.logo.x = spot.x;
+        state.logo.y = spot.y;
         pushHistory();
         save();
         applyLogo();
@@ -1532,6 +1904,8 @@
       const styleTextColor = e.target.closest("[data-style-text-color]");
       if (styleTextColor) {
         setNative("text", styleTextColor.dataset.styleTextColor);
+        const rgb = body.querySelector("[data-style-text-rgb]");
+        if (rgb) rgb.value = styleTextColor.dataset.styleTextColor;
         return;
       }
       const styleBgColor = e.target.closest("[data-style-bg-color]");
@@ -1554,6 +1928,7 @@
       if (key) qs(`.text-layer-picks [data-layer="${key}"]`)?.click();
       syncTrackingUi(body);
       syncShadowUi(body);
+      syncBgShadowUi(body);
     };
 
     body.oninput = (e) => {
@@ -1573,11 +1948,13 @@
         if (e.target.matches("[data-grad-angle]")) state.customGrad.angle = Number(e.target.value);
         const preview = qs("[data-grad-preview]", body);
         if (preview) preview.style.background = customGradCss();
+        const ang = qs("[data-grad-angle-val]", body);
+        if (ang) ang.textContent = `${state.customGrad.angle}°`;
         state.bg = { ...state.bg, type: "gradient", value: customGradCss() };
         applyBackground();
       }
       if (e.target.matches("[data-logo-size]")) {
-        state.logo.size = Number(e.target.value);
+        state.logo.size = clampLogoSize(e.target.value);
         save();
         applyLogo();
       }
@@ -1592,15 +1969,34 @@
       if (e.target.matches("[data-style-shadow-intensity]")) {
         applyShadowIntensity(e.target.value);
       }
+      if (e.target.matches("[data-style-bg-shadow-intensity]")) {
+        applyBgShadowIntensity(e.target.value);
+      }
+      if (e.target.matches("[data-style-text-rgb]")) {
+        setNative("text", e.target.value);
+      }
+      if (e.target.matches("[data-style-bg-rgb]")) {
+        setNative("bg", e.target.value);
+        body.querySelector("[data-style-bg-off]")?.classList.remove("active");
+        body.querySelectorAll(".leto-bg-extra").forEach((el) => el.classList.remove("is-off"));
+        syncBgShadowUi(body);
+      }
       if (e.target.matches("[data-style-bg-opacity]")) {
         setNative("bgOpacity", e.target.value);
         const val = qs("[data-style-opacity-val]", body);
         if (val) val.textContent = `${Math.round(Number(e.target.value) * 100)}%`;
       }
       if (e.target.matches("[data-style-bg-radius]")) {
-        setNative("radius", e.target.value);
+        const n = Math.max(0, Math.min(40, Number(e.target.value) || 0));
+        setNative("radius", String(n));
         const val = qs("[data-style-radius-val]", body);
-        if (val) val.textContent = `${e.target.value}px`;
+        if (val) val.textContent = radiusLabel(n);
+      }
+      if (e.target.matches("[data-style-bg-pad]")) {
+        const n = Math.max(-20, Math.min(28, Number(e.target.value) || 0));
+        setNative("bgPad", String(n));
+        const val = qs("[data-style-pad-val]", body);
+        if (val) val.textContent = `${n}px`;
       }
     };
     body.onchange = (e) => {
@@ -1632,6 +2028,7 @@
           pushHistory();
           save();
           applyLogo();
+          selectLogo();
           closeSheets();
         };
         reader.readAsDataURL(file);
@@ -1721,6 +2118,27 @@
     return Math.max(0.2, Math.min(6, n));
   }
 
+  function clampLogoSize(n) {
+    const v = Number(n);
+    return Math.max(8, Math.min(90, Number.isFinite(v) ? v : 18));
+  }
+
+  function syncLogoSizeUi() {
+    const size = clampLogoSize(state.logo.size);
+    const input = qs("[data-logo-size]");
+    if (input && document.activeElement !== input) input.value = String(Math.round(size));
+    const meta = qs("[data-logo-meta]");
+    if (meta) meta.textContent = `Өлшем: ${Math.round(size)}% · Мөлдірлік: ${state.logo.opacity || 100}%`;
+  }
+
+  function selectLogo() {
+    if (!state.logo.src) return;
+    setBgEdit(false);
+    clearTextSelect();
+    const wrap = qs(".stories-logo");
+    if (wrap && !wrap.hidden) wrap.dataset.selected = "1";
+  }
+
   function resetBgTransform() {
     if (!hasBgPhoto()) return;
     state.bg = { ...state.bg, x: 0, y: 0, scale: 1, rotate: 0 };
@@ -1730,15 +2148,47 @@
   }
 
   function clearTextSelect() {
-    const stack = qs(".subtitle-stack");
-    stack?.querySelectorAll("[data-selected]").forEach((el) => el.removeAttribute("data-selected"));
-    stack?.querySelectorAll("[data-editing='1']").forEach((el) => {
-      el.removeAttribute("data-editing");
-      el.removeAttribute("contenteditable");
-    });
-    const hud = qs(".reels-hud");
-    if (hud) hud.dataset.show = "0";
+    if (typeof window.__qaripGesture?.clearSelect === "function") {
+      window.__qaripGesture.clearSelect();
+    } else {
+      const stack = qs(".subtitle-stack");
+      stack?.querySelectorAll("[data-selected]").forEach((el) => el.removeAttribute("data-selected"));
+      stack?.querySelectorAll("[data-editing='1']").forEach((el) => {
+        el.removeAttribute("data-editing");
+        el.removeAttribute("contenteditable");
+      });
+      const hud = qs(".reels-hud");
+      if (hud) hud.dataset.show = "0";
+    }
     qs(".leto-textbar")?.classList.remove("on");
+  }
+
+  function clearLogoSelect() {
+    qs(".stories-logo")?.removeAttribute("data-selected");
+  }
+
+  function logoXY(L = state.logo) {
+    const x = Number(L.x);
+    const y = Number(L.y);
+    if (Number.isFinite(x) && Number.isFinite(y)) return { x, y };
+    return LOGO_POS[L.pos] || LOGO_POS["top-right"];
+  }
+
+  function lockStageScroll() {
+    if (lockStageScroll.on) return;
+    lockStageScroll.on = true;
+    const block = (ev) => {
+      if (ev.cancelable) ev.preventDefault();
+    };
+    const stop = () => {
+      lockStageScroll.on = false;
+      window.removeEventListener("touchmove", block, true);
+      window.removeEventListener("pointerup", stop, true);
+      window.removeEventListener("pointercancel", stop, true);
+    };
+    window.addEventListener("touchmove", block, { passive: false, capture: true });
+    window.addEventListener("pointerup", stop, { capture: true });
+    window.addEventListener("pointercancel", stop, { capture: true });
   }
 
   function syncDock(mode) {
@@ -1752,14 +2202,14 @@
     const preview = qs(".phone-preview");
     if (!preview) return;
     preview.classList.toggle("leto-bg-edit", bgEdit);
-    qs(".leto-scrim")?.classList.toggle("pass-stage", bgEdit);
+    if (hasBgPhoto()) ensureBgHit(preview);
     if (bgEdit) {
       syncDock("bg");
       clearTextSelect();
-      ensureBgHit(preview);
+      clearLogoSelect();
     } else {
-      syncDock(activeSheet === "bg" ? "bg" : activeSheet === "text" ? "text" : "");
-      removeBgChrome(preview);
+      const dockId = ["bg", "gallery", "grad", "text"].includes(activeSheet) ? activeSheet : "";
+      syncDock(dockId);
     }
   }
 
@@ -1823,11 +2273,21 @@
       });
       preview.append(tools);
     }
+    let scale = qs(".stories-bg-scale", preview);
+    if (!scale) {
+      scale = document.createElement("span");
+      scale.className = "stories-scale-handle stories-bg-scale";
+      scale.setAttribute("role", "slider");
+      scale.setAttribute("aria-label", "Фон өлшемі");
+      preview.append(scale);
+      bindBgScaleHandle(scale);
+    }
   }
 
   function removeBgChrome(preview) {
     qs(".stories-bg-hit", preview)?.remove();
     qs(".stories-bg-tools", preview)?.remove();
+    qs(".stories-bg-scale", preview)?.remove();
   }
 
   function bindBgGestures(hit) {
@@ -1836,23 +2296,6 @@
     const pointers = new Map();
     let gesture = null;
     let dirty = false;
-
-    const lockScroll = () => {
-      if (lockScroll.on) return;
-      lockScroll.on = true;
-      const block = (ev) => {
-        if (ev.cancelable) ev.preventDefault();
-      };
-      const stop = () => {
-        lockScroll.on = false;
-        window.removeEventListener("touchmove", block, true);
-        window.removeEventListener("pointerup", stop, true);
-        window.removeEventListener("pointercancel", stop, true);
-      };
-      window.addEventListener("touchmove", block, { passive: false, capture: true });
-      window.addEventListener("pointerup", stop, { capture: true });
-      window.addEventListener("pointercancel", stop, { capture: true });
-    };
 
     const pts = () => [...pointers.values()];
     const commit = () => {
@@ -1863,11 +2306,12 @@
     };
 
     hit.addEventListener("pointerdown", (e) => {
-      if (!bgEdit || !hasBgPhoto()) return;
+      if (!hasBgPhoto()) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
       e.preventDefault();
       e.stopPropagation();
-      lockScroll();
+      setBgEdit(true);
+      lockStageScroll();
       try {
         hit.setPointerCapture(e.pointerId);
       } catch {}
@@ -1941,7 +2385,7 @@
     hit.addEventListener(
       "wheel",
       (e) => {
-        if (!bgEdit || !hasBgPhoto()) return;
+        if (!hasBgPhoto()) return;
         e.preventDefault();
         e.stopPropagation();
         const factor = e.deltaY > 0 ? 0.94 : 1.06;
@@ -1963,16 +2407,82 @@
       { passive: false }
     );
   }
+
+  function bindBgScaleHandle(handle) {
+    if (handle.dataset.bound === "1") return;
+    handle.dataset.bound = "1";
+    handle.addEventListener("pointerdown", (e) => {
+      if (!hasBgPhoto()) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setBgEdit(true);
+      lockStageScroll();
+      try {
+        handle.setPointerCapture(e.pointerId);
+      } catch {}
+      const preview = qs(".phone-preview");
+      const r = preview.getBoundingClientRect();
+      const now = bgXform();
+      const cx = r.left + r.width / 2 + now.x;
+      const cy = r.top + r.height / 2 + now.y;
+      const startDist = Math.max(12, Math.hypot(e.clientX - cx, e.clientY - cy));
+      const startScale = now.scale;
+      let dirty = false;
+      const move = (ev) => {
+        const dist = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+        state.bg.scale = clampBgScale(startScale * (dist / startDist));
+        dirty = true;
+        applyBgTransform();
+      };
+      const end = () => {
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", end);
+        handle.removeEventListener("pointercancel", end);
+        if (dirty) {
+          pushHistory();
+          save();
+        }
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", end);
+      handle.addEventListener("pointercancel", end);
+    });
+  }
+
   function ensureLogo(preview) {
-    let logo = qs(".stories-logo", preview);
-    if (!logo) {
-      logo = document.createElement("img");
-      logo.className = "stories-logo";
-      logo.alt = "Logo";
-      logo.hidden = true;
-      preview.append(logo);
+    let wrap = qs(".stories-logo", preview);
+    if (wrap && wrap.tagName === "IMG") {
+      wrap.remove();
+      wrap = null;
     }
-    return logo;
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "stories-logo";
+      wrap.hidden = true;
+      const img = document.createElement("img");
+      img.className = "stories-logo-img";
+      img.alt = "Logo";
+      img.draggable = false;
+      wrap.append(img);
+      preview.append(wrap);
+    }
+    if (!qs(".stories-logo-img", wrap)) {
+      const img = document.createElement("img");
+      img.className = "stories-logo-img";
+      img.alt = "Logo";
+      img.draggable = false;
+      wrap.prepend(img);
+    }
+    if (!qs(".stories-scale-handle", wrap)) {
+      const handle = document.createElement("span");
+      handle.className = "stories-scale-handle";
+      handle.setAttribute("role", "slider");
+      handle.setAttribute("aria-label", "Өлшем");
+      wrap.append(handle);
+    }
+    bindLogoGestures(wrap);
+    return wrap;
   }
 
   function applyBackground() {
@@ -1987,7 +2497,7 @@
     if (b.type === "solid") {
       bg.style.backgroundImage = "none";
       bg.style.backgroundColor = b.value || "#101014";
-    } else if (b.type === "gradient") {
+    } else if (b.type === "gradient" || b.type === "grad") {
       bg.style.backgroundColor = "transparent";
       bg.style.backgroundImage = b.value;
     } else if (photoOn) {
@@ -2007,36 +2517,38 @@
       img.hidden = true;
       img.removeAttribute("src");
     }
-    if (bgEdit && !hasBgPhoto()) setBgEdit(false);
-    else if (bgEdit) ensureBgHit(preview);
+    if (hasBgPhoto()) ensureBgHit(preview);
+    else {
+      bgEdit = false;
+      preview.classList.remove("leto-bg-edit");
+      removeBgChrome(preview);
+    }
   }
 
   function applyLogo() {
     const preview = qs(".phone-preview");
     if (!preview) return;
-    const logo = ensureLogo(preview);
+    const wrap = ensureLogo(preview);
+    const img = qs(".stories-logo-img", wrap);
     const L = state.logo;
     if (!L.src) {
-      logo.hidden = true;
+      wrap.hidden = true;
+      wrap.removeAttribute("data-selected");
+      if (img) img.removeAttribute("src");
       return;
     }
-    logo.hidden = false;
-    if (logo.getAttribute("src") !== L.src) logo.src = L.src;
-    const map = {
-      "top-left": [10, 8],
-      "top-center": [50, 8],
-      "top-right": [90, 8],
-      center: [50, 50],
-      "bottom-left": [10, 92],
-      "bottom-center": [50, 92],
-      "bottom-right": [90, 92],
-    };
-    const [x, y] = map[L.pos] || map["top-right"];
-    logo.style.left = `${x}%`;
-    logo.style.top = `${y}%`;
-    logo.style.transform = `translate(-${x}%, -${y}%)`;
-    logo.style.width = `${L.size}%`;
-    logo.style.opacity = String((L.opacity || 100) / 100);
+    wrap.hidden = false;
+    L.size = clampLogoSize(L.size);
+    if (img && img.getAttribute("src") !== L.src) img.src = L.src;
+    const { x, y } = logoXY(L);
+    L.x = x;
+    L.y = y;
+    wrap.style.left = `${x}%`;
+    wrap.style.top = `${y}%`;
+    wrap.style.transform = "translate(-50%, -50%)";
+    wrap.style.width = `${L.size}%`;
+    wrap.style.opacity = String((L.opacity || 100) / 100);
+    syncLogoSizeUi();
   }
 
   function applyLayout() {
@@ -2055,13 +2567,16 @@
       el.style.setProperty("text-align", align, "important");
       el.style.setProperty("left", align === "left" ? "12%" : align === "right" ? "88%" : "50%", "important");
       el.style.setProperty("max-width", `${state.text.maxWidth || 86}%`, "important");
-      el.style.setProperty("line-height", String((state.text.lineHeight || 100) / 100), "important");
+      if (el.dataset.hasBg !== "1") {
+        el.style.setProperty("line-height", String((state.text.lineHeight || 100) / 100), "important");
+      }
     });
     const scale = (state.text.size || 100) / 100;
     const hook = qs(".sub-hook", stack);
     const mark = qs(".sub-mark", stack);
     if (hook) hook.style.setProperty("font-size", `calc(var(--reel-hook, 34px) * ${scale})`, "important");
     if (mark) mark.style.setProperty("font-size", `calc(var(--reel-mark, 18px) * ${scale})`, "important");
+    window.__qaripGesture?.refreshLooks?.();
   }
 
   function addSticker(char) {
@@ -2091,13 +2606,170 @@
     });
   }
 
+  function bindLogoGestures(wrap) {
+    if (wrap.dataset.bound === "1") return;
+    wrap.dataset.bound = "1";
+    const pointers = new Map();
+    let gesture = null;
+    let dirty = false;
+
+    const pts = () => [...pointers.values()];
+    const commit = () => {
+      if (!dirty) return;
+      dirty = false;
+      pushHistory();
+      save();
+    };
+    const startSelect = () => {
+      setBgEdit(false);
+      clearTextSelect();
+      wrap.dataset.selected = "1";
+      lockStageScroll();
+    };
+
+    wrap.addEventListener("pointerdown", (e) => {
+      if (wrap.hidden || !state.logo.src) return;
+      if (e.target.closest(".stories-scale-handle")) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      startSelect();
+      try {
+        wrap.setPointerCapture(e.pointerId);
+      } catch {}
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const preview = qs(".phone-preview");
+      const r = preview.getBoundingClientRect();
+      const pos = logoXY();
+      if (pointers.size === 1) {
+        gesture = {
+          mode: "pan",
+          px: e.clientX,
+          py: e.clientY,
+          sx: pos.x,
+          sy: pos.y,
+          rw: r.width,
+          rh: r.height,
+        };
+      } else {
+        const [a, b] = pts();
+        gesture = {
+          mode: "pinch",
+          size: clampLogoSize(state.logo.size),
+          dist: Math.max(12, Math.hypot(b.x - a.x, b.y - a.y)),
+        };
+      }
+    });
+
+    wrap.addEventListener("pointermove", (e) => {
+      if (!pointers.has(e.pointerId) || !gesture) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (gesture.mode === "pan") {
+        const dx = ((e.clientX - gesture.px) / gesture.rw) * 100;
+        const dy = ((e.clientY - gesture.py) / gesture.rh) * 100;
+        if (Math.hypot(e.clientX - gesture.px, e.clientY - gesture.py) > 4) dirty = true;
+        state.logo.x = Math.max(6, Math.min(94, gesture.sx + dx));
+        state.logo.y = Math.max(6, Math.min(94, gesture.sy + dy));
+        wrap.style.left = `${state.logo.x}%`;
+        wrap.style.top = `${state.logo.y}%`;
+      } else if (gesture.mode === "pinch") {
+        const pair = pts();
+        if (pair.length < 2) return;
+        const [a, b] = pair;
+        const dist = Math.hypot(b.x - a.x, b.y - a.y);
+        state.logo.size = clampLogoSize(gesture.size * (dist / gesture.dist));
+        dirty = true;
+        applyLogo();
+      }
+    });
+
+    const endPointer = (e) => {
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) {
+        gesture = null;
+        commit();
+      } else if (pointers.size === 1) {
+        const only = pts()[0];
+        const preview = qs(".phone-preview");
+        const r = preview.getBoundingClientRect();
+        const pos = logoXY();
+        gesture = {
+          mode: "pan",
+          px: only.x,
+          py: only.y,
+          sx: pos.x,
+          sy: pos.y,
+          rw: r.width,
+          rh: r.height,
+        };
+      }
+    };
+    wrap.addEventListener("pointerup", endPointer);
+    wrap.addEventListener("pointercancel", endPointer);
+
+    wrap.addEventListener(
+      "wheel",
+      (e) => {
+        if (wrap.hidden || !state.logo.src) return;
+        e.preventDefault();
+        e.stopPropagation();
+        startSelect();
+        state.logo.size = clampLogoSize(state.logo.size * (e.deltaY > 0 ? 0.94 : 1.06));
+        applyLogo();
+        dirty = true;
+        clearTimeout(wrap._wheelSave);
+        wrap._wheelSave = setTimeout(commit, 280);
+      },
+      { passive: false }
+    );
+
+    const handle = qs(".stories-scale-handle", wrap);
+    if (!handle || handle.dataset.bound === "1") return;
+    handle.dataset.bound = "1";
+    handle.addEventListener("pointerdown", (e) => {
+      if (wrap.hidden || !state.logo.src) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      startSelect();
+      try {
+        handle.setPointerCapture(e.pointerId);
+      } catch {}
+      const box = wrap.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      const startDist = Math.max(12, Math.hypot(e.clientX - cx, e.clientY - cy));
+      const startSize = clampLogoSize(state.logo.size);
+      const move = (ev) => {
+        const dist = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+        state.logo.size = clampLogoSize(startSize * (dist / startDist));
+        dirty = true;
+        applyLogo();
+      };
+      const end = () => {
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", end);
+        handle.removeEventListener("pointercancel", end);
+        commit();
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", end);
+      handle.addEventListener("pointercancel", end);
+    });
+  }
+
   function bindStickerDrag(el, data) {
-    let ox = 0;
-    let oy = 0;
     let start = null;
     el.addEventListener("pointerdown", (e) => {
       e.preventDefault();
-      el.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+      setBgEdit(false);
+      clearTextSelect();
+      clearLogoSelect();
+      lockStageScroll();
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {}
       const preview = qs(".phone-preview");
       const r = preview.getBoundingClientRect();
       start = { x: e.clientX, y: e.clientY, sx: data.x, sy: data.y, rw: r.width, rh: r.height };
@@ -2125,7 +2797,10 @@
       qs(".leto-textbar")?.classList.add("on");
     }
     if (id === "bg") openSheet("bg");
-    if (id === "logo") openSheet("gallery");
+    if (id === "logo") {
+      selectLogo();
+      openSheet("gallery");
+    }
   }
 
   async function ensureHtml2Canvas() {
@@ -2289,16 +2964,6 @@
     letoToast("Жаңа Story басталды");
   }
 
-  function applyStarter(id) {
-    const tpl = STARTERS.find((t) => t.id === id);
-    if (!tpl) return;
-    state.bg = { ...defaultState().bg, ...tpl.bg };
-    applyBackground();
-    pushHistory();
-    save();
-    enterChoice("editor");
-    if (tpl.bg.type === "photo") openSheet("bg");
-  }
   let entryFontApplied = false;
   async function applyEntryFont(tries = 0) {
     if (entryFontApplied) return;
@@ -2355,10 +3020,6 @@
   }
 
   function renderChoiceHome() {
-    const tpls = STARTERS.map(
-      (t) =>
-        `<button type="button" class="leto-tpl" data-starter="${t.id}" style="background:${t.css}">${t.title}</button>`
-    ).join("");
     return `
       <button type="button" class="leto-choice-back" data-choice-back aria-label="Артқа"></button>
       <div class="leto-choice-head">
@@ -2372,7 +3033,6 @@
         <li><b>3</b> Қаріп таңдаңыз</li>
         <li><b>4</b> Story-ді жүктеңіз</li>
       </ol>
-      <div class="leto-tpl-grid" role="list">${tpls}</div>
       <button type="button" class="leto-choice-start" data-choice="editor">Story жасау</button>
       <button type="button" class="leto-choice-alt" data-choice="sticker">Мәтінді қаріппен көшіру</button>
     `;
@@ -2425,12 +3085,6 @@
         if (e.target.closest("[data-choice-back]")) {
           e.preventDefault();
           location.href = "/tanba/";
-          return;
-        }
-        const starter = e.target.closest("[data-starter]");
-        if (starter) {
-          e.preventDefault();
-          applyStarter(starter.dataset.starter);
           return;
         }
         const editorBtn = e.target.closest('[data-choice="editor"]');

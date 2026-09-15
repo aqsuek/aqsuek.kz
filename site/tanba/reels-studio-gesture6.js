@@ -33,7 +33,7 @@
     }
     .phone-preview:before,.phone-preview:after{display:none!important}
     .reel-ui,.reel-progress,.reel-orbit,.font-chip{display:none!important}
-    .subtitle-stack{z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:visible!important;transform:none!important;text-align:center!important;text-shadow:none!important;pointer-events:none}
+    .subtitle-stack{position:absolute!important;z-index:4!important;inset:0!important;width:auto!important;height:auto!important;overflow:visible!important;transform:none!important;text-align:center!important;text-shadow:none!important;pointer-events:none}
     .subtitle-stack .sub-hook,.subtitle-stack .sub-mark,.subtitle-stack .sub-extra{position:absolute;left:50%;display:inline-block!important;box-sizing:border-box!important;text-align:center;max-width:none;margin:0!important;overflow-wrap:anywhere;word-break:break-word;white-space:normal!important;touch-action:none;user-select:none;cursor:grab;pointer-events:auto}
     .subtitle-stack .sub-hook{top:38%;letter-spacing:-.045em;text-transform:none!important;line-height:.92!important;transform:translate(calc(-50% + var(--hook-x,0px)),calc(-50% + var(--hook-y,0px))) rotate(var(--hook-rotate,0deg)) scale(var(--hook-scale,1))}
     .subtitle-stack .sub-mark{top:58%;padding:8px 16px!important;border-radius:999px!important;box-shadow:0 7px 18px #0005;transform:translate(calc(-50% + var(--mark-x,0px)),calc(-50% + var(--mark-y,0px))) rotate(var(--mark-rotate,0deg)) scale(var(--mark-scale,1))}
@@ -166,9 +166,12 @@
     bg: null,
     bgOpacity: 1,
     radius: null,
+    bgPad: 7,
     letterSpacing: null,
     textShadow: true,
     shadowIntensity: 0.55,
+    bgShadow: true,
+    bgShadowIntensity: 0.4,
     on,
     text: "",
     family: "",
@@ -231,6 +234,23 @@
     const y = Math.max(1, Math.round(2 + 4 * i));
     const blur = Math.max(2, Math.round(6 + 20 * i));
     return `0 ${y}px ${blur}px rgba(0,0,0,${i.toFixed(3)})`;
+  }
+
+  function bgShadowIntensityOf(layer) {
+    const n = Number(layer?.bgShadowIntensity);
+    if (!Number.isFinite(n)) return 0.4;
+    return Math.max(0, Math.min(1, n));
+  }
+
+  function bgShadowCss(layer, alpha) {
+    if (layer?.bgShadow === false) return "none";
+    if (alpha != null && alpha <= 0.08) return "none";
+    const i = bgShadowIntensityOf(layer);
+    if (i <= 0.01) return "none";
+    const y = Math.max(2, Math.round(2 + 14 * i));
+    const blur = Math.max(6, Math.round(8 + 36 * i));
+    const a = 0.12 + 0.5 * i;
+    return `0 ${y}px ${blur}px rgba(0,0,0,${a.toFixed(3)})`;
   }
 
   function paint(stack) {
@@ -596,6 +616,36 @@
     italic: ["400", "italic"],
   };
 
+  function measureTextInk(el) {
+    const cs = getComputedStyle(el);
+    const fontSize = parseFloat(cs.fontSize) || 16;
+    const ctx = (measureTextInk.ctx ||= document.createElement("canvas").getContext("2d"));
+    ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`;
+    if (ctx.letterSpacing !== undefined) {
+      ctx.letterSpacing = cs.letterSpacing && cs.letterSpacing !== "normal" ? cs.letterSpacing : "0px";
+    }
+    const lines = String(el.innerText || el.textContent || "A").split(/\n/);
+    let extraX = 0;
+    let extraY = 0;
+    let inkH = 0;
+    lines.forEach((line) => {
+      const sample = line.length ? line : "A";
+      const m = ctx.measureText(sample);
+      const ascent = Math.max(m.actualBoundingBoxAscent || 0, m.fontBoundingBoxAscent || 0);
+      const descent = Math.max(m.actualBoundingBoxDescent || 0, m.fontBoundingBoxDescent || 0);
+      if (ascent || descent) {
+        inkH = Math.max(inkH, ascent + descent);
+        extraY = Math.max(extraY, Math.max(0, (ascent + descent - fontSize) / 2));
+      }
+      const left = Number.isFinite(m.actualBoundingBoxLeft) ? Math.max(0, m.actualBoundingBoxLeft) : 0;
+      const right = Number.isFinite(m.actualBoundingBoxRight) ? Math.max(0, m.actualBoundingBoxRight - m.width) : 0;
+      extraX = Math.max(extraX, left, right);
+    });
+    extraX = Math.min(fontSize * 0.7, extraX);
+    extraY = Math.min(fontSize * 0.55, extraY);
+    return { extraX, extraY, inkH, fontSize };
+  }
+
   function applyLayerLook(el, key) {
     if (!el) return;
     const layer = state[key];
@@ -620,17 +670,38 @@
     }
     if (layer.bg) {
       const alpha = layer.bgOpacity == null ? 1 : Number(layer.bgOpacity);
-      const radius = layer.radius == null ? 999 : Number(layer.radius);
+      const rawRadius = layer.radius == null ? 999 : Number(layer.radius);
+      const radius = rawRadius >= 40 ? 999 : rawRadius;
+      const pad = layer.bgPad == null ? 7 : Math.max(-20, Math.min(28, Number(layer.bgPad) || 0));
+      const ink = measureTextInk(el);
+      const airY = Math.round(ink.fontSize * 0.16);
+      const airX = Math.round(ink.fontSize * 0.32);
+      const padY = Math.max(0, pad + airY + Math.ceil(ink.extraY));
+      const padX = Math.max(0, Math.round(pad * 1.55) + airX + Math.ceil(ink.extraX));
+      const tight = Math.max(0, Math.min(1, (4 - pad) / 24));
+      const lhFit = ink.inkH > 0 ? Math.max(0.88, (ink.inkH + 2) / ink.fontSize) : 0.95;
+      const lhRoom = ink.inkH > 0 ? Math.min(1.65, Math.max(1.18, (ink.inkH + 6) / ink.fontSize)) : 1.22;
+      const lh = lhRoom - (lhRoom - lhFit) * tight;
       el.style.setProperty("background", hexToRgba(layer.bg, alpha), "important");
-      el.style.setProperty("padding", "7px 11px", "important");
+      el.style.setProperty("padding", `${padY}px ${padX}px`, "important");
       el.style.setProperty("border-radius", `${radius}px`, "important");
-      el.style.setProperty("box-shadow", alpha > 0.08 ? "0 6px 16px #0005" : "none", "important");
+      el.style.setProperty("box-shadow", bgShadowCss(layer, alpha), "important");
+      el.style.setProperty("line-height", String(lh), "important");
       el.dataset.hasBg = "1";
     } else if (layer.bg === "") {
       el.style.setProperty("background", "transparent", "important");
       el.style.setProperty("box-shadow", "none", "important");
       if (key !== "mark") el.style.setProperty("padding", "0", "important");
+      el.style.removeProperty("line-height");
       el.dataset.hasBg = "0";
+    } else {
+      const bg = getComputedStyle(el).backgroundColor || "";
+      const rgbaMatch = bg.match(/^rgba\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*([\d.]+)\s*\)$/);
+      const alpha = rgbaMatch ? parseFloat(rgbaMatch[1]) : /^rgb\(/.test(bg) ? 1 : 0;
+      if (bg && bg !== "transparent" && alpha > 0.03) {
+        el.style.setProperty("box-shadow", bgShadowCss(layer, alpha), "important");
+        el.dataset.hasBg = "1";
+      }
     }
   }
 
@@ -717,9 +788,11 @@
     if (bgNative && layer.bg) bgNative.value = layer.bg;
     const opacityNative = tools.querySelector("[data-native='bgOpacity']");
     const radiusNative = tools.querySelector("[data-native='radius']");
+    const padNative = tools.querySelector("[data-native='bgPad']");
     const trackingNative = tools.querySelector("[data-native='tracking']");
     if (opacityNative) opacityNative.value = layer.bgOpacity == null ? 1 : layer.bgOpacity;
     if (radiusNative) radiusNative.value = layer.radius == null ? 999 : layer.radius;
+    if (padNative) padNative.value = layer.bgPad == null ? 7 : layer.bgPad;
     if (trackingNative) trackingNative.value = layer.letterSpacing == null ? 0 : layer.letterSpacing;
     const shadowBtn = tools.querySelector("[data-shadow-toggle]");
     if (shadowBtn) {
@@ -730,6 +803,15 @@
     }
     const shadowIntNative = tools.querySelector("[data-native='shadowIntensity']");
     if (shadowIntNative) shadowIntNative.value = shadowIntensityOf(layer);
+    const bgShadowBtn = tools.querySelector("[data-bg-shadow-toggle]");
+    if (bgShadowBtn) {
+      const on = layer.bgShadow !== false;
+      bgShadowBtn.classList.toggle("active", on);
+      bgShadowBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      bgShadowBtn.textContent = on ? "Қосулы" : "Өшірулі";
+    }
+    const bgShadowIntNative = tools.querySelector("[data-native='bgShadowIntensity']");
+    if (bgShadowIntNative) bgShadowIntNative.value = bgShadowIntensityOf(layer);
   }
 
   function layerCenter(element) {
@@ -906,6 +988,7 @@
       if (event.target.closest(".reels-handle")) return;
       if (element._qaripPinch) return;
       if (element.dataset.editing === "1") return;
+      event.stopPropagation();
       const already = element.dataset.selected === "1";
       if (!already) {
         event.preventDefault();
@@ -1230,11 +1313,22 @@
     const h = Math.max(el.offsetHeight * scale * outScale, lh * lines.length + padT + padB, 2);
     const wantShadow = state[item.key]?.textShadow !== false;
     const intensity = shadowIntensityOf(state[item.key]);
+    const layer = state[item.key];
     if (hasBg) {
+      const bgI = bgShadowIntensityOf(layer);
+      if (layer?.bgShadow !== false && bgI > 0.01) {
+        ctx.shadowColor = `rgba(0,0,0,${(0.12 + 0.5 * bgI).toFixed(3)})`;
+        ctx.shadowBlur = (8 + 36 * bgI) * outScale * scale;
+        ctx.shadowOffsetY = (2 + 14 * bgI) * outScale * scale;
+      }
       ctx.fillStyle = bg;
       fillRoundRect(ctx, -w / 2, -h / 2, w, h, radius || h / 2);
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
       ctx.fillStyle = cs.color;
-    } else if (wantShadow && intensity > 0.01) {
+    }
+    if (wantShadow && intensity > 0.01) {
       ctx.shadowColor = `rgba(0,0,0,${intensity.toFixed(3)})`;
       ctx.shadowBlur = (6 + 16 * intensity) * outScale * scale;
       ctx.shadowOffsetY = (1 + 3 * intensity) * outScale * scale;
@@ -1390,6 +1484,7 @@
     const rec = (FONT_INDEX || catalogFontsFromDom()).find((font) => font.name === name);
     const url = rec?.url || "";
     const finish = () => {
+      applyLayerLook(stack.querySelector(layerSelector(key)), key);
       containLayer(stack, key, true);
       save();
       syncFontActive();
@@ -1552,6 +1647,12 @@
     ensureGuides(preview);
     bindHud(preview);
     paint(stack);
+    if (document.fonts && preview.dataset.fontPadWatch !== "1") {
+      preview.dataset.fontPadWatch = "1";
+      document.fonts.addEventListener("loadingdone", () => {
+        ["hook", "mark", "extra"].forEach((key) => applyLayerLook(stack.querySelector(layerSelector(key)), key));
+      });
+    }
     if (state.extra.on) {
       if (!stack.querySelector(".sub-extra")) createExtra(stack, editor, false);
       else {
@@ -1662,6 +1763,18 @@
         <span>ДӨҢГ</span>
         <input type="range" data-native="radius" min="0" max="60" step="2" value="999" aria-label="Дөңгелектену">
       </div>
+      <div class="text-tool-row" data-row="bg-pad">
+        <span>ӨЛШ</span>
+        <input type="range" data-native="bgPad" min="-20" max="28" step="1" value="7" aria-label="Фон өлшемі">
+      </div>
+      <div class="text-tool-row" data-row="bg-shadow">
+        <span>ФКӨЛ</span>
+        <button type="button" class="shadow-toggle active" data-bg-shadow-toggle aria-pressed="true">Қосулы</button>
+      </div>
+      <div class="text-tool-row" data-row="bg-shadow-intensity">
+        <span>ФКҮШ</span>
+        <input type="range" data-native="bgShadowIntensity" min="0" max="1" step="0.05" value="0.4" aria-label="Фон көлеңкесі">
+      </div>
       <div class="text-tool-row" data-row="tracking">
         <span>АРАЛ</span>
         <input type="range" data-native="tracking" min="-4" max="16" step="0.5" value="0" aria-label="Әріп аралығы">
@@ -1709,7 +1822,8 @@
       const bgBtn = event.target.closest("[data-bg-color]");
       const faceBtn = event.target.closest("[data-face]");
       const shadowBtn = event.target.closest("[data-shadow-toggle]");
-      if (!off && !textBtn && !bgBtn && !faceBtn && !shadowBtn) return;
+      const bgShadowBtn = event.target.closest("[data-bg-shadow-toggle]");
+      if (!off && !textBtn && !bgBtn && !faceBtn && !shadowBtn && !bgShadowBtn) return;
       const key = selectedKey(stack);
       const el = stack.querySelector(layerSelector(key));
       if (off) state[key].bg = "";
@@ -1720,6 +1834,12 @@
         state[key].textShadow = state[key].textShadow === false;
         if (state[key].textShadow !== false && shadowIntensityOf(state[key]) <= 0.01) {
           state[key].shadowIntensity = 0.55;
+        }
+      }
+      if (bgShadowBtn) {
+        state[key].bgShadow = state[key].bgShadow === false;
+        if (state[key].bgShadow !== false && bgShadowIntensityOf(state[key]) <= 0.01) {
+          state[key].bgShadowIntensity = 0.4;
         }
       }
       applyLayerLook(el, key);
@@ -1766,6 +1886,17 @@
       syncSwatches(key);
       save();
     });
+    tools.querySelector("[data-native='bgPad']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      const el = stack.querySelector(layerSelector(key));
+      ensureBgColor(key, el);
+      state[key].bgPad = Math.max(-20, Math.min(28, parseFloat(event.target.value) || 0));
+      applyLayerLook(el, key);
+      containLayer(stack, key, false);
+      layoutHud(stack);
+      syncSwatches(key);
+      save();
+    });
     tools.querySelector("[data-native='tracking']").addEventListener("input", (event) => {
       const key = selectedKey(stack);
       state[key].letterSpacing = parseFloat(event.target.value);
@@ -1777,6 +1908,15 @@
       state[key].shadowIntensity = Math.max(0, Math.min(1, parseFloat(event.target.value) || 0));
       if (state[key].shadowIntensity > 0.01) state[key].textShadow = true;
       applyLayerLook(stack.querySelector(layerSelector(key)), key);
+      syncSwatches(key);
+      save();
+    });
+    tools.querySelector("[data-native='bgShadowIntensity']").addEventListener("input", (event) => {
+      const key = selectedKey(stack);
+      const el = stack.querySelector(layerSelector(key));
+      state[key].bgShadowIntensity = Math.max(0, Math.min(1, parseFloat(event.target.value) || 0));
+      if (state[key].bgShadowIntensity > 0.01) state[key].bgShadow = true;
+      applyLayerLook(el, key);
       syncSwatches(key);
       save();
     });
@@ -1854,6 +1994,14 @@
       if (!stack) return null;
       const key = selectedKey(stack);
       return { key, ...(state[key] || {}) };
+    },
+    clearSelect() {
+      clearSelect(document.querySelector(".subtitle-stack"));
+    },
+    refreshLooks() {
+      const stack = document.querySelector(".subtitle-stack");
+      if (!stack) return;
+      ["hook", "mark", "extra"].forEach((key) => applyLayerLook(stack.querySelector(layerSelector(key)), key));
     },
   };
 

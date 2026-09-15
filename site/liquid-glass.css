@@ -1131,6 +1131,7 @@ html.qarip-stories .leto-choice-card .cc-arrow:active{
   --lg-bolt:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M13 3 5.5 13.5H11L10.5 21 18.5 10.5H13z'/%3E%3C/svg%3E");
   --lg-pencil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4.5 19.5 8 9 18.5l-4.5 1 1-4.5z'/%3E%3Cpath d='M14 6.5 17.5 10'/%3E%3C/svg%3E");
   --lg-palette:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 4a8 8 0 1 0 0 16c1.2 0 1.8-.8 1.8-1.7 0-1.4-1-1.8-1-2.8 0-.8.7-1.5 1.6-1.5h1.4A4.2 4.2 0 0 0 20 9.8C20 6.6 16.4 4 12 4Z'/%3E%3Ccircle cx='8.2' cy='10' r='1.1'/%3E%3Ccircle cx='12' cy='7.8' r='1.1'/%3E%3C/svg%3E");
+  --lg-grad:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='9.2' cy='12' r='5.6'/%3E%3Ccircle cx='14.8' cy='12' r='5.6'/%3E%3C/svg%3E");
   --lg-arrow-right:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M12.5 6 18.5 12l-6 6'/%3E%3C/svg%3E");
   --lg-arrow-down:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v13M6 11.5 12 17.5l6-6'/%3E%3C/svg%3E");
 }
@@ -1180,6 +1181,7 @@ html.qarip-stories .leto-dock-btn[data-acto="text"],
 html.qarip-stories .leto-text-add{ --lg-mask:var(--lg-text); }
 html.qarip-stories .leto-dock-btn[data-acto="bg"]{ --lg-mask:var(--lg-photo); }
 html.qarip-stories .leto-dock-btn[data-acto="gallery"]{ --lg-mask:var(--lg-image-plus); }
+html.qarip-stories .leto-dock-btn[data-acto="grad"]{ --lg-mask:var(--lg-grad); }
 html.qarip-stories .leto-dock-btn[data-acto="more"]{ --lg-mask:var(--lg-ellipsis); }
 html.qarip-stories .leto-export{ --lg-mask:var(--lg-download); }
 
@@ -1628,24 +1630,6 @@ html.qarip-stories .leto-choice-steps li b{
   font:800 11px/1 Arial,sans-serif;
 }
 html.qarip-stories .leto-choice-steps li::before{ content:none; }
-html.qarip-stories .leto-tpl-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  max-width:420px;
-  margin:0 auto 18px;
-}
-html.qarip-stories .leto-tpl{
-  min-height:88px;
-  border:0;
-  border-radius:18px;
-  padding:10px;
-  color:#fff;
-  font:800 12px/1.2 Arial,sans-serif;
-  text-align:left;
-  cursor:pointer;
-  box-shadow:var(--lg-lift);
-}
 html.qarip-stories .leto-choice-start,
 html.qarip-stories .leto-choice-alt{
   display:flex;
@@ -1721,6 +1705,5 @@ html.qarip-stories .leto-hint-card button{
   cursor:pointer;
 }
 @media (max-width:360px){
-  html.qarip-stories .leto-tpl-grid{ grid-template-columns:repeat(2,1fr); }
   html.qarip-stories .leto-choice-steps{ grid-template-columns:1fr; }
 }
