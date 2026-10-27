@@ -12,7 +12,7 @@
   let allRows = [];
   let catalogByName = new Map();
   let mounting = false;
-  const FONTS_JSON = "/qarip/data/fonts.json?v=qarip1";
+  const FONTS_JSON = "/qarip/data/fonts.json?v=qarip8";
 
   const styleSheet = document.createElement("style");
   styleSheet.textContent =

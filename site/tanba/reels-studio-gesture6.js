@@ -1421,7 +1421,7 @@
 
   let FONT_INDEX = null;
   let fontIndexPromise = null;
-  const FONT_ASSET_V = "tanba18";
+  const FONT_ASSET_V = "qarip8";
 
   function loadFontIndex() {
     if (fontIndexPromise) return fontIndexPromise;

@@ -186,7 +186,7 @@
     }
     if (!document.querySelector('script[data-stories-editor]')) {
       const script = document.createElement("script");
-      script.src = "/tanba/stories-editor.js?v=tanba56";
+      script.src = "/tanba/stories-editor.js?v=tanba58";
       script.defer = true;
       script.dataset.storiesEditor = "1";
       document.body.appendChild(script);

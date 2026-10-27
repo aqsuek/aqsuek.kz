@@ -272,35 +272,61 @@
     setModalOpen(document.querySelector(".qarip-license-modal"), false);
   }
 
+  function isiOSFamily() {
+    const ua = navigator.userAgent || "";
+    if (/iPad|iPhone|iPod/.test(ua)) return true;
+    return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  }
+
+  const ARCHIVE_DIRECT =
+    "https://cdn.jsdelivr.net/gh/aqsuek/aqsuek.kz@tanba-fonts-v1/site/tanba/downloads/";
+
+  function archiveDirectUrl(file) {
+    return ARCHIVE_DIRECT + encodeURIComponent(file);
+  }
+
+  function archiveMime(file) {
+    return /\.rar$/i.test(file || "") ? "application/vnd.rar" : "application/zip";
+  }
+
+  function clickDownload(url, file) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file || "font.zip";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  function startIosArchiveDownload(file) {
+    // iPhone Safari ignores <a download> on blob: URLs; Chrome's share path copies.
+    // Navigate to the real zip so iOS saves the file into Files, not the clipboard.
+    window.location.assign(archiveDirectUrl(file));
+  }
+
   async function startDownload(href, filename) {
     if (isGoogleHref(href)) {
       window.open(href, "_blank", "noopener,noreferrer");
       return;
     }
     const file = archiveFileName(href, filename);
+    if (isiOSFamily()) {
+      startIosArchiveDownload(file);
+      return;
+    }
     const src = isFontArchiveHref(href) ? resolveArchiveUrl(href) : href;
     try {
       const res = await fetch(src, { mode: "cors", credentials: "omit" });
       if (!res.ok) throw new Error(`download ${res.status}`);
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = file;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 2500);
+      const typed = new Blob([blob], { type: archiveMime(file) });
+      const url = URL.createObjectURL(typed);
+      clickDownload(url, file);
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
     } catch (err) {
       console.warn(err);
-      // Last resort: stay on-site messaging — open blob path failed.
-      const link = document.createElement("a");
-      link.href = src;
-      link.rel = "noopener noreferrer";
-      link.download = file;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      clickDownload(src, file);
     }
   }
 

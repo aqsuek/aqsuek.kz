@@ -13,7 +13,7 @@
   let fontDataPromise = null;
   function loadFontData() {
     if (fontDataPromise) return fontDataPromise;
-    fontDataPromise = fetch(`/qarip/data/fonts.json?v=${ASSET_V}`)
+    fontDataPromise = fetch(`/qarip/data/fonts.json?v=qarip8`)
       .then((r) => (r.ok ? r.json() : []))
       .then((list) => {
         const rows = Array.isArray(list) ? list : [];

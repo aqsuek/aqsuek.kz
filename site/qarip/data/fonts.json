@@ -5797,5 +5797,442 @@
       "oswald",
       "orelega-one"
     ]
+  },
+  {
+    "slug": "avalon-medium",
+    "name": "Avalon Medium",
+    "maker": "Gophmann A.L.",
+    "author": "Gophmann A.L.",
+    "style": "Санс-сериф",
+    "category": "Sans Serif",
+    "family": "Local Avalon Medium",
+    "download": "/qarip/downloads/avalon-medium.zip",
+    "preview": "/qarip/fonts/preview/avalon-medium.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-samsung-sharp-sans",
+      "modern-h",
+      "titillium-web",
+      "inter"
+    ]
+  },
+  {
+    "slug": "fk-arabic",
+    "name": "FK Arabic",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local FK Arabic",
+    "download": "/qarip/downloads/fk-arabic.zip",
+    "preview": "/qarip/fonts/preview/fk-arabic.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "anthem",
+    "name": "Anthem",
+    "maker": "cyr Cherry Vishnya",
+    "author": "cyr Cherry Vishnya",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Anthem",
+    "download": "/qarip/downloads/anthem.zip",
+    "preview": "/qarip/fonts/preview/anthem.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "atziluth-script",
+    "name": "Atziluth Script",
+    "maker": "Motokiwo/cyrillic by Cherry Vishnya",
+    "author": "Motokiwo/cyrillic by Cherry Vishnya",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Atziluth Script",
+    "download": "/qarip/downloads/atziluth-script.zip",
+    "preview": "/qarip/fonts/preview/atziluth-script.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "bickham-script-pro-3",
+    "name": "Bickham Script Pro 3",
+    "maker": "Richard Lipton",
+    "author": "Richard Lipton",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Bickham Script Pro 3",
+    "download": "/qarip/downloads/bickham-script-pro-3.zip",
+    "preview": "/qarip/fonts/preview/bickham-script-pro-3.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "cassandra",
+    "name": "Cassandra",
+    "maker": "Gophmann A.L.",
+    "author": "Gophmann A.L.",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Cassandra",
+    "download": "/qarip/downloads/cassandra.zip",
+    "preview": "/qarip/fonts/preview/cassandra.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "corvetta",
+    "name": "Corvetta",
+    "maker": "Donis Miftahudin/cyrillic by Cherry Vishnya",
+    "author": "Donis Miftahudin/cyrillic by Cherry Vishnya",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Corvetta",
+    "download": "/qarip/downloads/corvetta.zip",
+    "preview": "/qarip/fonts/preview/corvetta.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "isadora",
+    "name": "Isadora",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Isadora",
+    "download": "/qarip/downloads/isadora.zip",
+    "preview": "/qarip/fonts/preview/isadora.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-boss-baby",
+    "name": "KZ Boss Baby",
+    "maker": "Paul Renner,Vladimir Yefimov, Isabella Chaeva",
+    "author": "Paul Renner,Vladimir Yefimov, Isabella Chaeva",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local KZ Boss Baby",
+    "download": "/qarip/downloads/kz-boss-baby.zip",
+    "preview": "/qarip/fonts/preview/kz-boss-baby.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "kz-decor",
+    "name": "KZ Decor",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local KZ Decor",
+    "download": "/qarip/downloads/kz-decor.zip",
+    "preview": "/qarip/fonts/preview/kz-decor.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "kz-mon-amour-one",
+    "name": "KZ Mon Amour One",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Mon Amour One",
+    "download": "/qarip/downloads/kz-mon-amour-one.zip",
+    "preview": "/qarip/fonts/preview/kz-mon-amour-one.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-taurus",
+    "name": "KZ Taurus",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local KZ Taurus",
+    "download": "/qarip/downloads/kz-taurus.zip",
+    "preview": "/qarip/fonts/preview/kz-taurus.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "kz-disney-park",
+    "name": "KZ Disney Park",
+    "maker": "Nikolay Dubina",
+    "author": "Nikolay Dubina",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local KZ Disney Park",
+    "download": "/qarip/downloads/kz-disney-park.zip",
+    "preview": "/qarip/fonts/preview/kz-disney-park.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "kz-nizami",
+    "name": "KZ Nizami",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Nizami",
+    "download": "/qarip/downloads/kz-nizami.zip",
+    "preview": "/qarip/fonts/preview/kz-nizami.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-vivaldi",
+    "name": "KZ Vivaldi",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Vivaldi",
+    "download": "/qarip/downloads/kz-vivaldi.zip",
+    "preview": "/qarip/fonts/preview/kz-vivaldi.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "ceremonious-three",
+    "name": "Ceremonious Three",
+    "maker": "Ivan D. Zeifert",
+    "author": "Ivan D. Zeifert",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Ceremonious Three",
+    "download": "/qarip/downloads/ceremonious-three.zip",
+    "preview": "/qarip/fonts/preview/ceremonious-three.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "miss-katherine",
+    "name": "Miss Katherine",
+    "maker": "Ira Dvilyuk/cyrillic by Cherry Vishnya",
+    "author": "Ira Dvilyuk/cyrillic by Cherry Vishnya",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Miss Katherine",
+    "download": "/qarip/downloads/miss-katherine.zip",
+    "preview": "/qarip/fonts/preview/miss-katherine.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "mister-k-informal",
+    "name": "Mister K Informal",
+    "maker": "Julia Sysmäläinen",
+    "author": "Julia Sysmäläinen",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Mister K Informal",
+    "download": "/qarip/downloads/mister-k-informal.zip",
+    "preview": "/qarip/fonts/preview/mister-k-informal.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-nuria",
+    "name": "KZ Nuria",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Nuria",
+    "download": "/qarip/downloads/kz-nuria.zip",
+    "preview": "/qarip/fonts/preview/kz-nuria.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-parsek",
+    "name": "KZ Parsek",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Parsek",
+    "download": "/qarip/downloads/kz-parsek.zip",
+    "preview": "/qarip/fonts/preview/kz-parsek.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "propisi",
+    "name": "Propisi",
+    "maker": "Manvel Shmavonyan, Gennadiy Fridman",
+    "author": "Manvel Shmavonyan, Gennadiy Fridman",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local Propisi",
+    "download": "/qarip/downloads/propisi.zip",
+    "preview": "/qarip/fonts/preview/propisi.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
+  },
+  {
+    "slug": "kz-timpani-stars",
+    "name": "KZ Timpani Stars",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Дисплей",
+    "category": "Display",
+    "family": "Local KZ Timpani Stars",
+    "download": "/qarip/downloads/kz-timpani-stars.zip",
+    "preview": "/qarip/fonts/preview/kz-timpani-stars.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "afolkalips",
+      "clickuper",
+      "dela-gothic-one",
+      "kz-facon"
+    ]
+  },
+  {
+    "slug": "kz-art-script",
+    "name": "KZ Art Script",
+    "maker": "Жеке жинақ · архив",
+    "author": "",
+    "style": "Қолжазба",
+    "category": "Handwritten",
+    "family": "Local KZ Art Script",
+    "download": "/qarip/downloads/kz-art-script.zip",
+    "preview": "/qarip/fonts/preview/kz-art-script.woff2",
+    "license": "check",
+    "local": true,
+    "similar": [
+      "kz-sign-painter",
+      "valisca",
+      "kz-balmoral",
+      "kz-buxton-sketch"
+    ]
   }
 ]
