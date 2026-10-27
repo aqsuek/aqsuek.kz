@@ -49,6 +49,10 @@
   --lg-r-box:18px;
   --lg-r-pill:999px;
 
+  --lg-page:1180px;
+  --lg-gutter:24px;
+  --lg-col:min(var(--lg-page), calc(100% - 2 * var(--lg-gutter)));
+
   --lg-ease:cubic-bezier(.22,1,.36,1);
   --lg-spring:cubic-bezier(.32,1.4,.42,1);
 
@@ -202,7 +206,7 @@ body.qarip-font-page .topbar{
   position:sticky;
   top:10px;
   z-index:60;
-  width:min(1180px, calc(100% - 24px));
+  width:var(--lg-col);
   margin:10px auto 0;
   min-height:56px;
   height:auto;
@@ -218,6 +222,37 @@ body.qarip-font-page .topbar.lg-scrolled{
   min-height:50px;
   background:var(--lg-reg-dense)!important;
   box-shadow:var(--lg-lift-2);
+}
+
+/* One content column: hero, catalog, cards and footer share one left edge. */
+html.qarip-home .intro.qarip-hero,
+html.qarip-home #catalog.workspace,
+html.qarip-home .qarip-landing,
+html.qarip-home #about.notice,
+html.qarip-home footer{
+  width:var(--lg-col)!important;
+  max-width:var(--lg-page);
+  margin-left:auto!important;
+  margin-right:auto!important;
+  box-sizing:border-box;
+}
+html.qarip-home .intro.qarip-hero,
+html.qarip-home #catalog.workspace{
+  padding-left:0!important;
+  padding-right:0!important;
+}
+html.qarip-home .intro.qarip-hero{
+  display:block;
+  min-height:0;
+  padding-top:36px;
+  padding-bottom:28px;
+}
+html.qarip-home .intro.qarip-hero:has(.qarip-hero-visual){
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);
+  gap:40px;
+  align-items:center;
+  min-height:min(62vh,560px);
 }
 
 /* In-page links must land below the floating bar, not under it. */
@@ -312,8 +347,7 @@ html:not(.qarip-stories) .site-footer{
 }
 
 html.qarip-home #about.notice{
-  width:min(1120px, calc(100% - 40px));
-  margin:8px auto 0;
+  margin-top:8px;
   padding:22px 24px 24px;
   border-radius:var(--lg-r-bar);
 }
@@ -348,8 +382,7 @@ html.qarip-home #about.notice a{
 html.qarip-home #about.notice a:hover{ text-decoration:underline; }
 
 html.qarip-home .qarip-landing{
-  width:min(1120px, calc(100% - 40px));
-  margin:12px auto 0;
+  margin-top:12px;
   padding:0;
   display:flex;
   flex-direction:column;
@@ -358,6 +391,7 @@ html.qarip-home .qarip-landing{
 html.qarip-home .qarip-how,
 html.qarip-home .qarip-toolcta{
   width:100%;
+  box-sizing:border-box;
   margin:0!important;
   padding:28px 28px 30px;
   border-radius:var(--lg-r-bar);
@@ -415,8 +449,8 @@ html.qarip-home .qarip-toolcta a:not(.qarip-cta-primary){
 html.qarip-home .qarip-toolcta a:not(.qarip-cta-primary):hover{ text-decoration:underline; }
 
 html.qarip-home footer{
-  width:min(1120px, calc(100% - 40px));
-  margin:28px auto 40px!important;
+  margin-top:28px!important;
+  margin-bottom:40px!important;
   padding:18px 0 28px!important;
   display:flex;
   flex-wrap:wrap;
@@ -1688,8 +1722,8 @@ html.nav-open .site-nav a:active{
    7. Responsive
    ========================================================================== */
 @media (max-width:900px){
+  :root{ --lg-gutter:16px; }
   html:not(.qarip-stories) .site-header,
-  html.qarip-v2:not(.qarip-stories) .topbar,
   body.qarip-font-page .topbar{
     top:8px;
     width:calc(100% - 16px);
@@ -1698,15 +1732,24 @@ html.nav-open .site-nav a:active{
     border-radius:22px;
     padding:6px 8px 6px 14px;
   }
+  html.qarip-v2:not(.qarip-stories) .topbar{
+    top:8px;
+    margin-top:8px;
+    min-height:52px;
+    border-radius:22px;
+    padding:6px 8px 6px 14px;
+  }
   html:not(.qarip-stories) .site-header{ border-radius:var(--lg-r-pill); }
   html.qarip-home #catalog .sticky-tester.tester{ top:72px; }
   html:not(.qarip-stories) body::before{ height:84px; }
-  html.qarip-home #about.notice,
-  html.qarip-home .qarip-landing,
-  html.qarip-home footer{
-    width:auto;
-    margin-left:16px;
-    margin-right:16px;
+  html.qarip-home .intro.qarip-hero{
+    padding-top:28px;
+    padding-bottom:24px;
+  }
+  html.qarip-home .intro.qarip-hero:has(.qarip-hero-visual){
+    grid-template-columns:1fr;
+    gap:22px;
+    min-height:0;
   }
   html.qarip-home #about.notice,
   html.qarip-home .qarip-how,
