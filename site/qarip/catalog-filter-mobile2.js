@@ -584,12 +584,8 @@
   }
 
   function polishFooter() {
-    const text =
-      "Таңба қаріптердің қазақ әліпбиін қолдауын тексеруге және оларды табуды жеңілдетуге арналған. Қаріптердің авторлық құқықтары тиісті құқық иелеріне тиесілі. Коммерциялық қолданар алдында әр қаріптің лицензия шарттарын тексеріңіз.";
-    document.querySelectorAll("#about p, footer p").forEach((el) => {
-      el.textContent = text;
-      el.dataset.qaripDisclaimer = "1";
-    });
+    const kicker = document.querySelector("#about .qarip-about-kicker");
+    if (kicker) kicker.textContent = "Жоба";
   }
 
   function bindPreviewDefault() {

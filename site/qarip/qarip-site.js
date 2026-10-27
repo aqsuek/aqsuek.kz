@@ -182,12 +182,13 @@
 
   function polishAboutFooter() {
     const about = document.querySelector("#about");
-    if (about && !about.querySelector(".qarip-about-kicker")) {
-      const kicker = document.createElement("p");
+    let kicker = about?.querySelector(".qarip-about-kicker");
+    if (about && !kicker) {
+      kicker = document.createElement("p");
       kicker.className = "qarip-about-kicker";
-      kicker.textContent = "Жоба";
       about.prepend(kicker);
     }
+    if (kicker) kicker.textContent = "Жоба";
     const aboutH = document.querySelector("#about h2");
     if (aboutH) aboutH.textContent = "Жоба туралы";
     const aboutP = document.querySelector("#about p:not(.qarip-about-kicker)");

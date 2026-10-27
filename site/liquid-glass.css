@@ -314,27 +314,30 @@ html:not(.qarip-stories) .site-footer{
 html.qarip-home #about.notice{
   width:min(1120px, calc(100% - 40px));
   margin:8px auto 0;
-  padding:28px 28px 30px;
+  padding:22px 24px 24px;
   border-radius:var(--lg-r-bar);
 }
 html.qarip-home #about.notice .qarip-about-kicker,
 html.qarip-home .qarip-how .qarip-about-kicker{
+  display:block;
   margin:0 0 8px;
-  font:800 11px/1 var(--lg-sans);
-  letter-spacing:.14em;
+  max-width:none;
+  font:800 11px/1.2 var(--lg-sans);
+  letter-spacing:.12em;
   text-transform:uppercase;
   color:var(--lg-tint);
+  white-space:nowrap;
 }
 html.qarip-home #about.notice h2{
-  margin:0 0 12px;
-  font:800 clamp(26px,3.4vw,36px)/1.12 var(--lg-sans);
+  margin:0 0 10px;
+  font:800 clamp(22px,3vw,28px)/1.15 var(--lg-sans);
   letter-spacing:-.04em;
   color:var(--lg-ink);
 }
-html.qarip-home #about.notice p{
+html.qarip-home #about.notice p:not(.qarip-about-kicker){
   margin:0;
-  max-width:42em;
-  font:500 16px/1.55 var(--lg-sans);
+  max-width:46em;
+  font:500 15px/1.5 var(--lg-sans);
   color:var(--lg-muted);
 }
 html.qarip-home #about.notice a{
