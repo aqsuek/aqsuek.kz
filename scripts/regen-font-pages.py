@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from html import escape
 from pathlib import Path
 from urllib.parse import quote_plus
@@ -230,11 +231,18 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 
 
 def write_sitemap(fonts: list[dict]) -> None:
-    urls = ["https://aqsuek.kz/qarip/"] + [
-        f"https://aqsuek.kz/qarip/font/{f['slug']}/" for f in fonts
+    today = date.today().isoformat()
+    urls = [("https://aqsuek.kz/qarip/", "1.0")] + [
+        (f"https://aqsuek.kz/qarip/font/{f['slug']}/", "0.6") for f in fonts
     ]
     body = "\n".join(
-        f"  <url><loc>{escape(u)}</loc><changefreq>weekly</changefreq></url>" for u in urls
+        (
+            f"  <url><loc>{escape(u)}</loc>"
+            f"<lastmod>{today}</lastmod>"
+            f"<changefreq>weekly</changefreq>"
+            f"<priority>{p}</priority></url>"
+        )
+        for u, p in urls
     )
     SITEMAP.write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -244,6 +252,49 @@ def write_sitemap(fonts: list[dict]) -> None:
         encoding="utf-8",
     )
     print(f"wrote sitemap {len(urls)} urls → {SITEMAP.relative_to(ROOT)}")
+    write_root_sitemaps(today)
+
+
+def write_root_sitemaps(today: str | None = None) -> None:
+    today = today or date.today().isoformat()
+    site = ROOT / "site"
+    pages = [
+        ("https://aqsuek.kz/", "1.0", "daily"),
+        ("https://aqsuek.kz/qarip/", "0.9", "daily"),
+        ("https://aqsuek.kz/tanba/", "0.8", "weekly"),
+        ("https://aqsuek.kz/tanba/stories/", "0.8", "weekly"),
+    ]
+    pages_body = "\n".join(
+        (
+            f"  <url><loc>{escape(u)}</loc>"
+            f"<lastmod>{today}</lastmod>"
+            f"<changefreq>{freq}</changefreq>"
+            f"<priority>{p}</priority></url>"
+        )
+        for u, p, freq in pages
+    )
+    (site / "sitemap-pages.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{pages_body}\n"
+        "</urlset>\n",
+        encoding="utf-8",
+    )
+    (site / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"  <sitemap><loc>https://aqsuek.kz/sitemap-pages.xml</loc><lastmod>{today}</lastmod></sitemap>\n"
+        f"  <sitemap><loc>https://aqsuek.kz/qarip/sitemap-fonts.xml</loc><lastmod>{today}</lastmod></sitemap>\n"
+        "</sitemapindex>\n",
+        encoding="utf-8",
+    )
+    (site / "tanba" / "sitemap-fonts.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"  <sitemap><loc>https://aqsuek.kz/qarip/sitemap-fonts.xml</loc><lastmod>{today}</lastmod></sitemap>\n"
+        "</sitemapindex>\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> None:
