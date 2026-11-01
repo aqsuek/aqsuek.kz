@@ -13,7 +13,8 @@ SITE = ROOT / "site" / "qarip"
 DATA = SITE / "data" / "fonts.json"
 FONT_DIR = SITE / "font"
 SITEMAP = SITE / "sitemap-fonts.xml"
-ASSET_V = "qarip1"
+ASSET_V = "qarip1"  # legacy
+V = {"css": "qarip10", "site": "qarip5", "lib": "qarip7", "detail": "qarip3", "lg": "lg33"}
 OG_IMAGE = "https://aqsuek.kz/qarip/assets/og-create.jpg"
 
 PREVIEW = "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І"
@@ -42,6 +43,69 @@ LICENSE = {
         "Лицензия туралы толық ақпарат расталмаған. Коммерциялық қолданбас бұрын құқық иесінің шарттарын тексеріңіз.",
     ),
 }
+
+
+STYLE_USE = {
+    "Дисплей": [
+        ("Қайда жарасады", "Дисплей қаріптер ірі көлемде жақсы көрінеді: постер, баннер, Instagram Stories тақырыбы, YouTube мұқабасы, логотип не афиша. Мінезі айқын болғандықтан ұзақ мәтінге емес, бір-екі сөздік тақырыпқа қолданған дұрыс."),
+        ("Қайда жарасады", "Бұл — назар аударту үшін жасалған дисплей қаріп. Оны тақырыпқа, жарнама слоганына, Stories мұқабасына не іс-шара афишасына қойыңыз, ал негізгі мәтінге қарапайым санс-сериф таңдаңыз."),
+    ],
+    "Санс-сериф": [
+        ("Қайда жарасады", "Санс-сериф (тырнақшасыз) қаріптер экранда таза оқылады. Сайт, қосымша интерфейсі, презентация, Stories мәтіні мен субтитрге ыңғайлы. Тақырыпқа да, негізгі мәтінге де қолдануға болады."),
+        ("Қайда жарасады", "Тырнақшасыз қаріп болғандықтан ол заманауи әрі ұқыпты көрінеді: презентация, мәзір, инфографика, әлеуметтік желі посты және сайт мәтіні үшін жақсы таңдау."),
+    ],
+    "Сериф": [
+        ("Қайда жарасады", "Сериф (тырнақшалы) қаріптер ұзақ мәтінді оқуды жеңілдетеді және салмақты көрінеді: кітап, журнал, мақала, шақыру қағазы, сертификат не ресми құжат үшін лайық."),
+        ("Қайда жарасады", "Тырнақшалы қаріп мәтінге классикалық, сенімді рең береді. Оны баспа материалына, мақала тақырыбына, мейрамхана мәзіріне не шақыруға қолданып көріңіз."),
+    ],
+    "Қолжазба": [
+        ("Қайда жарасады", "Қолжазба қаріптер қолмен жазылғандай жылы әсер береді: құттықтау, той шақыруы, ашықхат, Stories-тағы жеке жазба не брендтің қолтаңбасы үшін лайық. Кіші көлемде оқылуы қиындауы мүмкін, сондықтан ірі жазыңыз."),
+        ("Қайда жарасады", "Бұл қаріп жазудың табиғи қозғалысын береді. Құттықтау, шақыру, кафе мәзіріндегі тақырып не Stories-тағы қысқа сөз үшін жақсы, ал ұзақ мәтінге қарапайым қаріппен жұптаған дұрыс."),
+    ],
+    "Моно": [
+        ("Қайда жарасады", "Моноширинді қаріпте әр әріптің ені бірдей. Ол код жазуға, кесте, техникалық құжат, терминал стиліндегі дизайн мен минималистік постерге ыңғайлы."),
+        ("Қайда жарасады", "Әріптері тең енді болғандықтан бұл қаріп бағандарды түзу ұстайды: бағдарлама коды, сандар кестесі, «техно» стиліндегі Stories не постер үшін жарайды."),
+    ],
+}
+
+
+def about_html(font: dict, names: dict[str, str], is_google: bool) -> str:
+    name = escape(font["name"])
+    style = font.get("style") or "Дисплей"
+    variants = STYLE_USE.get(style, STYLE_USE["Дисплей"])
+    head, use = variants[sum(map(ord, font["slug"])) % len(variants)]
+    maker = (font.get("maker") or "").strip()
+    author = (font.get("author") or "").strip()
+    parts = []
+    origin = []
+    if is_google:
+        origin.append(f"{name} — Google Fonts кітапханасындағы ашық лицензиялы қаріп, оны сайтқа тікелей қосуға не компьютерге орнатуға болады.")
+    elif author:
+        origin.append(f"{name} қаріпінің авторы — {escape(author)}.")
+    elif maker and "Жеке жинақ" not in maker:
+        origin.append(f"{name} қаріпін жасаған — {escape(maker)}.")
+    origin.append(f"Санаты: {escape(style)} ({escape(font.get('category') or '')}).")
+    parts.append(f"<p>{' '.join(origin)}</p>")
+    parts.append(f"<h3>{head}</h3><p>{use}</p>")
+    parts.append(
+        "<h3>Қазақ әріптерін тексеру</h3>"
+        f"<p>Жоғарыдағы терезеде {name} қаріпінің Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін көрсететінін өз мәтініңізбен тексере аласыз. "
+        "Егер қай да бір әріп басқа қаріппен ауысып көрінсе, ол таңба бұл қаріпте жоқ деген сөз — қолданар алдында міндетті түрде қараңыз.</p>"
+    )
+    sim = [names.get(s, s) for s in (font.get("similar") or [])][:3]
+    if sim:
+        links = ", ".join(f'<a href="/qarip/font/{escape(s)}/">{escape(names.get(s, s))}</a>' for s in (font.get("similar") or [])[:3])
+        parts.append(f"<h3>Ұқсас нұсқалар</h3><p>Стилі жақын қаріптер: {links}. Бірнешеуін салыстырып, мәтініңізге ең жарасатынын таңдаңыз.</p>")
+    install = (
+        f'<p>Қаріпті жүктеп, архивтен шығарыңыз да, .ttf не .otf файлын ашып «Орнату» батырмасын басыңыз. Толық нұсқаулық: '
+        f'<a href="/blog/qazaqsha-qarip-ornatu/">қазақша қаріпті компьютер мен телефонға орнату</a>. '
+        f'Орнатпай-ақ {name} қаріпімен Stories жасағыңыз келсе — <a href="/tanba/stories/">Таңба редакторын</a> ашыңыз.</p>'
+    )
+    parts.append("<h3>Қалай орнатамын</h3>" + install)
+    return (
+        '<section class="font-detail-about" aria-labelledby="about-title">'
+        f'<h2 id="about-title">{name} туралы</h2>' + "".join(parts) + "</section>"
+    )
 
 
 def google_css(family: str) -> str:
@@ -80,7 +144,11 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 
     url = f"https://aqsuek.kz/qarip/font/{slug}/"
     og_image = f"https://aqsuek.kz/qarip/og/{slug}.jpg" if (ROOT / "site" / "qarip" / "og" / f"{slug}.jpg").exists() else OG_IMAGE
-    title = f"{name} қазақша қаріп — жүктеу және онлайн тексеру | Qarip"
+    title = f"{name} — қазақша қаріп, жүктеу және тексеру"
+    if len(title) > 58:
+        title = f"{name} — қазақша қаріп жүктеу"
+    if len(title) > 58:
+        title = f"{name} қаріпі"
     origin = "Google Fonts. " if is_google else ""
     description = (
         f"{name} қазақша қаріпін онлайн тексеріп, қазақ әріптерін (Ә Ғ Қ Ң Ө Ұ Ү Һ І) қарап "
@@ -156,10 +224,10 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <meta name="twitter:title" content="{escape(title)}"/>
 <meta name="twitter:description" content="{escape(description)}"/>
 <meta name="twitter:image" content="{og_image}"/>
-<link rel="stylesheet" href="/qarip/catalog-pages.css?v={ASSET_V}"/>
-<link rel="stylesheet" href="/liquid-glass.css?v=lg20"/>
+<link rel="stylesheet" href="/qarip/catalog-pages.css?v={V["css"]}"/>
+<link rel="stylesheet" href="/liquid-glass.css?v={V["lg"]}"/>
 {google_link}<script type="application/ld+json">{ld}</script>
-<script defer src="/qarip/qarip-site.js?v={ASSET_V}"></script>
+<script defer src="/qarip/qarip-site.js?v={V["site"]}"></script>
 <script defer src="/liquid-glass.js?v=lg20"></script>
 </head>
 <body class="qarip-font-page">
@@ -216,6 +284,8 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     </div>
   </section>
 
+  {about_html(font, names, is_google)}
+
   {similar}
 </main>
 <footer class="font-detail-footer">
@@ -228,8 +298,8 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     <a href="/">AQSUEK</a>
   </nav>
 </footer>
-<script src="/qarip/qarip-lib.js?v={ASSET_V}"></script>
-<script src="/qarip/font-detail.js?v={ASSET_V}"></script>
+<script src="/qarip/qarip-lib.js?v={V["lib"]}"></script>
+<script src="/qarip/font-detail.js?v={V["detail"]}"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "4cff9e1227a64f6ea836c3fd64686153"}}'></script>
 </body>
 </html>
@@ -279,7 +349,7 @@ def write_root_sitemaps(today: str | None = None) -> None:
         )
         for u, p, freq in pages
     )
-    (site / "sitemap-pages.xml").write_text(
+    if False: (site / "sitemap-pages.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         f"{pages_body}\n"

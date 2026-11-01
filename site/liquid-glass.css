@@ -2028,3 +2028,12 @@ html.qarip-stories .leto-hint-card button{
 @media (max-width:360px){
   html.qarip-stories .leto-choice-steps{ grid-template-columns:1fr; }
 }
+
+/* Desktop: the nav is fully visible, so the burger is redundant. Links look the same across AQSUEK / Qarip / Таңба. */
+@media (min-width: 1100px){
+  html:not(.qarip-stories):not(.nav-open):not(.qarip-nav-open) .nav-toggle,
+  html.qarip-v2:not(.qarip-nav-open) .qarip-nav-toggle,
+  html:not(.qarip-nav-open) .qarip-nav-toggle{ display:none !important; }
+  .topbar nav a, .site-nav a{ text-decoration:none !important; }
+  .topbar nav a:hover, .site-nav a:hover{ text-decoration:underline !important; text-underline-offset:4px; }
+}

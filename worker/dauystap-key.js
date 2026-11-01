@@ -16,6 +16,10 @@ const LIMITS = { transcribe_websocket: 40, tts_rt: 50 };
 const UNLIMITED = ['ekunat00@gmail.com'];
 const SESSION_SECONDS = { transcribe_websocket: 600, tts_rt: 120 };
 const PER_MINUTE = 20;
+// Guests (not signed in) can try a few times a day, counted per hashed IP, with a site-wide daily cap.
+const GUEST_LIMITS = { transcribe_websocket: 3, tts_rt: 3 };
+const GUEST_SESSION_SECONDS = { transcribe_websocket: 60, tts_rt: 60 };
+const GUEST_DAILY_CAP = 400;
 const hits = new Map();
 let jwksCache = { keys: null, until: 0 };
 
@@ -75,6 +79,42 @@ async function quota(env, sub) {
   return Object.fromEntries(Object.entries(LIMITS).map(([k, limit]) => [k, { limit, used: used[k] || 0 }]));
 }
 
+async function bump(env, sub, kind, limit) {
+  const row = await env.DB.prepare('INSERT INTO usage (day, sub, kind, count) VALUES (?1, ?2, ?3, 1) ON CONFLICT(day, sub, kind) DO UPDATE SET count = count + 1 RETURNING count')
+    .bind(today(), sub, kind).first();
+  if (row.count > limit) { await unbump(env, sub, kind); return false; }
+  return true;
+}
+async function unbump(env, sub, kind) {
+  await env.DB.prepare('UPDATE usage SET count = count - 1 WHERE day = ?1 AND sub = ?2 AND kind = ?3').bind(today(), sub, kind).run();
+}
+async function sha(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function guest(request, env, body, ip, origin) {
+  const sub = 'guest:' + await sha('aqsuek-guest|' + ip + '|' + today());
+  const guestQuota = async () => {
+    const { results } = await env.DB.prepare('SELECT kind, count FROM usage WHERE day = ?1 AND sub = ?2').bind(today(), sub).all();
+    const used = Object.fromEntries((results || []).map((r) => [r.kind, r.count]));
+    return Object.fromEntries(Object.entries(GUEST_LIMITS).map(([k, limit]) => [k, { limit, used: used[k] || 0 }]));
+  };
+  if (body.action === 'quota') return json({ guest: true, quota: await guestQuota() }, 200, origin);
+  const usage = body.usage || 'transcribe_websocket';
+  if (!GUEST_LIMITS[usage]) return json({ error: 'usage' }, 400, origin);
+  if (!await bump(env, 'guest:all', usage, GUEST_DAILY_CAP)) return json({ error: 'guest_quota', limit: GUEST_LIMITS[usage] }, 429, origin);
+  if (!await bump(env, sub, usage, GUEST_LIMITS[usage])) { await unbump(env, 'guest:all', usage); return json({ error: 'guest_quota', limit: GUEST_LIMITS[usage] }, 429, origin); }
+  const res = await fetch('https://api.soniox.com/v1/auth/temporary-api-key', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + env.SONIOX_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ usage_type: usage, expires_in_seconds: 300, single_use: true, max_session_duration_seconds: GUEST_SESSION_SECONDS[usage], client_reference_id: 'aqsuek:' + sub })
+  });
+  if (!res.ok) { await unbump(env, sub, usage); await unbump(env, 'guest:all', usage); return json({ error: 'upstream', status: res.status }, 502, origin); }
+  const data = await res.json();
+  return json({ api_key: data.api_key, expires_at: data.expires_at, guest: true, quota: await guestQuota() }, 200, origin);
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -94,6 +134,7 @@ export default {
     let body = {};
     try { body = await request.json(); } catch {}
     const token = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '') || body.token;
+    if (!token) return guest(request, env, body, ip, origin);
     let user;
     try { user = await verifyGoogle(token); } catch (e) { return json({ error: 'auth', reason: String(e.message || e) }, 401, origin); }
 

@@ -157,7 +157,7 @@
       <section class="qarip-toolcta" aria-labelledby="qarip-toolcta-title">
         <div class="qarip-toolcta-copy">
           <h2 id="qarip-toolcta-title">Story-де қолдану</h2>
-          <p>Ұнаған қаріпті Tañba редакторында ашып, 9:16 Story жасаңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
+          <p>Ұнаған қаріпті Таңба редакторында ашып, 9:16 Story жасаңыз.${n ? ` ${n} қаріп қолжетімді.` : ""}</p>
         </div>
         <a class="qarip-cta-primary" href="/tanba/stories/">Story жасау</a>
       </section>

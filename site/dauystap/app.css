@@ -318,3 +318,8 @@ textarea:focus, .dt-card input[type="search"]:focus { outline: 2px solid var(--a
 .dt-account-quota { color: var(--muted); }
 .dt-account .dt-link { margin-left: auto; }
 .dt-account + #app-body .dt-tabs { margin-top: 10px; }
+/* Guest mode: a slim invite above the tools instead of a wall */
+.dt-gate.is-guest { margin-top: 18px; padding: 18px 20px; gap: 8px; }
+.dt-gate.is-guest h2 { font-size: 1.1rem; }
+.dt-gate.is-guest p { font-size: 0.95rem; max-width: 560px; }
+.dt-gate-quota { color: #d9ff47 !important; font-weight: 700; font-size: 0.9rem; }

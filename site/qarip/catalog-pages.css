@@ -1245,3 +1245,9 @@ html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(34px,4.2vw
  html.qarip-home .intro.qarip-hero{grid-template-columns:1fr;gap:28px}
  html.qarip-home .qarip-hero-visual{max-width:240px}
 }
+.font-detail-about{margin:28px 0 8px;padding:24px;border:1px solid rgba(127,127,127,.22);border-radius:22px;max-width:820px}
+.font-detail-about h2{margin:0 0 10px;font-size:1.35rem;letter-spacing:-.02em}
+.font-detail-about h3{margin:18px 0 6px;font-size:1.02rem}
+.font-detail-about p{margin:0 0 8px;line-height:1.65;opacity:.88}
+.font-detail-about a{text-decoration:underline;text-underline-offset:3px;font-weight:600}
+@media (max-width:640px){.font-detail-about{padding:16px;border-radius:18px}}

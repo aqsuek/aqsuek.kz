@@ -10,6 +10,7 @@ ARTICLES = [
         'slug': 'qazaqsha-qarip-ornatu',
         'date': '2026-11-02',
         'title': 'Қазақша қаріпті компьютер мен телефонға қалай орнатуға болады',
+        'seo': 'Қазақша қаріпті қалай орнатамын: компьютер мен телефон',
         'description': 'Windows, Mac, iPhone және Android-қа қазақ әріптерін қолдайтын қаріпті орнату жолы. Қаріп қазақ әріптерін қолдайтынын қалай тексеруге болады.',
         'lead': 'Қаріп таптыңыз, бірақ Қ, Ғ, Ң, Ә әріптері сұрақ белгісі не бос төртбұрыш болып шығады ма? Себебі көп қаріпте қазақ әріптері мүлде жоқ. Төменде қаріпті алдымен қалай тексеру керегін және әр құрылғыға қалай орнатуды түсіндіреміз.',
         'cta': ('/qarip/', 'Qarip-тен қаріп табу'),
@@ -47,6 +48,7 @@ ARTICLES = [
         'slug': 'qazaqsha-story',
         'date': '2026-11-02',
         'title': 'Instagram-да қазақша Story қалай жасауға болады: Ә, Ғ, Қ әріптері бұзылмасын',
+        'seo': 'Қазақша Instagram Story қалай жасаймын | AQSUEK',
         'description': 'Instagram Stories-те қазақ әріптері неге бұзылады және әдемі қазақша Story-ді 2 минутта қалай жасауға болады. Қадамдық нұсқаулық.',
         'lead': 'Instagram-ның өз қаріптерінің бір бөлігі қазақ әріптерін дұрыс көрсетпейді: Қ, Ғ, Ң әріптері басқа қаріппен шығып, мәтін ала-құла көрінеді. Ең сенімді шешім — мәтінді дайын сурет етіп жасау.',
         'cta': ('/tanba/stories/', 'Tañba-да Story жасау'),
@@ -82,6 +84,7 @@ ARTICLES = [
         'slug': 'dauyspen-jazu',
         'date': '2026-11-02',
         'title': 'Телефонда қазақша дауыспен жазу: мәтінді теру қажет емес',
+        'seo': 'Телефонда қазақша дауыспен жазу | AQSUEK',
         'description': 'Қазақша сөйлеп мәтін жазудың жолдары: пернетақтадағы микрофон және DauysTap. Аралас қазақ-орыс сөзін тану, видеодан мәтін шығару, мәтінді дауыспен оқыту.',
         'lead': 'Ұзын хабарламаны, пост мәтінін не жиналыс жазбасын терудің орнына айтып жазуға болады. Бұл мақалада қазақша дауыспен жазудың жолдарын және қайсысы қашан ыңғайлы екенін айтамыз.',
         'cta': ('/dauystap/', 'DauysTap-та сөйлеп жазу'),
@@ -164,7 +167,7 @@ def page(title, description, canonical, body, extra_head=''):
   <meta property="og:image" content="https://aqsuek.kz/assets/aqsuek/og.jpg"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="stylesheet" href="/home.css?v=aqsuek6"/>
-  <link rel="stylesheet" href="/liquid-glass.css?v=lg27"/>
+  <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
   <link rel="stylesheet" href="/blog/blog.css?v=2"/>
 {extra_head}</head>
 <body>
@@ -246,7 +249,7 @@ def main():
         d = os.path.join(SITE, 'blog', a['slug'])
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(page(a['title'] + ' | AQSUEK', a['description'], url, body, head))
+            f.write(page(a.get('seo', a['title'] + ' | AQSUEK'), a['description'], url, body, head))
         cards.append(f'''        <li><a class="post-card" href="/blog/{a["slug"]}/"><time datetime="{a["date"]}">{fmt_date(a["date"])}</time><h2>{html.escape(a["title"])}</h2><p>{html.escape(a["description"])}</p><span class="post-card-more">Оқу →</span></a></li>''')
     body = '''      <p class="eyebrow">Мақалалар</p>
       <h1>Қазақша контент жасау туралы нұсқаулықтар</h1>

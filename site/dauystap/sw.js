@@ -1,8 +1,8 @@
 /* DauysTap service worker: opens instantly and works offline for the page shell.
    Speech requests (key server, Soniox, Google) are never cached. */
-const CACHE = 'dauystap-v1';
+const CACHE = 'dauystap-v2';
 const SHELL = [
-  '/dauystap/', '/dauystap/app.css?v=3', '/dauystap/app.js?v=3', '/dauystap/config.js?v=3',
+  '/dauystap/', '/dauystap/app.css?v=4', '/dauystap/app.js?v=4', '/dauystap/config.js?v=3',
   '/home.css?v=aqsuek6', '/liquid-glass.css?v=lg27', '/dauystap/icon-192.png'
 ];
 self.addEventListener('install', (e) => {

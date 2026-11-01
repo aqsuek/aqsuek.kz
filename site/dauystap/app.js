@@ -104,7 +104,8 @@
   function renderAuth() {
     const signedIn = !!auth.token;
     $('gate').hidden = signedIn;
-    $('app-body').hidden = !signedIn;
+    $('gate').classList.toggle('is-guest', !signedIn);
+    $('app-body').hidden = false;
     $('account').hidden = !signedIn;
     if (signedIn && auth.profile) $('account-email').textContent = auth.profile.email || auth.profile.name || '';
   }
@@ -140,6 +141,13 @@
     showGate('');
   });
 
+  function renderGuestQuota(q) {
+    const el = $('gate-quota');
+    if (!el || !q) return;
+    const left = (k) => Math.max(0, q[k].limit - q[k].used);
+    el.textContent = 'Бүгін тіркелмей: ' + left('transcribe_websocket') + ' жазу · ' + left('tts_rt') + ' дауыс қалды';
+    el.hidden = false;
+  }
   function renderQuota(q, unlimited) {
     const el = $('account-quota');
     if (unlimited) { el.textContent = 'Шексіз'; return; }
@@ -159,21 +167,23 @@
   /* ---------- keys ---------- */
   async function getKey(usage) {
     if (CONFIG.keyServer) {
-      const token = await ensureToken();
-      const res = await fetch(CONFIG.keyServer, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ usage })
-      });
+      const token = auth.token ? await ensureToken() : null;
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = 'Bearer ' + token;
+      const res = await fetch(CONFIG.keyServer, { method: 'POST', headers, body: JSON.stringify({ usage }) });
       if (res.status === 401) { showGate('Қайта кіріңіз.'); throw new Error('Алдымен Google арқылы кіріңіз.'); }
       if (res.status === 429) {
         const d = await res.json().catch(() => ({}));
+        if (d.error === 'guest_quota') {
+          $('gate').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          throw new Error('Тегін сынақ бүгінге таусылды. Google арқылы кіріңіз — күніне 40 жазу және 50 дауыс.');
+        }
         if (d.error === 'quota') { refreshQuota(); throw new Error(usage === 'tts_rt' ? 'Бүгінгі дауыс лимиті бітті (' + d.limit + '). Ертең жаңарады.' : 'Бүгінгі жазу лимиті бітті (' + d.limit + '). Ертең жаңарады.'); }
         throw new Error('Сұраныс тым көп. Бір минуттан соң қайталаңыз.');
       }
       if (!res.ok) throw new Error('Қызметке қосылу мүмкін болмады.');
       const data = await res.json();
-      renderQuota(data.quota, data.unlimited);
+      if (data.guest) renderGuestQuota(data.quota); else renderQuota(data.quota, data.unlimited);
       return data.api_key;
     }
     if (CONFIG.apiKey) return CONFIG.apiKey;
@@ -650,6 +660,7 @@
   /* ---------- init ---------- */
   try { const saved = localStorage.getItem(TOKEN_KEY); if (tokenValid(saved, 60)) setToken(saved); } catch {}
   renderAuth();
+  if (!auth.token && CONFIG.keyServer) fetch(CONFIG.keyServer, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'quota' }) }).then((r) => r.ok ? r.json() : null).then((d) => d && renderGuestQuota(d.quota)).catch(() => {});
   if (CONFIG.googleClientId) initGoogle(); else { $('gate').hidden = true; $('app-body').hidden = false; }
   renderHistory();
   updateTtsCount();
