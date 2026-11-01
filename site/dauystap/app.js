@@ -80,22 +80,100 @@
     };
   }
 
+  /* ---------- Google sign-in ---------- */
+  const TOKEN_KEY = 'aqsuek.google';
+  const auth = { token: null, profile: null, waiters: [] };
+
+  function decodeJwt(token) {
+    try {
+      const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(decodeURIComponent(atob(part).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+    } catch { return null; }
+  }
+  function tokenValid(token, marginSeconds) {
+    const p = token && decodeJwt(token);
+    return !!(p && p.exp && p.exp * 1000 - Date.now() > (marginSeconds || 0) * 1000);
+  }
+  function setToken(token) {
+    auth.token = token;
+    auth.profile = token ? decodeJwt(token) : null;
+    try { token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY); } catch {}
+    renderAuth();
+    if (token) { auth.waiters.splice(0).forEach((w) => w(token)); refreshQuota(); }
+  }
+  function renderAuth() {
+    const signedIn = !!auth.token;
+    $('gate').hidden = signedIn;
+    $('app-body').hidden = !signedIn;
+    $('account').hidden = !signedIn;
+    if (signedIn && auth.profile) $('account-email').textContent = auth.profile.email || auth.profile.name || '';
+  }
+  function showGate(message) {
+    $('gate-note').textContent = message || '';
+    $('gate-note').hidden = !message;
+    setToken(null);
+    if (window.google && google.accounts && google.accounts.id) google.accounts.id.prompt();
+  }
+  // Resolves with a token that is valid for at least another minute; asks to sign in again if needed.
+  function ensureToken() {
+    if (tokenValid(auth.token, 60)) return Promise.resolve(auth.token);
+    return new Promise((resolve) => {
+      auth.waiters.push(resolve);
+      showGate('Қауіпсіздік үшін қайта кіріңіз — бір рет басу жеткілікті.');
+    });
+  }
+  function initGoogle() {
+    if (!window.google || !google.accounts || !google.accounts.id) { setTimeout(initGoogle, 200); return; }
+    google.accounts.id.initialize({
+      client_id: CONFIG.googleClientId,
+      callback: (r) => { if (r && r.credential) setToken(r.credential); },
+      auto_select: true,
+      itp_support: true,
+      use_fedcm_for_prompt: true,
+      context: 'signin'
+    });
+    google.accounts.id.renderButton($('gate-button'), { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: 'kk', width: 300 });
+    if (!auth.token) google.accounts.id.prompt();
+  }
+  $('sign-out').addEventListener('click', () => {
+    if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+    showGate('');
+  });
+
+  function renderQuota(q, unlimited) {
+    const el = $('account-quota');
+    if (unlimited) { el.textContent = 'Шексіз'; return; }
+    if (!q) { el.textContent = ''; return; }
+    const left = (k) => Math.max(0, q[k].limit - q[k].used);
+    el.textContent = 'Бүгін: ' + left('transcribe_websocket') + ' жазу · ' + left('tts_rt') + ' дауыс';
+  }
+  async function refreshQuota() {
+    if (!CONFIG.keyServer || !tokenValid(auth.token, 10)) return;
+    try {
+      const res = await fetch(CONFIG.keyServer, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + auth.token }, body: JSON.stringify({ action: 'quota' }) });
+      if (res.status === 401) { showGate('Қайта кіріңіз.'); return; }
+      if (res.ok) { const d = await res.json(); renderQuota(d.quota, d.unlimited); }
+    } catch {}
+  }
+
   /* ---------- keys ---------- */
-  const keyCache = {};
   async function getKey(usage) {
     if (CONFIG.keyServer) {
-      const cached = keyCache[usage];
-      if (cached && cached.expires - Date.now() > 30000) return cached.key;
+      const token = await ensureToken();
       const res = await fetch(CONFIG.keyServer, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         body: JSON.stringify({ usage })
       });
-      if (res.status === 429) throw new Error('Сұраныс тым көп. Бір минуттан соң қайталаңыз.');
+      if (res.status === 401) { showGate('Қайта кіріңіз.'); throw new Error('Алдымен Google арқылы кіріңіз.'); }
+      if (res.status === 429) {
+        const d = await res.json().catch(() => ({}));
+        if (d.error === 'quota') { refreshQuota(); throw new Error(usage === 'tts_rt' ? 'Бүгінгі дауыс лимиті бітті (' + d.limit + '). Ертең жаңарады.' : 'Бүгінгі жазу лимиті бітті (' + d.limit + '). Ертең жаңарады.'); }
+        throw new Error('Сұраныс тым көп. Бір минуттан соң қайталаңыз.');
+      }
       if (!res.ok) throw new Error('Қызметке қосылу мүмкін болмады.');
       const data = await res.json();
-      const expires = data.expires_at ? Date.parse(data.expires_at) : Date.now() + 240000;
-      keyCache[usage] = { key: data.api_key, expires };
+      renderQuota(data.quota, data.unlimited);
       return data.api_key;
     }
     if (CONFIG.apiKey) return CONFIG.apiKey;
@@ -104,6 +182,7 @@
 
   function friendly(error) {
     const text = String((error && error.message) || error || '');
+    if (/лимит|Google/.test(text)) return text;
     if (/balance|quota|credit/i.test(text)) return 'Қызмет уақытша қолжетімсіз. Кейінірек қайталаңыз.';
     if (/401|unauthor|invalid api key|api key/i.test(text)) return 'Қызметке қосылу мүмкін болмады.';
     if (/NotAllowedError|Permission|denied/i.test(text)) return 'Микрофонға рұқсат берілмеді. Браузердің баптауынан рұқсат беріңіз.';
@@ -548,6 +627,9 @@
   });
 
   /* ---------- init ---------- */
+  try { const saved = localStorage.getItem(TOKEN_KEY); if (tokenValid(saved, 60)) setToken(saved); } catch {}
+  renderAuth();
+  if (CONFIG.googleClientId) initGoogle(); else { $('gate').hidden = true; $('app-body').hidden = false; }
   renderHistory();
   updateTtsCount();
   updateDictCount();

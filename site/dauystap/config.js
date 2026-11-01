@@ -11,5 +11,6 @@
  */
 window.DAUYSTAP_CONFIG = {
   keyServer: "https://dauystap-key.ekunat00.workers.dev",
-  apiKey: ""
+  apiKey: "",
+  googleClientId: "686521879720-6g85tps9nta4ok1bcdc5bvgfin4jt690.apps.googleusercontent.com"
 };

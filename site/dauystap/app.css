@@ -287,3 +287,34 @@ textarea:focus, .dt-card input[type="search"]:focus { outline: 2px solid var(--a
 @media (prefers-reduced-motion: reduce) {
   .dt-wave i, .dt-loader em, .dt-progress-track i::after { animation: none; }
 }
+
+/* Sign-in gate and account bar */
+.dt-gate {
+  margin-top: 26px;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: clamp(24px, 6vw, 40px) clamp(18px, 5vw, 32px);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--dt-navy), var(--dt-navy-2));
+  color: #fff;
+}
+.dt-gate h2 { margin: 0; font-size: 1.4rem; letter-spacing: -0.02em; }
+.dt-gate p { margin: 0; max-width: 420px; color: #c3d0e4; }
+.dt-gate-button { min-height: 44px; display: flex; justify-content: center; }
+.dt-gate-note { color: #fff !important; font-weight: 600; }
+.dt-gate-small { font-size: 0.85rem; }
+.dt-gate-small a { color: #fff; text-decoration: underline; }
+.dt-account {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 0.88rem;
+}
+.dt-account-email { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+.dt-account-quota { color: var(--muted); }
+.dt-account .dt-link { margin-left: auto; }
+.dt-account + #app-body .dt-tabs { margin-top: 10px; }
