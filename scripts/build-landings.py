@@ -239,7 +239,7 @@ def build(key):
   <meta name="twitter:image" content="{og}"/>
   <link rel="stylesheet" href="/home.css?v=aqsuek7"/>
   <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
-  <link rel="stylesheet" href="/landing.css?v=4"/>
+  <link rel="stylesheet" href="/landing.css?v=6"/>
   <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>
 <body>
