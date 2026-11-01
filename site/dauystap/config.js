@@ -10,6 +10,6 @@
  *             keyServer бос болғанда ғана қолданылады.
  */
 window.DAUYSTAP_CONFIG = {
-  keyServer: "",
+  keyServer: "https://dauystap-key.ekunat00.workers.dev",
   apiKey: ""
 };
