@@ -227,6 +227,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 </footer>
 <script src="/qarip/qarip-lib.js?v={ASSET_V}"></script>
 <script src="/qarip/font-detail.js?v={ASSET_V}"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "4cff9e1227a64f6ea836c3fd64686153"}}'></script>
 </body>
 </html>
 """
