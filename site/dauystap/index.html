@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DauysTap — сөйлеп жазу, мәтіннен дауыс, видеодан мәтін</title>
+  <meta name="description" content="Браузерде тегін: қазақша сөйлеп жазыңыз, мәтінді дауыспен тыңдаңыз, видеодағы сөздерді мәтінге айналдырыңыз.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://aqsuek.kz/dauystap/">
+  <link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="kk_KZ">
+  <meta property="og:site_name" content="AQSUEK">
+  <meta property="og:title" content="DauysTap — сөйле, мәтін өзі жазылады">
+  <meta property="og:description" content="Браузерде тегін: сөйлеп жазу, мәтіннен дауыс, видеодан мәтін.">
+  <meta property="og:url" content="https://aqsuek.kz/dauystap/">
+  <link rel="stylesheet" href="/home.css?v=aqsuek4">
+  <link rel="stylesheet" href="/liquid-glass.css?v=lg27">
+  <link rel="stylesheet" href="/dauystap/app.css?v=1">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"DauysTap","applicationCategory":"UtilitiesApplication","inLanguage":"kk","url":"https://aqsuek.kz/dauystap/","offers":{"@type":"Offer","price":"0"},"publisher":{"@type":"Organization","name":"AQSUEK","url":"https://aqsuek.kz/"}}</script>
+</head>
+<body>
+  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
+      <nav class="site-nav" id="site-nav" aria-label="Негізгі мәзір">
+        <a href="/qarip/">Qarip</a>
+        <a href="/tanba/stories/">Stories</a>
+        <a href="/tanba/">Tañba</a>
+        <a href="/dauystap/" aria-current="page">DauysTap</a>
+      </nav>
+      <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="dt-app">
+    <div class="wrap">
+      <div class="dt-intro">
+        <p class="eyebrow">03 / DauysTap</p>
+        <h1>Сөйле. Мәтін өзі жазылады.</h1>
+        <p class="dt-lead">Қазақша, орысша, ағылшынша — араласса да түсінеді. Браузерде, тегін, тіркелусіз.</p>
+      </div>
+
+      <div class="dt-tabs" role="tablist" aria-label="Құралдар">
+        <button type="button" role="tab" id="tab-dictate" aria-controls="panel-dictate" aria-selected="true">Сөйлеп жазу</button>
+        <button type="button" role="tab" id="tab-voice" aria-controls="panel-voice" aria-selected="false" tabindex="-1">Мәтіннен дауыс</button>
+        <button type="button" role="tab" id="tab-video" aria-controls="panel-video" aria-selected="false" tabindex="-1">Видео → мәтін</button>
+        <button type="button" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">Тарих</button>
+      </div>
+
+      <!-- Dictation -->
+      <section class="dt-panel" id="panel-dictate" role="tabpanel" aria-labelledby="tab-dictate">
+        <div class="dt-card dt-recorder">
+          <div class="dt-wavebox" aria-hidden="true"><canvas id="dict-wave" width="600" height="96"></canvas></div>
+          <button type="button" class="dt-mic" id="dict-mic" aria-pressed="false" aria-label="Жазуды бастау">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+          </button>
+          <p class="dt-hint" id="dict-hint">Микрофонды басып, сөйлей беріңіз. Қайта басқанда тоқтайды.</p>
+          <p class="dt-timer" id="dict-timer" hidden>0:00</p>
+          <div class="dt-progress" id="dict-progress" hidden>
+            <div class="dt-progress-head"><span data-label>Танылуда</span><b data-pct>0%</b></div>
+            <div class="dt-progress-track"><i data-bar></i></div>
+          </div>
+        </div>
+
+        <div class="dt-card">
+          <div class="dt-card-head">
+            <h2>Мәтін</h2>
+            <span class="dt-count" id="dict-count">0 таңба</span>
+          </div>
+          <div class="dt-output" id="dict-output" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Танылған мәтін" data-placeholder="Сөйлеген сөздеріңіз осы жерде пайда болады."></div>
+          <div class="dt-actions">
+            <button type="button" class="btn btn-primary" id="dict-copy">Көшіру</button>
+            <button type="button" class="btn btn-ghost" id="dict-to-voice">Дауыспен тыңдау</button>
+            <button type="button" class="btn btn-ghost" id="dict-clear">Тазалау</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Text to speech -->
+      <section class="dt-panel" id="panel-voice" role="tabpanel" aria-labelledby="tab-voice" hidden>
+        <div class="dt-card">
+          <label class="dt-label" for="tts-text">Мәтін</label>
+          <textarea id="tts-text" rows="6" maxlength="1500" placeholder="Мәтінді осында жазыңыз…"></textarea>
+          <div class="dt-row">
+            <div class="dt-presets" aria-label="Дайын мәтіндер">
+              <button type="button" class="dt-chip" data-preset="Сәлем! DauysTap-қа қош келдіңіз. Бүгінгі күніңіз сәтті өтсін!">Сәлемдесу</button>
+              <button type="button" class="dt-chip" data-preset="Сәлеметсіз бе! Ертеңгі кездесу сағат 15:00-де басталады.">Хабарлама</button>
+              <button type="button" class="dt-chip" data-preset="Идеяңызды дауыспен жеткізіңіз. DauysTap — сөзіңізге жаңа үн.">Жарнама</button>
+            </div>
+            <span class="dt-count" id="tts-count">0 / 1500</span>
+          </div>
+          <div class="dt-fields">
+            <div>
+              <label class="dt-label" for="tts-voice">Дауыс</label>
+              <div class="dt-select"><select id="tts-voice">
+                <option value="Adrian">Adrian · Ер</option>
+                <option value="Maya">Maya · Әйел</option>
+                <option value="Daniel">Daniel · Ер</option>
+                <option value="Noah">Noah · Ер</option>
+                <option value="Nina">Nina · Әйел</option>
+                <option value="Emma">Emma · Әйел</option>
+                <option value="Jack">Jack · Ер</option>
+              </select></div>
+            </div>
+            <div>
+              <label class="dt-label" for="tts-lang">Тіл</label>
+              <div class="dt-select"><select id="tts-lang">
+                <option value="kk">Қазақша</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+              </select></div>
+            </div>
+          </div>
+          <div class="dt-progress" id="tts-progress" hidden>
+            <div class="dt-progress-head"><span data-label>Дауыс жасалуда</span><b data-pct>0%</b></div>
+            <div class="dt-progress-track"><i data-bar></i></div>
+          </div>
+          <div class="dt-actions">
+            <button type="button" class="btn btn-primary" id="tts-go" disabled>▶ Тыңдау</button>
+            <a class="btn btn-ghost" id="tts-download" hidden download="DauysTap.mp3">↓ MP3 жүктеу</a>
+          </div>
+          <audio id="tts-audio" controls hidden></audio>
+        </div>
+      </section>
+
+      <!-- Video to text -->
+      <section class="dt-panel" id="panel-video" role="tabpanel" aria-labelledby="tab-video" hidden>
+        <div class="dt-card">
+          <label class="dt-drop" id="video-drop">
+            <input type="file" id="video-file" accept="video/*,audio/*">
+            <strong>Видео таңдау</strong>
+            <span>не осында сүйреп әкеліңіз · MP4, MOV, WebM, MP3 · 200 МБ дейін</span>
+          </label>
+          <p class="dt-file" id="video-name" hidden></p>
+          <div class="dt-progress" id="video-progress" hidden>
+            <div class="dt-progress-head"><span data-label>Дайындалуда</span><b data-pct>0%</b></div>
+            <div class="dt-progress-track"><i data-bar></i></div>
+          </div>
+          <div class="dt-actions" id="video-cancel-row" hidden>
+            <button type="button" class="btn btn-ghost" id="video-cancel">Тоқтату</button>
+          </div>
+        </div>
+        <div class="dt-card">
+          <div class="dt-card-head">
+            <h2>Танылған мәтін</h2>
+            <span class="dt-count" id="video-count">0 таңба</span>
+          </div>
+          <div class="dt-output" id="video-output" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Видеодан танылған мәтін" data-placeholder="Видеодағы сөздер осы жерде пайда болады."></div>
+          <div class="dt-actions">
+            <button type="button" class="btn btn-primary" id="video-copy">Көшіру</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="dt-panel" id="panel-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+        <div class="dt-card">
+          <div class="dt-card-head">
+            <h2>Тарих</h2>
+            <button type="button" class="dt-link" id="history-clear">Барлығын өшіру</button>
+          </div>
+          <input type="search" id="history-search" placeholder="Мәтін іздеу" aria-label="Тарихтан іздеу">
+          <ol class="dt-history" id="history-list"></ol>
+          <p class="dt-empty" id="history-empty">Алғашқы мәтініңіз осы жерде пайда болады. Тарих тек осы браузерде сақталады.</p>
+        </div>
+      </section>
+
+      <p class="dt-toast" id="toast" role="status" aria-live="polite"></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p class="footer-copy">AQSUEK © 2026</p>
+      <nav class="footer-links" aria-label="Төменгі мәзір">
+        <a href="/qarip/">Qarip</a>
+        <a href="/tanba/stories/">Stories</a>
+        <a href="/tanba/">Tañba</a>
+        <a href="/dauystap/">DauysTap</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/dauystap/config.js?v=1"></script>
+  <script src="/dauystap/app.js?v=1" defer></script>
+  <script src="/home.js?v=aqsuek2" defer></script>
+  <script src="/liquid-glass.js?v=lg20" defer></script>
+</body>
+</html>
