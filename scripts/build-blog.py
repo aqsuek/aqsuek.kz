@@ -115,6 +115,33 @@ ARTICLES = [
 ]
 
 
+ABOUT_BODY = '''      <p class="eyebrow">Жоба туралы</p>
+      <h1>AQSUEK — қазақ тілінде контент жасауға арналған құралдар</h1>
+      <p class="post-lead">AQSUEK қазақша жазатын, дизайн жасайтын және видео түсіретін адамдарға арналған тегін құралдар жинағы. Мақсатымыз қарапайым: қазақ әріптері кез келген жерде дұрыс шықсын, ал қазақша контент жасау орысша не ағылшынша жасаудан қиын болмасын.</p>
+      <div class="post-body">
+        <h2>Неге бастадық</h2>
+        <p>Көп қаріпте Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптері жоқ. Дизайн құралдарында, Instagram-да, тұсаукесер слайдтарында бұл әріптер басқа қаріппен шығып, мәтін ала-құла көрінеді. Ал қазақша дауыспен жазу мен мәтінді дауыстау құралдары аз әрі көбіне ақылы. AQSUEK осы олқылықтарды жабу үшін жасалды.</p>
+
+        <h2>Құралдар</h2>
+        <ul class="about-tools">
+          <li><a href="/qarip/"><b>Qarip</b></a> — қазақ әріптерін толық қолдайтын 320+ қаріп каталогы. Өз мәтініңізбен тексеріп, жүктей аласыз.</li>
+          <li><a href="/tanba/stories/"><b>Tañba Stories</b></a> — фон, мәтін және қазақша қаріппен дайын 9:16 Story жасайтын редактор.</li>
+          <li><a href="/dauystap/"><b>DauysTap</b></a> — сөйлеп жазу, мәтінді дауыстау және видеодағы сөзді мәтінге айналдыру. Қазақша, орысша, ағылшынша.</li>
+        </ul>
+
+        <h2>Қағидаларымыз</h2>
+        <ul>
+          <li><b>Тегін.</b> Негізгі мүмкіндіктер ақысыз. DauysTap-та әр адамға күнделікті лимит бар — қызмет бәріне жетуі үшін.</li>
+          <li><b>Браузерде.</b> Ештеңе орнатудың қажеті жоқ, телефонда да, компьютерде де ашылады.</li>
+          <li><b>Деректер — сіздікі.</b> Мәтін тарихы өз браузеріңізде сақталады, аудио мен видео серверде қалмайды. Толығырақ — <a href="/privacy/">құпиялық саясаты</a>.</li>
+          <li><b>Лицензияға адалдық.</b> Қаріптердің авторлық құқығы иелерінде. Әр қаріп бетінде лицензиясын тексеруге шақырамыз.</li>
+        </ul>
+
+        <h2>Байланыс</h2>
+        <p>Ұсыныс, қате не серіктестік туралы жазыңыз: <a href="mailto:ekunat00@gmail.com">ekunat00@gmail.com</a>. Каталогқа қосу керек қазақша қаріп білсеңіз — оны да жіберіңіз.</p>
+      </div>'''
+
+
 def page(title, description, canonical, body, extra_head=''):
     t = html.escape(title)
     d = html.escape(description, quote=True)
@@ -138,7 +165,7 @@ def page(title, description, canonical, body, extra_head=''):
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="stylesheet" href="/home.css?v=aqsuek6"/>
   <link rel="stylesheet" href="/liquid-glass.css?v=lg27"/>
-  <link rel="stylesheet" href="/blog/blog.css?v=1"/>
+  <link rel="stylesheet" href="/blog/blog.css?v=2"/>
 {extra_head}</head>
 <body>
   <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
@@ -151,6 +178,7 @@ def page(title, description, canonical, body, extra_head=''):
         <a href="/tanba/">Tañba</a>
         <a href="/dauystap/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
+        <a href="/about/">Жоба туралы</a>
       </nav>
       <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
         <span></span><span></span><span></span>
@@ -171,6 +199,7 @@ def page(title, description, canonical, body, extra_head=''):
         <a href="/tanba/">Tañba</a>
         <a href="/dauystap/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
+        <a href="/about/">Жоба туралы</a>
       </nav>
     </div>
   </footer>
@@ -226,7 +255,13 @@ def main():
 ''' + '\n'.join(cards) + '\n      </ul>'
     with open(os.path.join(SITE, 'blog', 'index.html'), 'w', encoding='utf-8') as f:
         f.write(page('Мақалалар — қазақша контент жасау туралы | AQSUEK', 'Қазақша қаріп орнату, Instagram-да қазақша Story жасау, телефонда дауыспен жазу туралы нұсқаулықтар.', 'https://aqsuek.kz/blog/', body))
-    print('built', len(ARTICLES), 'articles')
+    os.makedirs(os.path.join(SITE, 'about'), exist_ok=True)
+    org = {'@context': 'https://schema.org', '@type': 'AboutPage', 'name': 'AQSUEK туралы', 'url': 'https://aqsuek.kz/about/', 'inLanguage': 'kk',
+           'mainEntity': {'@type': 'Organization', 'name': 'AQSUEK', 'url': 'https://aqsuek.kz/', 'email': 'ekunat00@gmail.com'}}
+    with open(os.path.join(SITE, 'about', 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(page('Жоба туралы — AQSUEK', 'AQSUEK — қазақ тілінде контент жасауға арналған тегін құралдар: Qarip, Tañba, DauysTap. Мақсатымыз, қағидаларымыз және байланыс.',
+                     'https://aqsuek.kz/about/', ABOUT_BODY, f'  <script type="application/ld+json">{json.dumps(org, ensure_ascii=False)}</script>\n'))
+    print('built', len(ARTICLES), 'articles + about')
 
 
 if __name__ == '__main__':

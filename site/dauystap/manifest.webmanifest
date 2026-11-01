@@ -1,0 +1,22 @@
+{
+  "name": "DauysTap — қазақша дауыспен жазу",
+  "short_name": "DauysTap",
+  "description": "Сөйлеп жазу, мәтіннен дауыс, видеодан мәтін. Қазақша, орысша, ағылшынша.",
+  "lang": "kk",
+  "start_url": "/dauystap/?source=pwa",
+  "scope": "/dauystap/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f5f0",
+  "theme_color": "#11203a",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    { "src": "/dauystap/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/dauystap/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/dauystap/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Мәтіннен дауыс", "url": "/dauystap/#voice" },
+    { "name": "Видео → мәтін", "url": "/dauystap/#video" }
+  ]
+}

@@ -626,6 +626,27 @@
     if (window.confirm('Барлық мәтінді өшіресіз бе?')) { writeHistory([]); renderHistory(); }
   });
 
+
+  /* ---------- install as an app (PWA) ---------- */
+  let installPrompt = null;
+  const installBtn = $('install-app');
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/dauystap/sw.js', { scope: '/dauystap/' }).catch(() => {});
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installPrompt = e; if (!standalone) installBtn.hidden = false; });
+  if (isIos && !standalone) installBtn.hidden = false;
+  installBtn.addEventListener('click', async () => {
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice.catch(() => null);
+      if (choice && choice.outcome === 'accepted') installBtn.hidden = true;
+      installPrompt = null;
+    } else if (isIos) {
+      toast('Safari-де «Бөлісу» ⬆︎ батырмасын басып, «Басты экранға қосу» таңдаңыз');
+    }
+  });
+  window.addEventListener('appinstalled', () => { installBtn.hidden = true; toast('DauysTap басты экранға қосылды'); });
+
   /* ---------- init ---------- */
   try { const saved = localStorage.getItem(TOKEN_KEY); if (tokenValid(saved, 60)) setToken(saved); } catch {}
   renderAuth();

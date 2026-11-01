@@ -79,6 +79,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     )
 
     url = f"https://aqsuek.kz/qarip/font/{slug}/"
+    og_image = f"https://aqsuek.kz/qarip/og/{slug}.jpg" if (ROOT / "site" / "qarip" / "og" / f"{slug}.jpg").exists() else OG_IMAGE
     title = f"{name} қазақша қаріп — жүктеу және онлайн тексеру | Qarip"
     origin = "Google Fonts. " if is_google else ""
     description = (
@@ -148,11 +149,13 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <meta property="og:title" content="{escape(title)}"/>
 <meta property="og:description" content="{escape(description)}"/>
 <meta property="og:url" content="{escape(url)}"/>
-<meta property="og:image" content="{OG_IMAGE}"/>
+<meta property="og:image" content="{og_image}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{escape(title)}"/>
 <meta name="twitter:description" content="{escape(description)}"/>
-<meta name="twitter:image" content="{OG_IMAGE}"/>
+<meta name="twitter:image" content="{og_image}"/>
 <link rel="stylesheet" href="/qarip/catalog-pages.css?v={ASSET_V}"/>
 <link rel="stylesheet" href="/liquid-glass.css?v=lg20"/>
 {google_link}<script type="application/ld+json">{ld}</script>
