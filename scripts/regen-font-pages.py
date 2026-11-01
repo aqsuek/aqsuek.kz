@@ -235,11 +235,11 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <header class="topbar">
   <a class="brand" href="/qarip/" aria-label="Qarip — басты бет"><span class="brand-mark">Ә</span><span>Qarip<span class="brand-dot">.</span></span></a>
   <nav aria-label="Негізгі мәзір">
-    <a href="/qarip/#catalog">Қаріптер</a>
-    <a href="/tanba/stories/">Stories</a>
-    <a href="/dauystap/">DauysTap</a>
-    <a href="/qarip/#tester">Онлайн тексеру</a>
-    <a href="/qarip/#about">Жоба туралы</a>
+    <a href="/">AQSUEK</a>
+    <a href="/qarip/tanystyru/">Qarip</a>
+    <a href="/tanba/tanystyru/">Таңба</a>
+    <a href="/dauystap/tanystyru/">DauysTap</a>
+    <a href="/blog/">Мақалалар</a>
   </nav>
   <div class="qarip-nav-actions">
     <a class="qarip-nav-start" href="/tanba/stories/">Stories</a>
@@ -292,10 +292,10 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <footer class="font-detail-footer">
   <p class="disclaimer">{escape(DISCLAIMER)}</p>
   <nav class="qarip-footer-nav" aria-label="Төменгі мәзір">
-    <a href="/qarip/#catalog">Қаріптер</a>
+    <a href="/qarip/">Қаріптер</a>
     <a href="/tanba/stories/">Stories</a>
     <a href="/dauystap/">DauysTap</a>
-    <a href="/qarip/#about">Жоба туралы</a>
+    <a href="/blog/">Мақалалар</a>
     <a href="/">AQSUEK</a>
   </nav>
 </footer>

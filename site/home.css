@@ -948,3 +948,6 @@ html.nav-open .nav-toggle span:nth-child(3) {
   font-size: 0.78rem;
   letter-spacing: 0.04em;
 }
+.project-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.project-more { font-weight: 700; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.project-more:hover { color: var(--accent); }

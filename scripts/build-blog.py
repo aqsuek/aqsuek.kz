@@ -235,9 +235,9 @@ ABOUT_BODY = '''      <p class="eyebrow">Жоба туралы</p>
 
         <h2>Құралдар</h2>
         <ul class="about-tools">
-          <li><a href="/qarip/"><b>Qarip</b></a> — қазақ әріптерін толық қолдайтын 320+ қаріп каталогы. Өз мәтініңізбен тексеріп, жүктей аласыз.</li>
-          <li><a href="/tanba/stories/"><b>Таңба Stories</b></a> — фон, мәтін және қазақша қаріппен дайын 9:16 Story жасайтын редактор.</li>
-          <li><a href="/dauystap/"><b>DauysTap</b></a> — сөйлеп жазу, мәтінді дауыстау және видеодағы сөзді мәтінге айналдыру. Қазақша, орысша, ағылшынша.</li>
+          <li><a href="/qarip/tanystyru/"><b>Qarip</b></a> — қазақ әріптерін толық қолдайтын 320+ қаріп каталогы. Өз мәтініңізбен тексеріп, жүктей аласыз.</li>
+          <li><a href="/tanba/tanystyru/"><b>Таңба Stories</b></a> — фон, мәтін және қазақша қаріппен дайын 9:16 Story жасайтын редактор.</li>
+          <li><a href="/dauystap/tanystyru/"><b>DauysTap</b></a> — сөйлеп жазу, мәтінді дауыстау және видеодағы сөзді мәтінге айналдыру. Қазақша, орысша, ағылшынша.</li>
         </ul>
 
         <h2>Қағидаларымыз</h2>
@@ -274,7 +274,7 @@ def page(title, description, canonical, body, extra_head=''):
   <meta property="og:url" content="{canonical}"/>
   <meta property="og:image" content="https://aqsuek.kz/assets/aqsuek/og.jpg"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <link rel="stylesheet" href="/home.css?v=aqsuek6"/>
+  <link rel="stylesheet" href="/home.css?v=aqsuek7"/>
   <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
   <link rel="stylesheet" href="/blog/blog.css?v=2"/>
 {extra_head}</head>
@@ -284,10 +284,9 @@ def page(title, description, canonical, body, extra_head=''):
     <div class="header-inner">
       <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
       <nav class="site-nav" id="site-nav" aria-label="Негізгі мәзір">
-        <a href="/qarip/">Qarip</a>
-        <a href="/tanba/stories/">Stories</a>
-        <a href="/tanba/">Таңба</a>
-        <a href="/dauystap/">DauysTap</a>
+        <a href="/qarip/tanystyru/">Qarip</a>
+        <a href="/tanba/tanystyru/">Таңба</a>
+        <a href="/dauystap/tanystyru/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
       </nav>
@@ -305,10 +304,9 @@ def page(title, description, canonical, body, extra_head=''):
     <div class="wrap footer-inner">
       <p class="footer-copy">AQSUEK © 2026 · <a href="/privacy/">Құпиялық</a></p>
       <nav class="footer-links" aria-label="Төменгі мәзір">
-        <a href="/qarip/">Qarip</a>
-        <a href="/tanba/stories/">Stories</a>
-        <a href="/tanba/">Таңба</a>
-        <a href="/dauystap/">DauysTap</a>
+        <a href="/qarip/tanystyru/">Qarip</a>
+        <a href="/tanba/tanystyru/">Таңба</a>
+        <a href="/dauystap/tanystyru/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
       </nav>
