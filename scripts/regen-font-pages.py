@@ -165,6 +165,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
   <nav aria-label="Негізгі мәзір">
     <a href="/qarip/#catalog">Қаріптер</a>
     <a href="/tanba/stories/">Stories</a>
+    <a href="/dauystap/">DauysTap</a>
     <a href="/qarip/#tester">Онлайн тексеру</a>
     <a href="/qarip/#about">Жоба туралы</a>
   </nav>
@@ -219,6 +220,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
   <nav class="qarip-footer-nav" aria-label="Төменгі мәзір">
     <a href="/qarip/#catalog">Қаріптер</a>
     <a href="/tanba/stories/">Stories</a>
+    <a href="/dauystap/">DauysTap</a>
     <a href="/qarip/#about">Жоба туралы</a>
     <a href="/">AQSUEK</a>
   </nav>
