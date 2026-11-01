@@ -114,6 +114,7 @@ def google_css(family: str) -> str:
 
 
 def detail_html(font: dict, names: dict[str, str]) -> str:
+    font = {**font, "similar": [x for x in (font.get("similar") or []) if x in names]}
     name = font["name"]
     slug = font["slug"]
     style = font.get("style") or "Қаріп"
