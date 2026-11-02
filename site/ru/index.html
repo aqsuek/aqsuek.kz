@@ -47,7 +47,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&family=Comfortaa:wght@600&family=Yeseva+One&display=swap"/>
-<link rel="stylesheet" href="/aq/glass.css?v=3"/>
+<link rel="stylesheet" href="/aq/glass.css?v=4"/>
 <meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
 <meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
 </head>
@@ -90,7 +90,7 @@
         <div class="spec-bar">
           <label for="t">Ваш текст</label>
           <input id="t" value="Қазақ тілі — ғажап тіл. Әке, Өнер, Ұлы дала" maxlength="80" autocomplete="off">
-          <div class="size"><label for="sz">Размер</label><input id="sz" type="range" min="20" max="56" value="34"></div>
+          <div class="size"><label for="sz">Размер</label><input id="sz" type="range" min="18" max="48" value="26"></div>
         </div>
         <div id="rows"></div>
         <div class="spec-foot">
@@ -201,16 +201,14 @@
   <a href="/dauystap/"><b>●</b>DauysTap</a>
   <a href="/ru/blog/"><b>≡</b>Статьи</a>
 </nav>
-<script src="/aq/glass.js?v=3"></script>
+<script src="/aq/glass.js?v=4"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 
 <script>
 const FONTS=[
   {n:"Geologica",c:"Гротеск",css:"'Geologica',sans-serif",w:700},
   {n:"Lora",c:"Сериф",css:"'Lora',serif",w:500},
-  {n:"Onest",c:"Санс-сериф",css:"'Onest',sans-serif",w:500},
-  {n:"Comfortaa",c:"Округлый",css:"'Comfortaa',sans-serif",w:600},
-  {n:"Yeseva One",c:"Дисплей",css:"'Yeseva One',serif",w:400}
+  {n:"Comfortaa",c:"Округлый",css:"'Comfortaa',sans-serif",w:600}
 ];
 const t=document.getElementById('t'), sz=document.getElementById('sz'), rows=document.getElementById('rows');
 function render(){
