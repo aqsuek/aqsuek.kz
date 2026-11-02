@@ -6,7 +6,7 @@ menu change is made once. Styles live in /aq/glass.css, behaviour in /aq/glass.j
 """
 from html import escape
 
-GLASS_V = "4"
+GLASS_V = "5"
 BEACON = ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
           'data-cf-beacon=\'{"token": "4cff9e1227a64f6ea836c3fd64686153"}\'></script>')
 

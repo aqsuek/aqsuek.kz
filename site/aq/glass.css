@@ -164,8 +164,19 @@ section.block{padding-block:56px}
 @media (max-width:960px){.tools{grid-template-columns:1fr}}
 .v-qarip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px;width:100%}
 .v-qarip div{border-radius:14px;display:grid;place-items:center;height:84px;font-size:40px;background:var(--glass);box-shadow:inset 0 1px 0 var(--rim)}
-.v-story{width:116px;aspect-ratio:9/16;max-width:100%;border-radius:18px;background:linear-gradient(160deg,#0A7C8A,#16233A 72%);color:#fff;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;font:22px/1.05 "Yeseva One",Georgia,serif;box-shadow:0 14px 34px rgba(10,30,50,.35),inset 0 1px 0 rgba(255,255,255,.35)}
-.v-story small{font:600 9px var(--sys);opacity:.75;margin-bottom:auto;letter-spacing:.06em}
+/* Таңба card: the two modes side by side — a finished 9:16 Story and a transparent text sticker. */
+.v-tanba{display:flex;align-items:center;justify-content:center;gap:16px;width:100%;padding:14px}
+.v-story{width:104px;aspect-ratio:9/16;max-width:100%;border-radius:16px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;color:#fff;
+  background:radial-gradient(90% 60% at 18% 8%,rgba(255,200,107,.85) 0%,transparent 60%),linear-gradient(165deg,#0A7C8A 0%,#0B2A3A 78%);
+  box-shadow:0 16px 30px -12px rgba(10,30,50,.55),inset 0 1px 0 rgba(255,255,255,.35);transform:rotate(-4deg)}
+.v-story small{font:700 8px var(--sys);letter-spacing:.08em;opacity:.8;margin-bottom:auto}
+.v-story b{font:400 19px/1.04 "Yeseva One",Georgia,serif}
+.v-story i{align-self:flex-start;font:700 9px var(--sys);font-style:normal;color:#13202E;background:#D9FF47;border-radius:999px;padding:3px 8px}
+.v-sticker{width:112px;height:128px;border-radius:16px;display:grid;place-content:center;justify-items:center;gap:10px;transform:rotate(3deg);
+  background-color:var(--glass-strong);background-image:linear-gradient(45deg,var(--rim-low) 25%,transparent 25%,transparent 75%,var(--rim-low) 75%),linear-gradient(45deg,var(--rim-low) 25%,transparent 25%,transparent 75%,var(--rim-low) 75%);
+  background-size:14px 14px;background-position:0 0,7px 7px;box-shadow:0 16px 30px -14px var(--shade),inset 0 0 0 1px var(--rim-low)}
+.v-sticker span{font:italic 400 19px/1 "Yeseva One",Georgia,serif;color:var(--ink);white-space:nowrap}
+.v-sticker em{font:700 10px var(--sys);font-style:normal;color:var(--on-tint);background:var(--tint-glass);border-radius:999px;padding:4px 9px}
 .v-voice{width:100%;padding:18px;display:grid;gap:14px;justify-items:center}
 .mic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--tint-glass);color:#fff;font-size:26px;box-shadow:0 0 0 10px rgba(76,198,212,.18),inset 0 1px 0 rgba(255,255,255,.5);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 18px rgba(76,198,212,.06),inset 0 1px 0 rgba(255,255,255,.5)}}
