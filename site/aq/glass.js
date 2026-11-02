@@ -28,7 +28,8 @@ const AQ=(()=>{
     // The stylesheet may still be in flight on the first try.
     return tries.reduce((p,ms)=>p.then(n=>n!=null?n:new Promise(r=>setTimeout(r,ms)).then(check)),ready.then(()=>null)).then(n=>n??0);
   }
-  const badge=n=>`<span class="ok${n!=null&&n<9?' bad':''}">${n==null?'Тексерілуде':n+'/9 әріп'}</span>`;
+  const RU=document.documentElement.lang==='ru';
+  const badge=n=>`<span class="ok${n!=null&&n<9?' bad':''}">${n==null?(RU?'Проверка':'Тексерілуде'):n+(RU?'/9 букв':'/9 әріп')}</span>`;
   const markKZ=s=>esc(s).replace(KZ,'<mark class="kz">$1</mark>');
   function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem('aq.'+k));localStorage.setItem('aq.'+k,JSON.stringify(v))}catch(_){return null}}
   function toast(msg){
@@ -99,7 +100,7 @@ const AQ=(()=>{
   const kzCheck=(family,w=400)=>PAIRS.filter(p=>[...p].every(ch=>has(family,w,ch))).length;
   // A font earns a place in the catalog only if it opens and carries all nine Kazakh letters.
   const isComplete=F=>!F.failed&&F.ok===9;
-  const fontBadge=F=>F.failed?'<span class="ok bad">Жүктелмеді</span>':badge(F.ok);
+  const fontBadge=F=>F.failed?`<span class="ok bad">${RU?'Не загрузился':'Жүктелмеді'}</span>`:badge(F.ok);
 
   return {KZ,PAIRS,esc,loadFont,kzCount,badge,markKZ,store,toast,catalog,useFont,kzCheck,fontBadge,isComplete};
 })();
@@ -114,8 +115,11 @@ document.addEventListener('pointermove',e=>{
   }
 },{passive:true});
 
-document.getElementById('cp')?.addEventListener('click',e=>{
-  const btn=e.currentTarget, em=document.getElementById('em');
-  const sel=()=>{const r=document.createRange();r.selectNodeContents(em);const s=getSelection();s.removeAllRanges();s.addRange(r)};
-  try{navigator.clipboard.writeText(em.textContent).then(()=>{btn.textContent='Көшірілді';setTimeout(()=>btn.textContent='Көшіру',1600)},sel)}catch(_){sel()}
+// Copy buttons: <code>text</code><button class="copy">…</button>, anywhere on the page.
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('button.copy');if(!btn)return;
+  const code=btn.previousElementSibling;if(!code)return;
+  const label=btn.textContent,done=()=>{btn.textContent='✓';setTimeout(()=>btn.textContent=label,1600)};
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(code);const s=getSelection();s.removeAllRanges();s.addRange(r)};
+  try{navigator.clipboard.writeText(code.textContent.trim()).then(done,sel)}catch(_){sel()}
 });

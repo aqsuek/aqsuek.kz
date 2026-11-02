@@ -19,41 +19,47 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://aqsuek.kz/dauystap/og.jpg">
-  <meta name="theme-color" content="#11203a">
   <link rel="manifest" href="/dauystap/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/dauystap/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="DauysTap">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="stylesheet" href="/home.css?v=aqsuek7">
-  <link rel="stylesheet" href="/liquid-glass.css?v=lg33">
   <link rel="stylesheet" href="/dauystap/app.css?v=4">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"DauysTap","applicationCategory":"UtilitiesApplication","inLanguage":"kk","url":"https://aqsuek.kz/dauystap/","offers":{"@type":"Offer","price":"0"},"publisher":{"@type":"Organization","name":"AQSUEK","url":"https://aqsuek.kz/"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="/aq/glass.css?v=3"/>
+<meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
 </head>
 <body>
-  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
-      <nav class="site-nav" id="site-nav" aria-label="Негізгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
+<div class="backdrop" aria-hidden="true">
+  <div class="field a"></div><div class="field b"></div><div class="field c"></div><div class="field d"></div>
+  <div class="glyphs"><span>Д</span><span>Ү</span><span>Ұ</span></div>
+</div>
+<a class="skip glass" href="#main">Негізгі мазмұнға өту</a>
+<header class="top">
+  <div class="wrap">
+    <div class="capsule glass">
+      <a class="logo" href="/">AQSU<span>E</span>K</a>
+      <nav aria-label="Негізгі мәзір">
+        <a href="/qarip/">Qarip</a>
+        <a href="/tanba/stories/">Таңба</a>
+        <a href="/dauystap/" class="on" aria-current="page">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
       </nav>
-      <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
-        <span></span><span></span><span></span>
-      </button>
+      <a class="lang" href="/ru/" lang="ru" hreflang="ru" aria-label="Русская версия">РУС</a>
+      <a class="btn tinted glass sm" href="/qarip/">Қаріп табу</a>
     </div>
-  </header>
-
-  <main class="dt-app">
+  </div>
+</header>
+  <main id="main" class="dt-app">
     <div class="wrap">
       <div class="dt-intro">
-        <p class="eyebrow">03 / DauysTap</p>
         <h1>Сөйле. Мәтін өзі жазылады.</h1>
         <p class="dt-lead">Қазақша, орысша, ағылшынша — араласса да түсінеді. Браузерде, тегін — тіркелмей-ақ байқап көре аласыз.</p>
       </div>
@@ -205,23 +211,28 @@
       <p class="dt-toast" id="toast" role="status" aria-live="polite"></p>
     </div>
   </main>
-
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <p class="footer-copy">AQSUEK © 2026 · <a href="/privacy/">Құпиялық</a></p>
-      <nav class="footer-links" aria-label="Төменгі мәзір">
-        <a href="/qarip/">Qarip</a>
-        <a href="/tanba/stories/">Stories</a>
-        <a href="/tanba/">Таңба</a>
-        <a href="/dauystap/">DauysTap</a>
-      </nav>
+<footer>
+  <div class="wrap">
+    <div class="foot glass">
+      <div class="foot-id">
+        <a class="logo" href="/">AQSU<span>E</span>K</a>
+        <div class="mail">Ұсыныс пен қате туралы: <code>ekunat00@gmail.com</code><button class="copy glass strong" type="button">Көшіру</button></div>
+      </div>
+      <nav aria-label="Төменгі мәзір"><a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a><a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a></nav>
     </div>
-  </footer>
+  </div>
+</footer>
+<nav class="tabbar glass strong" aria-label="Құралдар">
+  <a href="/"><b>А</b>Басты</a>
+  <a href="/qarip/"><b>Ә</b>Qarip</a>
+  <a href="/tanba/stories/"><b>Т</b>Таңба</a>
+  <a href="/dauystap/" class="on" aria-current="page"><b>●</b>DauysTap</a>
+  <a href="/blog/"><b>≡</b>Мақалалар</a>
+</nav>
+<script src="/aq/glass.js?v=3"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 
   <script src="/dauystap/config.js?v=3"></script>
   <script src="/dauystap/app.js?v=4" defer></script>
-  <script src="/home.js?v=aqsuek2" defer></script>
-  <script src="/liquid-glass.js?v=lg20" defer></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 </body>
 </html>

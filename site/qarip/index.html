@@ -16,10 +16,6 @@
 <meta property="og:url" content="https://aqsuek.kz/qarip/"/>
 <meta property="og:image" content="https://aqsuek.kz/qarip/assets/og-create.jpg"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Qarip","url":"https://aqsuek.kz/qarip/","inLanguage":"kk","description":"Қазақ әріптерін қолдайтын қаріптер каталогы.","isPartOf":{"@type":"WebSite","name":"AQSUEK","url":"https://aqsuek.kz/"}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@700;800&family=Onest:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/aq/glass.css?v=1"/>
 <style>
 html,body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -55,6 +51,12 @@ html,body{margin:0}
 .empty{padding:40px 24px;text-align:center;display:grid;gap:12px;justify-items:center}
 .empty p{color:var(--muted);max-width:40ch}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="/aq/glass.css?v=3"/>
+<meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
 </head>
 <body>
 <div class="backdrop" aria-hidden="true">
@@ -62,24 +64,22 @@ html,body{margin:0}
   <div class="glyphs"><span>Ғ</span><span>Ң</span><span>Ө</span></div>
 </div>
 <a class="skip glass" href="#main">Негізгі мазмұнға өту</a>
-
 <header class="top">
   <div class="wrap">
     <div class="capsule glass">
       <a class="logo" href="/">AQSU<span>E</span>K</a>
       <nav aria-label="Негізгі мәзір">
-        <a class="on" href="/qarip/" aria-current="page">Qarip</a>
+        <a href="/qarip/" class="on" aria-current="page">Qarip</a>
         <a href="/tanba/stories/">Таңба</a>
         <a href="/dauystap/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
       </nav>
-      <a class="lang" href="https://aqsuek.kz/ru/qarip/" lang="ru" aria-label="Русская версия">РУС</a>
-      <a class="btn tinted glass sm" href="/tanba/stories/">Story жасау</a>
+      <a class="lang" href="/ru/" lang="ru" hreflang="ru" aria-label="Русская версия">РУС</a>
+      <a class="btn tinted glass sm" href="/qarip/">Қаріп табу</a>
     </div>
   </div>
 </header>
-
 <main id="main">
   <div class="wrap">
     <section class="page-head">
@@ -116,30 +116,27 @@ html,body{margin:0}
     </section>
   </div>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="foot glass">
-      <div style="display:grid;gap:8px">
+      <div class="foot-id">
         <a class="logo" href="/">AQSU<span>E</span>K</a>
-        <div class="mail">Каталогқа қаріп ұсыныңыз: <code id="em">ekunat00@gmail.com</code><button class="copy glass strong" id="cp" type="button">Көшіру</button></div>
+        <div class="mail">Ұсыныс пен қате туралы: <code>ekunat00@gmail.com</code><button class="copy glass strong" type="button">Көшіру</button></div>
       </div>
-      <nav aria-label="Төменгі мәзір">
-        <a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a>
-      </nav>
+      <nav aria-label="Төменгі мәзір"><a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a><a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a></nav>
     </div>
   </div>
 </footer>
-
 <nav class="tabbar glass strong" aria-label="Құралдар">
   <a href="/"><b>А</b>Басты</a>
-  <a class="on" href="/qarip/" aria-current="page"><b>Ә</b>Qarip</a>
+  <a href="/qarip/" class="on" aria-current="page"><b>Ә</b>Qarip</a>
   <a href="/tanba/stories/"><b>Т</b>Таңба</a>
   <a href="/dauystap/"><b>●</b>DauysTap</a>
+  <a href="/blog/"><b>≡</b>Мақалалар</a>
 </nav>
+<script src="/aq/glass.js?v=3"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 
-<script src="/aq/glass.js?v=2"></script>
 <script>
 const $=id=>document.getElementById(id);
 const q=$('q'),txt=$('txt'),sz=$('sz'),grid=$('grid');
@@ -218,6 +215,5 @@ AQ.catalog().then(({list,live})=>{
   chips();draw();
 });
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 </body>
 </html>

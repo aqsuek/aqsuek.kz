@@ -2,6 +2,7 @@
 """Builds the product landing pages /qarip/tanystyru/, /tanba/tanystyru/, /dauystap/tanystyru/.
 Run from repo root: python3 scripts/build-landings.py"""
 import html, json, os
+import aq_chrome as chrome
 
 SITE = os.path.join(os.path.dirname(__file__), '..', 'site')
 BEACON = '<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token": "4cff9e1227a64f6ea836c3fd64686153"}\'></script>'
@@ -42,16 +43,16 @@ PRODUCTS = {
         'path': '/qarip/tanystyru/',
         'app': '/qarip/',
         'name': 'Qarip',
-        'title': 'Qarip — қазақ әріптері бар 320+ қаріп каталогы',
-        'description': 'Qarip — Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін толық көрсететін 320-дан астам қаріп. Өз мәтініңізбен тексеріп, салыстырып, тегін жүктеңіз.',
+        'title': 'Qarip — қазақ әріптері бар 300+ қаріп каталогы',
+        'description': 'Qarip — Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін толық көрсететін 300-ден астам қаріп. Өз мәтініңізбен тексеріп, салыстырып, тегін жүктеңіз.',
         'chip': 'Qarip · қаріптер',
         'h1': 'Қазақ әріптері <em>бұзылмайтын</em> қаріптер',
-        'lead': 'Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін толық көрсететін 320-дан астам қаріп бір каталогта. Өз мәтініңізді жазып, бірден көріңіз — содан кейін ғана жүктеңіз.',
+        'lead': 'Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін толық көрсететін 300-ден астам қаріп бір каталогта. Өз мәтініңізді жазып, бірден көріңіз, содан кейін ғана жүктеңіз.',
         'cta': 'Каталогты ашу',
-        'facts': [('320+', 'қаріп'), ('5', 'санат'), ('9', 'қазақ әрпі тексеріледі'), ('0 ₸', 'тіркеусіз')],
+        'facts': [('300+', 'қаріп'), ('5', 'санат'), ('9', 'қазақ әрпі тексеріледі'), ('0 ₸', 'тіркеусіз')],
         'visual': '''<div class="ld-browser"><div class="ld-browser-bar"><i></i><i></i><i></i></div><img src="/assets/landing/qarip-desk.webp" width="1400" height="875" alt="Qarip каталогы: іздеу, санаттар және өз мәтінмен қаріп тексеру" fetchpriority="high"/></div>
         <div class="ld-float a">Әә Ғғ Ққ Ңң<small>Толық қолдау</small></div>
-        <div class="ld-float b">320+ қаріп<small>Сериф, санс, қолжазба…</small></div>''',
+        <div class="ld-float b">300+ қаріп<small>Сериф, санс, қолжазба…</small></div>''',
         'problem_title': 'Әдемі қаріп таңдадыңыз — ал «Қ» басқаша шықты',
         'problem_visual': '<p class="ld-broken">Қазақ тілі → <s>?</s>азақ тілі</p>',
         'problem': 'Көп қаріпте қазақ әріптері мүлде салынбаған. Сондықтан тақырыптағы Қ, Ғ, Ң басқа қаріппен шығып, дизайн ала-құла болады не орнында бос төртбұрыш тұрады. Qarip-тегі әр қаріп қазақ әріптеріне тексерілген, ал оны жүктемей тұрып өз мәтініңізбен көре аласыз.',
@@ -73,18 +74,18 @@ PRODUCTS = {
         'show_text': 'Қаріп бетінде мәтінді еркін өзгертіп, өлшемін жылжытып, қазақ әріптерінің бәрін бір қарағанда көресіз.',
         'show_list': ['Мәтін мен өлшемді өзгерту', 'Қазақ әліпбиін қолдау белгісі', 'Санаты, лицензия туралы ескерту және ұқсас қаріптер', 'Компьютер мен телефонға орнату нұсқаулығы'],
         'show_visual': '<div class="ld-phone"><img src="/assets/landing/qarip-font.webp" width="560" height="1091" alt="Qarip қаріп беті: мәтінді тексеру және қазақ әріптері" loading="lazy"/></div>',
-        'extra': '''<section><div class="wrap"><h2>Тексерілетін әріптер</h2><p class="ld-sub">Қаріп қазақша мәтінге жарамды болуы үшін мына тоғыз әріптің бас және кіші түрі болуы керек.</p>
-        <div class="ld-letters" aria-label="Қазақ әріптері"><span>Ә</span><span>Ғ</span><span>Қ</span><span>Ң</span><span>Ө</span><span>Ұ</span><span>Ү</span><span>Һ</span><span>І</span></div></div></section>''',
+        'extra': '''<section class="block"><div class="head"><h2>Тексерілетін әріптер</h2><p>Қаріп қазақша мәтінге жарамды болуы үшін мына тоғыз әріптің бас және кіші түрі болуы керек.</p></div>
+        <div class="alpha" aria-label="Қазақ әріптері"><b class="glass"><i>Ә</i></b><b class="glass"><i>Ғ</i></b><b class="glass"><i>Қ</i></b><b class="glass"><i>Ң</i></b><b class="glass"><i>Ө</i></b><b class="glass"><i>Ұ</i></b><b class="glass"><i>Ү</i></b><b class="glass"><i>Һ</i></b><b class="glass"><i>І</i></b></div></section>''',
         'who': ['Дизайнерлер', 'SMM мамандары', 'Мұғалімдер мен студенттер', 'Блогерлер', 'Шағын бизнес', 'Баспа мен БАҚ'],
         'faq': [
             ('Qarip тегін бе?', 'Иә. Каталогты қарау, қаріпті өз мәтінмен тексеру және жүктеу тегін, тіркелудің қажеті жоқ.'),
-            ('Қаріпті коммерциялық жобаға қолдануға бола ма?', 'Бұл әр қаріптің лицензиясына байланысты. Google Fonts-тағы қаріптер ашық лицензиямен келеді. Басқаларын жарнама, логотип не сатылатын өнімге қолданар алдында құқық иесінің шарттарын міндетті түрде тексеріңіз.'),
+            ('Қаріпті коммерциялық жобаға қолдануға бола ма?', 'Бұл әр қаріптің лицензиясына байланысты. «Ашық лицензия» белгісі бар қаріптерді еркін қолдануға болады. Басқаларын жарнама, логотип не сатылатын өнімге қолданар алдында құқық иесінің шарттарын міндетті түрде тексеріңіз.'),
             ('Қаріпті қалай орнатамын?', 'Жүктелген .ttf не .otf файлды ашып, «Орнату» батырмасын басыңыз. Толық нұсқаулық «Мақалалар» бөлімінде бар.'),
             ('Instagram-да неге басқаша шығады?', 'Instagram мен TikTok өз қаріптерін қолданады. Қазақша Story үшін мәтінді Таңба Stories редакторында сурет етіп жасаған сенімді.'),
             ('Каталогқа қаріп ұсынуға бола ма?', 'Иә, ekunat00@gmail.com мекенжайына жазыңыз.'),
         ],
         'cta_title': 'Мәтініңізге лайық қаріпті табыңыз',
-        'cta_text': '320-дан астам қаріп, бәрі қазақ әріптеріне тексерілген. Тіркеусіз, тегін.',
+        'cta_text': '300-ден астам қаріп, бәрі қазақ әріптеріне тексерілген. Тіркеусіз, тегін.',
     },
     'tanba': {
         'path': '/tanba/tanystyru/',
@@ -96,7 +97,7 @@ PRODUCTS = {
         'h1': 'Қазақша Story-ді <em>2 минутта</em> жасаңыз',
         'lead': 'Фон таңдайсыз, мәтін жазасыз, қазақша қаріп қоясыз — дайын 9:16 сурет Instagram, WhatsApp пен Telegram-да бірдей әдемі көрінеді. Бағдарлама орнатудың қажеті жоқ.',
         'cta': 'Story жасау',
-        'facts': [('9:16', 'дайын PNG'), ('320+', 'қазақша қаріп'), ('1 минут', 'алғашқы Story'), ('0 ₸', 'тіркеусіз')],
+        'facts': [('9:16', 'дайын PNG'), ('300+', 'қазақша қаріп'), ('1 минут', 'алғашқы Story'), ('0 ₸', 'тіркеусіз')],
         'visual': '''<div class="ld-phones"><div class="ld-phone"><img src="/assets/landing/tanba-editor.webp" width="560" height="1091" alt="Таңба Stories редакторы" fetchpriority="high"/></div><div class="ld-phone"><img src="/assets/landing/story-coffee-time.webp" width="360" height="640" alt="Таңбада жасалған Story үлгісі"/></div></div>
         <div class="ld-float a">Қ Ғ Ң Ә<small>Әріптер бұзылмайды</small></div>''',
         'problem_title': 'Instagram-ның қаріптері қазақ әріптерін көрсетпейді',
@@ -183,7 +184,7 @@ PRODUCTS = {
 }
 
 OTHERS = {
-    'qarip': ('Qarip', 'Қазақ әріптері бар 320+ қаріп каталогы.'),
+    'qarip': ('Qarip', 'Қазақ әріптері бар 300+ қаріп каталогы.'),
     'tanba': ('Таңба Stories', 'Қазақша Instagram Story редакторы.'),
     'dauystap': ('DauysTap', 'Сөйлеп жазу, мәтіннен дауыс, видеодан мәтін.'),
 }
@@ -218,6 +219,14 @@ def build(key):
     t = html.escape(p['title'])
     d = html.escape(p['description'], quote=True)
     og = 'https://aqsuek.kz/dauystap/og.jpg' if key == 'dauystap' else ('https://aqsuek.kz/qarip/assets/og-create.jpg' if key == 'qarip' else 'https://aqsuek.kz/assets/aqsuek/og.jpg')
+    feats = ''.join(f'<li class="glass">{icon(i)}<h3>{html.escape(t_)}</h3><p>{html.escape(d_)}</p></li>' for i, t_, d_ in p['features'])
+    steps = ''.join(f'<div class="glass"><h3>{html.escape(t_)}</h3><p>{html.escape(d_)}</p></div>' for t_, d_ in p['steps'])
+    facts = ''.join(f'<li><strong>{a}</strong>{html.escape(b)}</li>' for a, b in p['facts'])
+    who = ''.join(f'<span class="chip">{html.escape(x)}</span>' for x in p['who'])
+    others = ''.join(
+        f'<a class="glass" href="{PRODUCTS[k]["path"]}"><strong>{html.escape(n)}</strong><span>{html.escape(dd)}</span><em>Танысу</em></a>'
+        for k, (n, dd) in OTHERS.items() if k != key)
+    glyphs = {'qarip': 'ӘҒҚ', 'tanba': 'ТӘҢ', 'dauystap': 'ДҮҰ'}[key]
     out = f'''<!DOCTYPE html>
 <html lang="kk">
 <head>
@@ -237,123 +246,83 @@ def build(key):
   <meta property="og:image" content="{og}"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:image" content="{og}"/>
-  <link rel="stylesheet" href="/home.css?v=aqsuek7"/>
-  <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
-  <link rel="stylesheet" href="/landing.css?v=6"/>
-  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+{chrome.head_assets()}  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Негізгі мазмұнға өту</a>
-  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
-{nav}
-      <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <main id="main" class="ld ld-{key}">
+{chrome.backdrop(glyphs)}{chrome.header('kk', key)}
+<main id="main">
+  <div class="wrap">
     <section class="ld-hero">
-      <div class="wrap">
-        <div>
-          <span class="ld-chip"><b>{p['name'][0]}</b>{html.escape(p['chip'])}</span>
-          <h1>{p['h1']}</h1>
-          <p class="ld-lead">{html.escape(p['lead'])}</p>
-          <div class="ld-actions">
-            <a class="btn btn-primary" href="{p['app']}">{html.escape(p['cta'])} <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="btn btn-ghost" href="#how">Қалай жұмыс істейді</a>
-          </div>
-          <ul class="ld-facts">{facts}</ul>
+      <div>
+        <h1>{p['h1']}</h1>
+        <p class="lead">{html.escape(p['lead'])}</p>
+        <div class="cta">
+          <a class="btn tinted glass" href="{p['app']}">{html.escape(p['cta'])}</a>
+          <a class="btn glass" href="#how">Қалай жұмыс істейді</a>
         </div>
-        <div class="ld-visual">
+        <ul class="ld-facts">{facts}</ul>
+      </div>
+      <div class="ld-visual">
         {p['visual']}
-        </div>
       </div>
     </section>
 
-    <section class="ld-problem">
-      <div class="wrap">
+    <section class="block">
+      <div class="ld-problem glass strong">
         <div><h2>{html.escape(p['problem_title'])}</h2>{p['problem_visual']}</div>
         <p>{html.escape(p['problem'])}</p>
       </div>
     </section>
 
-    <section>
-      <div class="wrap">
-        <h2>{html.escape(p['features_title'])}</h2>
-        <p class="ld-sub">{html.escape(p['name'])} күнделікті жұмысты жеңілдетуге арналған — артық баптаусыз, тіркеусіз.</p>
-        <ul class="ld-features">{feats}</ul>
-      </div>
+    <section class="block">
+      <div class="head"><h2>{html.escape(p['features_title'])}</h2>
+        <p>{html.escape(p['name'])} күнделікті жұмысты жеңілдетеді: артық баптау жоқ, тіркелу қажет емес.</p></div>
+      <ul class="ld-features">{feats}</ul>
     </section>
 
-    <section id="how">
-      <div class="wrap">
-        <h2>Үш қадам</h2>
-        <p class="ld-sub">Бастау үшін нұсқаулық оқудың қажеті жоқ.</p>
-        <ol class="ld-steps">{steps}</ol>
-      </div>
+    <section class="block" id="how">
+      <div class="head"><h2>Үш қадам</h2><p>Бастау үшін нұсқаулық оқудың қажеті жоқ.</p></div>
+      <div class="steps">{steps}</div>
     </section>
 
-    <section>
-      <div class="wrap ld-show{' flip' if key == 'qarip' else ''}">
+    <section class="block">
+      <div class="ld-show{' flip' if key == 'qarip' else ''}">
         <div>
           <h2>{html.escape(p['show_title'])}</h2>
-          <p class="ld-sub">{html.escape(p['show_text'])}</p>
+          <p class="lead" style="color:var(--muted);margin-top:10px">{html.escape(p['show_text'])}</p>
           <ul class="ld-list">{show_list}</ul>
         </div>
         <div class="ld-visual">{p['show_visual']}</div>
       </div>
     </section>
 {p['extra']}
-    <section>
-      <div class="wrap">
-        <h2>Кімге керек</h2>
-        <ul class="ld-who">{who}</ul>
+    <section class="block">
+      <div class="head"><h2>Кімге керек</h2></div>
+      <div class="ld-who">{who}</div>
+    </section>
+
+    <section class="block">
+      <div class="faq-box glass">
+        <div class="head"><h2>Жиі қойылатын сұрақтар</h2></div>
+        {faq}
       </div>
     </section>
 
-    <section>
-      <div class="wrap">
-        <h2>Жиі қойылатын сұрақтар</h2>
-        <div class="faq-list">{faq}</div>
-      </div>
-    </section>
-
-    <section class="ld-cta">
-      <div class="wrap">
+    <section class="block">
+      <div class="ld-cta glass strong">
         <h2>{html.escape(p['cta_title'])}</h2>
         <p>{html.escape(p['cta_text'])}</p>
-        <a class="btn btn-primary" href="{p['app']}">{html.escape(p['cta'])} <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn tinted glass" href="{p['app']}">{html.escape(p['cta'])}</a>
       </div>
     </section>
 
-    <section>
-      <div class="wrap">
-        <h2>AQSUEK-тің басқа құралдары</h2>
-        <div class="ld-others">{others}</div>
-      </div>
+    <section class="block">
+      <div class="head"><h2>AQSUEK-тің басқа құралдары</h2></div>
+      <div class="ld-others">{others}</div>
     </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <p class="footer-copy">AQSUEK © 2026 · <a href="/privacy/">Құпиялық</a></p>
-      <nav class="footer-links" aria-label="Төменгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a>
-        <a href="/about/">Жоба туралы</a>
-      </nav>
-    </div>
-  </footer>
-  <script src="/home.js?v=aqsuek2" defer></script>
-  <script src="/liquid-glass.js?v=lg20" defer></script>
-{BEACON}
-</body>
+  </div>
+</main>
+{chrome.footer('kk')}{chrome.tabbar('kk', key)}{chrome.scripts()}</body>
 </html>
 '''
     d = os.path.join(SITE, p['path'].strip('/'))

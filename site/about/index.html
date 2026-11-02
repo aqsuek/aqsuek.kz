@@ -17,10 +17,6 @@
   <meta property="og:image" content="https://aqsuek.kz/assets/aqsuek/og.jpg"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AboutPage", "name": "AQSUEK туралы", "url": "https://aqsuek.kz/about/", "inLanguage": "kk", "mainEntity": {"@type": "Organization", "name": "AQSUEK", "url": "https://aqsuek.kz/", "email": "ekunat00@gmail.com"}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@700;800&family=Onest:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/aq/glass.css?v=1"/>
 <style>
 html,body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -40,6 +36,12 @@ html,body{margin:0}
 @media (max-width:640px){.rules{grid-template-columns:1fr}}
 .wrap > .prose{margin-bottom:40px}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="/aq/glass.css?v=3"/>
+<meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
 </head>
 <body>
 <div class="backdrop" aria-hidden="true">
@@ -47,7 +49,6 @@ html,body{margin:0}
   <div class="glyphs"><span>А</span><span>Һ</span><span>І</span></div>
 </div>
 <a class="skip glass" href="#main">Негізгі мазмұнға өту</a>
-
 <header class="top">
   <div class="wrap">
     <div class="capsule glass">
@@ -56,14 +57,14 @@ html,body{margin:0}
         <a href="/qarip/">Qarip</a>
         <a href="/tanba/stories/">Таңба</a>
         <a href="/dauystap/">DauysTap</a>
-        <a class="on" href="/about/" aria-current="page">Жоба туралы</a>
+        <a href="/blog/">Мақалалар</a>
+        <a href="/about/" class="on" aria-current="page">Жоба туралы</a>
       </nav>
-      <a class="lang" href="https://aqsuek.kz/ru/about/" lang="ru" aria-label="Русская версия">РУС</a>
+      <a class="lang" href="/ru/" lang="ru" hreflang="ru" aria-label="Русская версия">РУС</a>
       <a class="btn tinted glass sm" href="/qarip/">Қаріп табу</a>
     </div>
   </div>
 </header>
-
 <main id="main">
   <div class="wrap">
     <section class="page-head">
@@ -98,27 +99,26 @@ html,body{margin:0}
     </article>
   </div>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="foot glass">
-      <a class="logo" href="/">AQSU<span>E</span>K</a>
-      <nav aria-label="Төменгі мәзір">
-        <a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a>
-      </nav>
+      <div class="foot-id">
+        <a class="logo" href="/">AQSU<span>E</span>K</a>
+        <div class="mail">Ұсыныс пен қате туралы: <code>ekunat00@gmail.com</code><button class="copy glass strong" type="button">Көшіру</button></div>
+      </div>
+      <nav aria-label="Төменгі мәзір"><a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a><a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a></nav>
     </div>
   </div>
 </footer>
-
 <nav class="tabbar glass strong" aria-label="Құралдар">
   <a href="/"><b>А</b>Басты</a>
   <a href="/qarip/"><b>Ә</b>Qarip</a>
   <a href="/tanba/stories/"><b>Т</b>Таңба</a>
   <a href="/dauystap/"><b>●</b>DauysTap</a>
+  <a href="/blog/"><b>≡</b>Мақалалар</a>
 </nav>
-
-<script src="/aq/glass.js?v=2"></script>
+<script src="/aq/glass.js?v=3"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
+
 </body>
 </html>

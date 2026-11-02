@@ -8,6 +8,8 @@ from html import escape
 from pathlib import Path
 from urllib.parse import quote_plus
 
+import aq_chrome as chrome
+
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site" / "qarip"
 DATA = SITE / "data" / "fonts.json"
@@ -16,6 +18,11 @@ SITEMAP = SITE / "sitemap-fonts.xml"
 ASSET_V = "qarip1"  # legacy
 V = {"css": "qarip10", "site": "qarip5", "lib": "qarip7", "detail": "qarip3", "lg": "lg33"}
 OG_IMAGE = "https://aqsuek.kz/qarip/assets/og-create.jpg"
+ARCHIVE_CDN = "https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/"
+# Fonts that won't open or lack Kazakh letters (checked 2 Nov 2026). They get no page,
+# no sitemap entry and no "similar" links; keep in step with HIDDEN in site/aq/glass.js.
+HIDDEN = {"dela-gothic-one", "st-africa", "spectrashell", "black-rose", "telingaterdisplay",
+          "manrope", "playfair-display", "orelega-one", "ponomar"}
 
 PREVIEW = "Қазақ тілі — ғажап тіл. Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І"
 GLYPHS = "Әә · Ғғ · Ққ · Ңң · Өө · Ұұ · Үү · Һһ · Іі"
@@ -79,7 +86,7 @@ def about_html(font: dict, names: dict[str, str], is_google: bool) -> str:
     parts = []
     origin = []
     if is_google:
-        origin.append(f"{name} — Google Fonts кітапханасындағы ашық лицензиялы қаріп, оны сайтқа тікелей қосуға не компьютерге орнатуға болады.")
+        origin.append(f"{name} — ашық лицензиялы қаріп, оны сайтқа тікелей қосуға не компьютерге орнатуға болады.")
     elif author:
         origin.append(f"{name} қаріпінің авторы — {escape(author)}.")
     elif maker and "Жеке жинақ" not in maker:
@@ -126,6 +133,9 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     family = font["family"]
     preview = font.get("preview") or ""
     download = font.get("download") or ""
+    # Archives aren't on GitHub Pages; link straight to the tag CDN (same rule as qarip-lib.js).
+    if download.startswith(("/qarip/downloads/", "/tanba/downloads/")):
+        download = ARCHIVE_CDN + download.rsplit("/", 1)[-1]
     author_block = (
         f'<p class="font-detail-author">Автор: {escape(author)}</p>'
         if author
@@ -150,7 +160,7 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
         title = f"{name} — қазақша қаріп жүктеу"
     if len(title) > 58:
         title = f"{name} қаріпі"
-    origin = "Google Fonts. " if is_google else ""
+    origin = "Ашық лицензия. " if is_google else ""
     description = (
         f"{name} қазақша қаріпін онлайн тексеріп, қазақ әріптерін (Ә Ғ Қ Ң Ө Ұ Ү Һ І) қарап "
         f"және жүктеп алыңыз. {origin}Санат: {style}. Qarip каталогы."
@@ -164,12 +174,10 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     if is_google:
         dl_btn = (
             f'<a class="font-download" href="{escape(download)}" target="_blank" rel="noreferrer">'
-            f"Google Fonts</a>"
+            f"Жүктеу</a>"
         )
-        kicker = "GOOGLE FONTS · ҚАЗАҚША"
     else:
-        dl_btn = f'<a class="font-download" href="{escape(download)}" download><i class="lg-btn-ico" aria-hidden="true"></i>Жүктеу</a>'
-        kicker = "ҚАЗАҚША ҚАРІП"
+        dl_btn = f'<a class="font-download" href="{escape(download)}" download>Жүктеу</a>'
 
     json_ld = {
         "@context": "https://schema.org",
@@ -202,11 +210,12 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
     ld = json.dumps(json_ld, ensure_ascii=False, separators=(",", ":"))
     source_attr = "google" if is_google else "local"
 
+    google_family = quote_plus(family).replace("+", "+")
     return f"""<!DOCTYPE html>
-<html lang="kk" class="qarip-v2">
+<html lang="kk">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>{escape(title)}</title>
 <meta name="description" content="{escape(description)}"/>
 <meta name="robots" content="index,follow,max-image-preview:large"/>
@@ -225,84 +234,53 @@ def detail_html(font: dict, names: dict[str, str]) -> str:
 <meta name="twitter:title" content="{escape(title)}"/>
 <meta name="twitter:description" content="{escape(description)}"/>
 <meta name="twitter:image" content="{og_image}"/>
-<link rel="stylesheet" href="/qarip/catalog-pages.css?v={V["css"]}"/>
-<link rel="stylesheet" href="/liquid-glass.css?v={V["lg"]}"/>
-{google_link}<script type="application/ld+json">{ld}</script>
-<script defer src="/qarip/qarip-site.js?v={V["site"]}"></script>
-<script defer src="/liquid-glass.js?v=lg20"></script>
+{chrome.head_assets()}{google_link}<script type="application/ld+json">{ld}</script>
 </head>
-<body class="qarip-font-page">
-<header class="topbar">
-  <a class="brand" href="/qarip/" aria-label="Qarip — басты бет"><span class="brand-mark">Ә</span><span>Qarip<span class="brand-dot">.</span></span></a>
-  <nav aria-label="Негізгі мәзір">
-    <a href="/">AQSUEK</a>
-    <a href="/qarip/tanystyru/">Qarip</a>
-    <a href="/tanba/tanystyru/">Таңба</a>
-    <a href="/dauystap/tanystyru/">DauysTap</a>
-    <a href="/blog/">Мақалалар</a>
-  </nav>
-  <div class="qarip-nav-actions">
-    <a class="qarip-nav-start" href="/tanba/stories/">Stories</a>
-    <button type="button" class="qarip-nav-toggle" aria-label="Мәзір" aria-expanded="false"><span></span><span></span><span></span></button>
+<body>
+{chrome.backdrop("ӘҒҚ")}{chrome.header("kk", "qarip")}
+<main id="main" class="font-detail" data-slug="{escape(slug)}" data-name="{escape(name)}" data-family="{escape(family)}" data-preview="{escape(preview)}" data-download="{escape(download)}" data-license="{escape(license_key)}" data-style="{escape(style)}" data-source="{source_attr}">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Жол"><a href="/qarip/">Qarip</a><span aria-hidden="true">/</span><span>{escape(style)}</span></nav>
+    <header class="fd-head">
+      <h1>{escape(name)}</h1>
+      {author_block}
+      <p class="lead">{escape(name)} қаріпін өз мәтініңізбен тексеріп, қазақ әріптерін қарап, жүктеп алыңыз.</p>
+    </header>
+
+    <div class="fd-grid">
+      <section class="fd-stage glass" aria-label="Қаріп үлгісі">
+        <label class="tester-label">Өз мәтініңізді жазыңыз
+          <input class="detail-preview-input" value="{escape(PREVIEW)}" aria-label="Қаріпті тексеру мәтіні"/>
+        </label>
+        <div class="size-control"><span>Өлшем</span><input class="detail-size" type="range" min="20" max="72" value="40" aria-label="Мәтін өлшемі"/><strong>40px</strong></div>
+        <p class="font-detail-preview" style="font-family:'{escape(family)}', sans-serif">{escape(PREVIEW)}</p>
+        <p class="font-detail-letters" style="font-family:'{escape(family)}', sans-serif">{GLYPHS}</p>
+        <p class="glyph-live">Қазақ әліпбиі: тексерілуде</p>
+      </section>
+
+      <section class="fd-panel glass strong" aria-label="Жүктеу және лицензия">
+        <div class="font-detail-meta">
+          <span>{escape(style_line)}</span>
+          <span class="license-badge" data-license="{escape(license_key)}">{escape(badge)}</span>
+        </div>
+        <p class="license-copy">{escape(license_copy)}</p>
+        <div class="font-detail-actions">
+          {dl_btn}
+          <button type="button" class="font-favorite" aria-pressed="false" aria-label="Ұнағандарға қосу"></button>
+          <a class="font-detail-stories" href="/tanba/stories/?font={quote_plus(slug)}">Story-де қолдану</a>
+        </div>
+        <p class="disclaimer">{escape(DISCLAIMER)}</p>
+      </section>
+    </div>
+
+    <div class="prose glass">{about_html(font, names, is_google).replace('<section class="font-detail-about" aria-labelledby="about-title">', '').replace('</section>', '')}</div>
+
+    {similar.replace('class="font-detail-similar"', 'class="block font-detail-similar"').replace('<h2 id="similar-title">', '<div class="head"><h2 id="similar-title">').replace('</h2><div class="similar-grid">', '</h2></div><div class="similar-grid">')}
   </div>
-</header>
-<main class="font-detail" data-slug="{escape(slug)}" data-name="{escape(name)}" data-family="{escape(family)}" data-preview="{escape(preview)}" data-download="{escape(download)}" data-license="{escape(license_key)}" data-style="{escape(style)}" data-source="{source_attr}">
-  <nav class="font-detail-crumbs" aria-label="Навигация">
-    <a href="/qarip/">Qarip</a>
-    <span aria-hidden="true">/</span>
-    <a href="/qarip/#catalog">Қаріптер</a>
-    <span aria-hidden="true">/</span>
-    <span>{escape(name)}</span>
-  </nav>
-
-  <header class="font-detail-head">
-    <p class="font-detail-kicker">{kicker}</p>
-    <h1>{escape(name)}</h1>
-    {author_block}
-    <p class="font-detail-lead">{escape(name)} қаріпін өз мәтініңізбен тексеріп, қазақ әріптерін қарап және жүктеп алыңыз.</p>
-  </header>
-
-  <section class="font-detail-stage" aria-label="Қаріп үлгісі">
-    <label class="tester-label">Өз мәтініңді жаз
-      <input class="detail-preview-input" value="{escape(PREVIEW)}" aria-label="Қаріпті тексеру мәтіні"/>
-    </label>
-    <div class="size-control"><span>A</span><input class="detail-size" type="range" min="20" max="72" value="40"/><strong>40px</strong></div>
-    <p class="font-detail-preview" style="font-family:'{escape(family)}', sans-serif">{escape(PREVIEW)}</p>
-    <p class="font-detail-letters" style="font-family:'{escape(family)}', sans-serif">{GLYPHS}</p>
-    <p class="glyph-live">Қазақ әліпбиі: тексерілуде</p>
-  </section>
-
-  <section class="font-detail-panel" aria-label="Жүктеу және лицензия">
-    <div class="font-detail-meta">
-      <span>{escape(style_line)}</span>
-      <span class="license-badge">{escape(badge)}</span>
-    </div>
-    <p class="license-copy">{escape(license_copy)}</p>
-    <div class="font-detail-actions">
-      {dl_btn}
-      <button type="button" class="font-favorite" aria-pressed="false" aria-label="Ұнағандарға қосу"></button>
-      <a class="qarip-cta-secondary font-detail-stories" href="/tanba/stories/?font={quote_plus(name)}">Story-де қолдану</a>
-    </div>
-  </section>
-
-  {about_html(font, names, is_google)}
-
-  {similar}
 </main>
-<footer class="font-detail-footer">
-  <p class="disclaimer">{escape(DISCLAIMER)}</p>
-  <nav class="qarip-footer-nav" aria-label="Төменгі мәзір">
-    <a href="/qarip/">Қаріптер</a>
-    <a href="/tanba/stories/">Stories</a>
-    <a href="/dauystap/">DauysTap</a>
-    <a href="/blog/">Мақалалар</a>
-    <a href="/">AQSUEK</a>
-  </nav>
-</footer>
-<script src="/qarip/qarip-lib.js?v={V["lib"]}"></script>
+{chrome.footer("kk")}{chrome.tabbar("kk", "qarip")}<script src="/qarip/qarip-lib.js?v={V["lib"]}"></script>
 <script src="/qarip/font-detail.js?v={V["detail"]}"></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "4cff9e1227a64f6ea836c3fd64686153"}}'></script>
-</body>
+{chrome.scripts()}</body>
 </html>
 """
 
@@ -375,7 +353,7 @@ def write_root_sitemaps(today: str | None = None) -> None:
 
 
 def main() -> None:
-    fonts = json.loads(DATA.read_text(encoding="utf-8"))
+    fonts = [f for f in json.loads(DATA.read_text(encoding="utf-8")) if f["slug"] not in HIDDEN]
     names = {f["slug"]: f["name"] for f in fonts}
     keep = {f["slug"] for f in fonts}
     FONT_DIR.mkdir(parents=True, exist_ok=True)

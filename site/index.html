@@ -11,8 +11,6 @@
   <link rel="alternate" hreflang="ru" href="https://aqsuek.kz/ru/"/>
   <link rel="alternate" hreflang="x-default" href="https://aqsuek.kz/"/>
   <link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml"/>
-  <meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
-  <meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
   <meta property="og:type" content="website"/>
   <meta property="og:locale" content="kk_KZ"/>
   <meta property="og:site_name" content="AQSUEK"/>
@@ -47,17 +45,17 @@
   </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&family=Comfortaa:wght@600&family=Yeseva+One&display=swap">
-<link rel="stylesheet" href="/aq/glass.css?v=1"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&family=Comfortaa:wght@600&family=Yeseva+One&display=swap"/>
+<link rel="stylesheet" href="/aq/glass.css?v=3"/>
+<meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
 </head>
 <body>
 <div class="backdrop" aria-hidden="true">
   <div class="field a"></div><div class="field b"></div><div class="field c"></div><div class="field d"></div>
   <div class="glyphs"><span>Қ</span><span>Ә</span><span>Ұ</span></div>
 </div>
-
 <a class="skip glass" href="#main">Негізгі мазмұнға өту</a>
-
 <header class="top">
   <div class="wrap">
     <div class="capsule glass">
@@ -69,12 +67,11 @@
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
       </nav>
-      <a class="lang" href="/ru/" lang="ru" aria-label="Русская версия">РУС</a>
+      <a class="lang" href="/ru/" lang="ru" hreflang="ru" aria-label="Русская версия">РУС</a>
       <a class="btn tinted glass sm" href="/qarip/">Қаріп табу</a>
     </div>
   </div>
 </header>
-
 <main id="main">
   <div class="wrap">
     <section class="hero">
@@ -175,6 +172,7 @@
       <div class="glass">
         <div class="head"><h2>Не жаңа</h2></div>
         <ol class="log" reversed>
+          <li><time datetime="2026-11-02">02.11.26</time><span>Сайттың жаңа дизайны: шыны беттер және қараңғы режим.</span></li>
           <li><time datetime="2026-11-02">02.11.26</time><span>DauysTap: сөйлеп жазу, мәтіннен дауыс, видеодан мәтін. Тіркелмей байқап көріңіз.</span></li>
           <li><time datetime="2026-10-27">27.10.26</time><span>Qarip: 23 жаңа қаріп, барлығы 320.</span></li>
           <li><time datetime="2026-09-14">14.09.26</time><span>Таңба: телефондағы редактор мен жүктеу жаңартылды.</span></li>
@@ -184,30 +182,27 @@
     </div>
   </section>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="foot glass">
-      <div style="display:grid;gap:8px">
+      <div class="foot-id">
         <a class="logo" href="/">AQSU<span>E</span>K</a>
-        <div class="mail">Ұсыныс пен қате туралы: <code id="em">ekunat00@gmail.com</code><button class="copy glass strong" id="cp" type="button">Көшіру</button></div>
+        <div class="mail">Ұсыныс пен қате туралы: <code>ekunat00@gmail.com</code><button class="copy glass strong" type="button">Көшіру</button></div>
       </div>
-      <nav aria-label="Төменгі мәзір">
-        <a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a>
-      </nav>
+      <nav aria-label="Төменгі мәзір"><a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a><a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a></nav>
     </div>
   </div>
 </footer>
-
 <nav class="tabbar glass strong" aria-label="Құралдар">
-  <a class="on" href="/" aria-current="page"><b>А</b>Басты</a>
+  <a href="/" class="on" aria-current="page"><b>А</b>Басты</a>
   <a href="/qarip/"><b>Ә</b>Qarip</a>
   <a href="/tanba/stories/"><b>Т</b>Таңба</a>
   <a href="/dauystap/"><b>●</b>DauysTap</a>
+  <a href="/blog/"><b>≡</b>Мақалалар</a>
 </nav>
+<script src="/aq/glass.js?v=3"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 
-<script src="/aq/glass.js?v=2"></script>
 <script>
 const FONTS=[
   {n:"Geologica",c:"Гротеск",css:"'Geologica',sans-serif",w:700},
@@ -224,6 +219,5 @@ function render(){
 t.addEventListener('input',render); sz.addEventListener('input',render); render();
 Promise.all(FONTS.map(f=>AQ.kzCount(f.n,f.w).then(n=>f.ok=n))).then(render);
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Builds /blog/ (index + articles) from the ARTICLES list below. Run from repo root: python3 scripts/build-blog.py"""
 import html, json, os
+import aq_chrome as chrome
 
 SITE = os.path.join(os.path.dirname(__file__), '..', 'site')
 BEACON = '<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token": "4cff9e1227a64f6ea836c3fd64686153"}\'></script>'
@@ -253,11 +254,12 @@ ABOUT_BODY = '''      <p class="eyebrow">Жоба туралы</p>
       </div>'''
 
 
-def page(title, description, canonical, body, extra_head=''):
+def page(title, description, canonical, body, extra_head='', lang='kk', active='blog', lang_href=''):
     t = html.escape(title)
     d = html.escape(description, quote=True)
+    locale = 'kk_KZ' if lang == 'kk' else 'ru_RU'
     return f'''<!DOCTYPE html>
-<html lang="kk">
+<html lang="{lang}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
@@ -267,55 +269,22 @@ def page(title, description, canonical, body, extra_head=''):
   <link rel="canonical" href="{canonical}"/>
   <link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:locale" content="kk_KZ"/>
+  <meta property="og:locale" content="{locale}"/>
   <meta property="og:site_name" content="AQSUEK"/>
   <meta property="og:title" content="{t}"/>
   <meta property="og:description" content="{d}"/>
   <meta property="og:url" content="{canonical}"/>
   <meta property="og:image" content="https://aqsuek.kz/assets/aqsuek/og.jpg"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <link rel="stylesheet" href="/home.css?v=aqsuek7"/>
-  <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
-  <link rel="stylesheet" href="/blog/blog.css?v=2"/>
-{extra_head}</head>
+{chrome.head_assets()}{extra_head}</head>
 <body>
-  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
-      <nav class="site-nav" id="site-nav" aria-label="Негізгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a>
-        <a href="/about/">Жоба туралы</a>
-      </nav>
-      <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-  <main class="blog">
-    <div class="wrap">
+{chrome.backdrop('ӘҚҢ')}{chrome.header(lang, active, lang_href)}
+<main id="main">
+  <div class="wrap narrow">
 {body}
-    </div>
-  </main>
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <p class="footer-copy">AQSUEK © 2026 · <a href="/privacy/">Құпиялық</a></p>
-      <nav class="footer-links" aria-label="Төменгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
-        <a href="/blog/">Мақалалар</a>
-        <a href="/about/">Жоба туралы</a>
-      </nav>
-    </div>
-  </footer>
-  <script src="/home.js?v=aqsuek2" defer></script>
-  <script src="/liquid-glass.js?v=lg20" defer></script>
-{BEACON}
-</body>
+  </div>
+</main>
+{chrome.footer(lang)}{chrome.tabbar(lang, active)}{chrome.scripts()}</body>
 </html>
 '''
 
@@ -346,34 +315,31 @@ def main():
         if ru_alt:
             head += f'  <link rel="alternate" hreflang="kk" href="{url}"/>\n  <link rel="alternate" hreflang="ru" href="https://aqsuek.kz/ru/blog/{ru_alt}/"/>\n'
         others = ''.join(f'<li><a href="/blog/{o["slug"]}/">{html.escape(o["title"])}</a></li>' for o in [x for x in ARTICLES if x is not a][:4])
-        body = f'''      <nav class="crumbs" aria-label="Жол"><a href="/">AQSUEK</a> / <a href="/blog/">Мақалалар</a></nav>
-      <article class="post">
-        <p class="eyebrow">Нұсқаулық · <time datetime="{a['date']}">{fmt_date(a['date'])}</time></p>
-        <h1>{html.escape(a['title'])}</h1>
-        <p class="post-lead">{html.escape(a['lead'])}</p>
-        <div class="post-body">{a['body']}</div>
-        <div class="post-cta"><a class="btn btn-primary" href="{a['cta'][0]}">{html.escape(a['cta'][1])} <span class="arrow" aria-hidden="true">→</span></a></div>
-      </article>
-      <aside class="post-more"><h2>Тағы оқыңыз</h2><ul>{others}</ul></aside>'''
+        body = f'''    <nav class="crumbs" aria-label="Жол"><a href="/">AQSUEK</a><span aria-hidden="true">/</span><a href="/blog/">Мақалалар</a></nav>
+    <header class="page-head">
+      <h1>{html.escape(a['title'])}</h1>
+      <p class="lead">{html.escape(a['lead'])}</p>
+      <p class="meta-line">Нұсқаулық · <time datetime="{a['date']}">{fmt_date(a['date'])}</time></p>
+    </header>
+    <article class="prose glass">{a['body']}
+      <div class="prose-cta"><a class="btn tinted glass" href="{a['cta'][0]}">{html.escape(a['cta'][1])}</a></div>
+    </article>
+    <aside class="more-reading glass"><h2>Тағы оқыңыз</h2><ul>{others}</ul></aside>'''
         d = os.path.join(SITE, 'blog', a['slug'])
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
             f.write(page(a.get('seo', a['title'] + ' | AQSUEK'), a['description'], url, body, head))
-        cards.append(f'''        <li><a class="post-card" href="/blog/{a["slug"]}/"><time datetime="{a["date"]}">{fmt_date(a["date"])}</time><h2>{html.escape(a["title"])}</h2><p>{html.escape(a["description"])}</p><span class="post-card-more">Оқу →</span></a></li>''')
-    body = '''      <p class="eyebrow">Мақалалар</p>
+        cards.append(f'''      <li><a class="post-card glass" href="/blog/{a["slug"]}/"><time class="meta-line" datetime="{a["date"]}">{fmt_date(a["date"])}</time><h2>{html.escape(a["title"])}</h2><p>{html.escape(a["description"])}</p><span class="more">Оқу</span></a></li>''')
+    body = '''    <header class="page-head">
       <h1>Қазақша контент жасау туралы нұсқаулықтар</h1>
-      <p class="post-lead">Қаріп орнату, қазақша Story, дауыспен жазу, мәтінді дауыстау және видеодан субтитр жасау — қысқа әрі түсінікті нұсқаулықтар.</p>
-      <ul class="post-list">
-''' + '\n'.join(cards) + '\n      </ul>'
+      <p class="lead">Қаріп орнату, қазақша Story, дауыспен жазу, мәтінді дауыстау және видеодан субтитр жасау туралы қысқа әрі түсінікті нұсқаулықтар.</p>
+    </header>
+    <ul class="post-list">
+''' + '\n'.join(cards) + '\n    </ul>'
     with open(os.path.join(SITE, 'blog', 'index.html'), 'w', encoding='utf-8') as f:
         f.write(page('Мақалалар — қазақша контент жасау туралы | AQSUEK', 'Қазақша қаріп орнату, қазақ әріптері шықпаса не істеу, Instagram Story, дауыспен жазу, мәтінді дауыстау және видеодан субтитр туралы нұсқаулықтар.', 'https://aqsuek.kz/blog/', body))
-    os.makedirs(os.path.join(SITE, 'about'), exist_ok=True)
-    org = {'@context': 'https://schema.org', '@type': 'AboutPage', 'name': 'AQSUEK туралы', 'url': 'https://aqsuek.kz/about/', 'inLanguage': 'kk',
-           'mainEntity': {'@type': 'Organization', 'name': 'AQSUEK', 'url': 'https://aqsuek.kz/', 'email': 'ekunat00@gmail.com'}}
-    with open(os.path.join(SITE, 'about', 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(page('Жоба туралы — AQSUEK', 'AQSUEK — қазақ тілінде контент жасауға арналған тегін құралдар: Qarip, Таңба, DauysTap. Мақсатымыз, қағидаларымыз және байланыс.',
-                     'https://aqsuek.kz/about/', ABOUT_BODY, f'  <script type="application/ld+json">{json.dumps(org, ensure_ascii=False)}</script>\n'))
-    print('built', len(ARTICLES), 'articles + about')
+    # /about/ is maintained by hand (site/about/index.html) since the Nov 2026 redesign.
+    print('built', len(ARTICLES), 'articles')
 
 RU_ARTICLES = [
     {
@@ -402,7 +368,7 @@ RU_ARTICLES = [
   <li>Если все буквы одного стиля и толщины — шрифт подходит.</li>
   <li>Если какая-то буква выделяется или пустая — выберите другой шрифт.</li>
 </ol>
-<p>Быстрее всего — в каталоге <a href="/qarip/">Qarip</a>: там 320+ шрифтов, и каждый можно сразу проверить своим текстом.</p>
+<p>Быстрее всего — в каталоге <a href="/qarip/">Qarip</a>: там более 300 шрифтов, и каждый можно сразу проверить своим текстом.</p>
 ''',
     },
     {
@@ -443,23 +409,9 @@ RU_ARTICLES = [
 
 
 def ru_page(title, description, canonical, body, extra_head='', alt_kk='https://aqsuek.kz/blog/'):
-    out = page(title, description, canonical, body, extra_head)
-    rep = [
-        ('<html lang="kk">', '<html lang="ru">'),
-        ('content="kk_KZ"', 'content="ru_RU"'),
-        ('aria-label="AQSUEK — басты бет"', 'aria-label="AQSUEK — главная"'),
-        ('href="/" aria-label', 'href="/ru/" aria-label'),
-        ('aria-label="Негізгі мәзір"', 'aria-label="Главное меню"'),
-        ('aria-label="Төменгі мәзір"', 'aria-label="Нижнее меню"'),
-        ('aria-label="Мәзір"', 'aria-label="Меню"'),
-        ('<a href="/blog/">Мақалалар</a>', '<a href="/ru/blog/">Статьи</a>'),
-        ('<a href="/about/">Жоба туралы</a>', '<a href="/about/">О проекте</a>'),
-        ('<a href="/privacy/">Құпиялық</a>', '<a href="/privacy/">Конфиденциальность</a>'),
-    ]
-    for a, b in rep:
-        out = out.replace(a, b)
     alts = f'  <link rel="alternate" hreflang="ru" href="{canonical}"/>\n  <link rel="alternate" hreflang="kk" href="{alt_kk}"/>\n'
-    return out.replace('</head>', alts + '</head>', 1)
+    lang_href = alt_kk.replace('https://aqsuek.kz', '')
+    return page(title, description, canonical, body, extra_head + alts, lang='ru', active='blog', lang_href=lang_href)
 
 
 def build_ru():
@@ -475,25 +427,27 @@ def build_ru():
               'publisher': {'@type': 'Organization', 'name': 'AQSUEK', 'logo': {'@type': 'ImageObject', 'url': 'https://aqsuek.kz/assets/aqsuek/favicon.svg'}}}
         head = f'  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n'
         others = ''.join(f'<li><a href="/ru/blog/{o["slug"]}/">{html.escape(o["title"])}</a></li>' for o in RU_ARTICLES if o is not a)
-        body = f'''      <nav class="crumbs" aria-label="Путь"><a href="/ru/">AQSUEK</a> / <a href="/ru/blog/">Статьи</a></nav>
-      <article class="post">
-        <p class="eyebrow">Инструкция · <time datetime="{a['date']}">{fmt_date(a['date'])}</time></p>
-        <h1>{html.escape(a['title'])}</h1>
-        <p class="post-lead">{html.escape(a['lead'])}</p>
-        <div class="post-body">{a['body']}</div>
-        <div class="post-cta"><a class="btn btn-primary" href="{a['cta'][0]}">{html.escape(a['cta'][1])} <span class="arrow" aria-hidden="true">→</span></a></div>
-      </article>
-      <aside class="post-more"><h2>Читайте также</h2><ul>{others}<li><a href="/blog/{a['kk']}/" hreflang="kk">Эта статья на казахском</a></li></ul></aside>'''
+        body = f'''    <nav class="crumbs" aria-label="Путь"><a href="/ru/">AQSUEK</a><span aria-hidden="true">/</span><a href="/ru/blog/">Статьи</a></nav>
+    <header class="page-head">
+      <h1>{html.escape(a['title'])}</h1>
+      <p class="lead">{html.escape(a['lead'])}</p>
+      <p class="meta-line">Инструкция · <time datetime="{a['date']}">{fmt_date(a['date'])}</time></p>
+    </header>
+    <article class="prose glass">{a['body']}
+      <div class="prose-cta"><a class="btn tinted glass" href="{a['cta'][0]}">{html.escape(a['cta'][1])}</a></div>
+    </article>
+    <aside class="more-reading glass"><h2>Читайте также</h2><ul>{others}<li><a href="/blog/{a['kk']}/" hreflang="kk">Эта статья на казахском</a></li></ul></aside>'''
         d = os.path.join(base, a['slug'])
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
             f.write(ru_page(a['seo'], a['description'], url, body, head, f'https://aqsuek.kz/blog/{a["kk"]}/'))
-        cards.append(f'''        <li><a class="post-card" href="/ru/blog/{a["slug"]}/"><time datetime="{a["date"]}">{fmt_date(a["date"])}</time><h2>{html.escape(a["title"])}</h2><p>{html.escape(a["description"])}</p><span class="post-card-more">Читать →</span></a></li>''')
-    body = '''      <p class="eyebrow">Статьи</p>
+        cards.append(f'''      <li><a class="post-card glass" href="/ru/blog/{a["slug"]}/"><time class="meta-line" datetime="{a["date"]}">{fmt_date(a["date"])}</time><h2>{html.escape(a["title"])}</h2><p>{html.escape(a["description"])}</p><span class="more">Читать</span></a></li>''')
+    body = '''    <header class="page-head">
       <h1>Как создавать контент на казахском</h1>
-      <p class="post-lead">Казахские шрифты, буквы Ә, Ғ, Қ, Ң и инструменты AQSUEK — коротко и по делу.</p>
-      <ul class="post-list">
-''' + '\n'.join(cards) + '\n      </ul>'
+      <p class="lead">Казахские шрифты, буквы Ә, Ғ, Қ, Ң и инструменты AQSUEK: коротко и по делу.</p>
+    </header>
+    <ul class="post-list">
+''' + '\n'.join(cards) + '\n    </ul>'
     with open(os.path.join(base, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(ru_page('Статьи о казахских шрифтах и контенте | AQSUEK', 'Как установить казахский шрифт, почему не отображаются казахские буквы и как делать контент на казахском языке.', 'https://aqsuek.kz/ru/blog/', body))
     print('built', len(RU_ARTICLES), 'ru articles')
