@@ -20,7 +20,7 @@ html,body{
   padding:0 14px!important;
   border:1px solid #181816;
   border-radius:999px!important;
-  background:var(--q-blue,#0040dc);
+  background:var(--q-blue,#0A7C8A);
   color:#fff;
   text-decoration:none;
   white-space:nowrap;
@@ -169,7 +169,7 @@ html,body{
   align-self:center;
 }
 .cat-more[aria-expanded="true"]{
-  background:var(--q-blue,#0040dc);
+  background:var(--q-blue,#0A7C8A);
   color:#fff;
   align-self:start;
 }
@@ -207,7 +207,7 @@ html,body{
   text-decoration:none;
   cursor:pointer;
 }
-.qarip-dl-go{border:0;background:var(--q-blue,#0040dc);color:#fff}
+.qarip-dl-go{border:0;background:var(--q-blue,#0A7C8A);color:#fff}
 .qarip-dl-info{border:1px solid #181816;color:#181816;background:#fff}
 .qarip-dl-close{
   position:absolute;top:10px;right:12px;width:32px;height:32px;
@@ -264,7 +264,7 @@ body.qarip-font-page .brand-logo{display:none}
 body.qarip-font-page .qarip-nav-actions{display:flex}
 body.qarip-font-page .qarip-nav-start{
   display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border-radius:999px;
-  background:var(--q-blue,#0040dc);color:#fff;font:800 14px/1 var(--lg-sans);text-decoration:none;
+  background:var(--q-blue,#0A7C8A);color:#fff;font:800 14px/1 var(--lg-sans);text-decoration:none;
 }
 body.qarip-font-page .font-detail{
   width:min(880px,calc(100% - 32px));
@@ -325,7 +325,7 @@ body.qarip-font-page .license-badge{color:#8b4a14!important}
 .license-copy{margin:0 0 16px;font:500 13px/1.45 var(--lg-sans);color:#6b6b6b;max-width:42em}
 body.qarip-font-page .font-download{
   min-height:46px!important;padding:0 18px!important;border-radius:999px!important;
-  background:var(--q-blue,#0040dc)!important;border:1px solid var(--q-blue,#0040dc)!important;color:#fff!important;
+  background:var(--q-blue,#0A7C8A)!important;border:1px solid var(--q-blue,#0A7C8A)!important;color:#fff!important;
   font:800 13px/1 var(--lg-sans);
 }
 /* Catalog cards use ::after label; detail pages already have text in HTML */
@@ -419,17 +419,17 @@ html.qarip-v2{
   --q-muted:#5b6780;
   --q-line:#e2e8f4;
   --q-soft:#eef2fa;
-  --q-blue:#0040dc;
+  --q-blue:#0A7C8A;
   --q-coral:#f06848;
   --q-yellow:var(--q-blue);
-  --q-yellow-soft:#e8eeff;
+  --q-yellow-soft:#E2F2F4;
   --q-r-sm:12px;
   --q-r-md:16px;
   --q-r-lg:22px;
   --q-r-xl:28px;
   --q-btn-h:50px;
   --q-ease:cubic-bezier(.22,1,.36,1);
-  --q-shadow:0 14px 34px #0040dc14;
+  --q-shadow:0 14px 34px #0A7C8A14;
   --q-shadow-soft:0 8px 20px #0e1a330a;
   scroll-behavior:smooth;
 }
@@ -531,10 +531,10 @@ html.qarip-v2 .qarip-nav-start{
   color:#fff;
   font:800 14px/1 var(--lg-sans);
   text-decoration:none;
-  box-shadow:0 8px 18px #0040dc33;
+  box-shadow:0 8px 18px #0A7C8A33;
   transition:transform .2s var(--q-ease),background .2s;
 }
-html.qarip-v2 .qarip-nav-start:hover{background:#0036c4;transform:translateY(-1px)}
+html.qarip-v2 .qarip-nav-start:hover{background:#07606C;transform:translateY(-1px)}
 
 /* Buttons */
 .qarip-cta-primary,
@@ -557,12 +557,12 @@ html.qarip-home .intro-cta{
   border:1px solid var(--q-blue);
   background:var(--q-blue);
   color:#fff;
-  box-shadow:0 10px 24px #0040dc33;
+  box-shadow:0 10px 24px #0A7C8A33;
 }
 .qarip-cta-primary:hover,
 html.qarip-home .intro-cta:hover{
   transform:translateY(-1px);
-  background:#0036c4;
+  background:#07606C;
 }
 .qarip-cta-secondary{
   border:1.5px solid var(--q-line);
@@ -600,7 +600,7 @@ html.qarip-home .intro.qarip-hero{
   padding:44px clamp(20px,5vw,72px) 52px;
   overflow:hidden;
   background:
-    radial-gradient(circle at 86% 16%,#0040dc22 0,transparent 34%),
+    radial-gradient(circle at 86% 16%,#0A7C8A22 0,transparent 34%),
     radial-gradient(circle at 12% 82%,#f0684820 0,transparent 30%),
     var(--q-paper);
 }
@@ -625,7 +625,7 @@ html.qarip-home .intro.qarip-hero .eyebrow{
   width:fit-content;max-width:100%;
   margin:0 0 16px;padding:8px 14px;
   border-radius:999px;
-  background:#e8eeff;
+  background:#E2F2F4;
   color:var(--q-blue);
   font:700 11px/1.2 var(--lg-sans)!important;
   letter-spacing:.05em;
@@ -791,7 +791,7 @@ html.qarip-home .card-bottom a[download]{
 html.qarip-home .font-download:hover,
 html.qarip-home .card-bottom a[aria-label$="жүктеу"]:hover,
 html.qarip-home .card-bottom a[download]:hover{
-  background:#0036c4!important;transform:translateY(-1px);
+  background:#07606C!important;transform:translateY(-1px);
 }
 html.qarip-home .font-download:hover,
 html.qarip-home .card-bottom a[aria-label$="жүктеу"]:hover,
@@ -826,7 +826,7 @@ html.qarip-stories footer p{max-width:52em;line-height:1.55;font-size:12px}
 
 .stories-page-hero{
   width:100%;margin:0;padding:28px 16px 14px;text-align:center;color:var(--q-ink);
-  background:radial-gradient(circle at 50% 0%,#0040dc18 0,transparent 55%),var(--q-paper);
+  background:radial-gradient(circle at 50% 0%,#0A7C8A18 0,transparent 55%),var(--q-paper);
 }
 .stories-page-eyebrow{margin:0 0 8px;font:800 11px/1 var(--lg-sans);letter-spacing:.14em;color:var(--q-coral)}
 .stories-page-hero h1{margin:0 0 8px;font:800 clamp(24px,5.2vw,34px)/1.12 var(--lg-sans);letter-spacing:-.04em}
@@ -1195,7 +1195,7 @@ html.qarip-home #catalog .card-bottom a[download]{
 html.qarip-home #catalog .font-download:hover,
 html.qarip-home #catalog .card-bottom a[aria-label$="жүктеу"]:hover,
 html.qarip-home #catalog .card-bottom a[download]:hover{
-  background:#0036c4!important;
+  background:#07606C!important;
 }
 html.qarip-home #catalog .catalog-more{
   display:block;
@@ -1237,7 +1237,7 @@ html.qarip-home #catalog .catalog-empty{
 html.qarip-home .intro.qarip-hero .hero-word{white-space:nowrap}
 html.qarip-home .intro.qarip-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:40px;align-items:center}
 html.qarip-home .intro.qarip-hero .qarip-hero-copy h1{font-size:clamp(34px,4.2vw,58px);max-width:none}
-.catalog-empty button{min-height:44px;padding:10px 16px;border:1px solid #0040dc;border-radius:12px;background:#fff;color:#0040dc;cursor:pointer}
+.catalog-empty button{min-height:44px;padding:10px 16px;border:1px solid #0A7C8A;border-radius:12px;background:#fff;color:#0A7C8A;cursor:pointer}
 @media(max-width:900px){
  html.qarip-v2 .topbar nav{display:none!important}
  html.qarip-v2.qarip-nav-open .topbar nav{display:flex!important;flex-direction:column;align-items:stretch;gap:0;width:100%}

@@ -11,7 +11,8 @@
   <link rel="alternate" hreflang="ru" href="https://aqsuek.kz/ru/"/>
   <link rel="alternate" hreflang="x-default" href="https://aqsuek.kz/"/>
   <link rel="icon" href="/assets/aqsuek/favicon.svg" type="image/svg+xml"/>
-  <meta name="theme-color" content="#f7f5f0"/>
+  <meta name="theme-color" content="#E9EEF4" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#070C12" media="(prefers-color-scheme: dark)"/>
   <meta property="og:type" content="website"/>
   <meta property="og:locale" content="kk_KZ"/>
   <meta property="og:site_name" content="AQSUEK"/>
@@ -26,9 +27,6 @@
   <meta name="twitter:title" content="AQSUEK — қазақша контентке арналған құралдар"/>
   <meta name="twitter:description" content="Қазақша қаріп табыңыз, Story жасаңыз, сөйлеп жазыңыз. Тегін, браузерде."/>
   <meta name="twitter:image" content="https://aqsuek.kz/assets/aqsuek/og.jpg"/>
-  <link rel="stylesheet" href="/home.css?v=aqsuek7"/>
-  <link rel="stylesheet" href="/liquid-glass.css?v=lg33"/>
-  <link rel="stylesheet" href="/dauystap/app.css?v=2"/>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[
     {"@type":"Organization","@id":"https://aqsuek.kz/#org","name":"AQSUEK","url":"https://aqsuek.kz/","logo":"https://aqsuek.kz/assets/aqsuek/favicon.svg","email":"ekunat00@gmail.com","description":"Қазақ тіліне арналған тегін цифрлық құралдар."},
@@ -47,270 +45,185 @@
     ]}
   ]}
   </script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&family=Comfortaa:wght@600&family=Yeseva+One&display=swap">
+<link rel="stylesheet" href="/aq/glass.css?v=1"/>
 </head>
 <body>
-  <div class="lg-blobs" aria-hidden="true"><i class="lg-blob-a"></i><i class="lg-blob-b"></i><i class="lg-blob-c"></i></div>
-  <a class="skip-link" href="#main">Негізгі мазмұнға өту</a>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="/" aria-label="AQSUEK — басты бет">AQSUEK</a>
-      <nav class="site-nav" id="site-nav" aria-label="Негізгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
+<div class="backdrop" aria-hidden="true">
+  <div class="field a"></div><div class="field b"></div><div class="field c"></div><div class="field d"></div>
+  <div class="glyphs"><span>Қ</span><span>Ә</span><span>Ұ</span></div>
+</div>
+
+<a class="skip glass" href="#main">Негізгі мазмұнға өту</a>
+
+<header class="top">
+  <div class="wrap">
+    <div class="capsule glass">
+      <a class="logo" href="/">AQSU<span>E</span>K</a>
+      <nav aria-label="Негізгі мәзір">
+        <a href="/qarip/">Qarip</a>
+        <a href="/tanba/stories/">Таңба</a>
+        <a href="/dauystap/">DauysTap</a>
         <a href="/blog/">Мақалалар</a>
         <a href="/about/">Жоба туралы</a>
-        <a class="lang-switch" href="/ru/" lang="ru" hreflang="ru" title="Русская версия">РУС</a>
       </nav>
-      <button type="button" class="nav-toggle" aria-label="Мәзір" aria-expanded="false" aria-controls="site-nav">
-        <span></span><span></span><span></span>
-      </button>
+      <a class="lang" href="/ru/" lang="ru" aria-label="Русская версия">РУС</a>
+      <a class="btn tinted glass sm" href="/qarip/">Қаріп табу</a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main id="main">
-    <section class="hero home-hero" aria-labelledby="hero-title">
-      <div class="hero-inner" data-reveal>
-        <p class="eyebrow">AQSUEK · қазақ тіліне арналған құралдар</p>
-        <h1 id="hero-title">Қазақша жазу, көрсету, сөйлеу — бір жерде.</h1>
-        <p class="hero-lead">Қазақ әріптерін дұрыс көрсететін қаріп табыңыз, әдемі Story жасаңыз, сөйлеп жазыңыз. Бәрі тегін, браузерде, бағдарлама орнатусыз.</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#projects">Құралдарды көру <span class="arrow" aria-hidden="true">↓</span></a>
-          <a class="btn btn-ghost" href="/dauystap/">Сөйлеп жазып көру</a>
-        </div>
-        <ul class="hero-stats" aria-label="Қысқаша">
-          <li><b>320+</b><span>қазақша қаріп</span></li>
-          <li><b>9:16</b><span>дайын Stories</span></li>
-          <li><b>KK · RU · EN</b><span>дауыспен жазу</span></li>
-        </ul>
+<main id="main">
+  <div class="wrap">
+    <section class="hero">
+      <h1>Қазақ әріптері бұзылмай шығатын құралдар</h1>
+      <p class="lead">Қазақша қаріп табыңыз, Story жасаңыз, сөйлеп жазыңыз. Тегін, браузерде, ештеңе орнатпай.</p>
+      <div class="cta">
+        <a class="btn tinted glass" href="#tools">Құралдарды көру</a>
+        <a class="btn glass" href="/dauystap/">Сөйлеп жазып көру</a>
       </div>
-      <div class="hero-visual" aria-hidden="true">
-        <a class="hv-card hv-qarip" href="/qarip/" tabindex="-1"><small>Qarip</small><b>Ә Ғ Қ Ң</b><span>Ө Ұ Ү Һ І</span></a>
-        <a class="hv-card hv-tanba" href="/tanba/stories/" tabindex="-1"><img src="/tanba/assets/story-cards/good-days.webp" alt="" width="819" height="1024" decoding="async"/><small>Таңба</small></a>
-        <a class="hv-card hv-dauys" href="/dauystap/" tabindex="-1"><small>DauysTap</small><span class="hv-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>«Сәлем, әлем!»</b></a>
+      <div class="alpha" aria-label="Қазақ тіліне тән әріптер">
+        <b class="glass"><i>Ә</i></b><b class="glass"><i>Ғ</i></b><b class="glass"><i>Қ</i></b><b class="glass"><i>Ң</i></b><b class="glass"><i>Ө</i></b><b class="glass"><i>Ұ</i></b><b class="glass"><i>Ү</i></b><b class="glass"><i>Һ</i></b><b class="glass"><i>І</i></b>
       </div>
-    </section>
 
-    <section class="section" id="projects" aria-labelledby="projects-title">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <p class="section-kicker">Құралдар</p>
-          <h2 id="projects-title">Үш құрал — бір мақсат: қазақша контент оңай әрі әдемі болсын</h2>
+      <div class="spec glass" aria-label="Қаріпті өз мәтініңізбен тексеру">
+        <div class="spec-bar">
+          <label for="t">Мәтініңізді жазыңыз</label>
+          <input id="t" value="Қазақ тілі — ғажап тіл. Әке, Өнер, Ұлы дала" maxlength="80" autocomplete="off">
+          <div class="size"><label for="sz">Өлшем</label><input id="sz" type="range" min="20" max="56" value="34"></div>
         </div>
-
-        <div class="projects-grid">
-          <article class="project-card qarip" data-reveal>
-            <div class="project-meta">
-              <p class="project-label">01 / Qarip</p>
-              <h3>Қазақша қаріптерді табыңыз.</h3>
-              <p>Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптерін толық қолдайтын қаріптер каталогы. Өз мәтініңізбен тексеріп, санат бойынша сүзіп, бір басуда жүктеңіз.</p>
-              <ul class="chips" aria-label="Мүмкіндіктер">
-                <li>320+ қаріп</li>
-                <li>Онлайн тексеру</li>
-                <li>Санаттар мен іздеу</li>
-                <li>Лицензия белгісі</li>
-              </ul>
-              <div class="project-ctas"><a class="btn btn-ghost cta" href="/qarip/">Қаріптерді көру <span class="arrow" aria-hidden="true">→</span></a><a class="project-more" href="/qarip/tanystyru/">Толығырақ</a></div>
-            </div>
-            <div class="project-preview" aria-hidden="true">
-              <div class="qarip-mock">
-                <div class="qarip-mock-bar">
-                  <div class="qarip-mock-search">Қаріп атауын іздеу...</div>
-                  <span class="qarip-mock-pill">Барлығы</span>
-                </div>
-                <div class="qarip-mock-card">
-                  <strong>Afolkalips</strong>
-                  <p class="qarip-mock-sample">Қазақ тілі — ғажап тіл. Ә Ғ Қ Ң Ө</p>
-                  <div class="qarip-mock-meta">
-                    <span>Толық қолдау</span>
-                    <span>Дисплей</span>
-                  </div>
-                </div>
-                <div class="qarip-mock-row">
-                  <div class="qarip-mock-mini">
-                    <b>Gilroy</b>
-                    <span>Әдемі Stories</span>
-                  </div>
-                  <div class="qarip-mock-mini">
-                    <b>Inter</b>
-                    <span>Ұ Ү Һ І</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-card tanba" data-reveal>
-            <div class="project-meta">
-              <p class="project-label">02 / Таңба Stories <span class="badge">Beta</span></p>
-              <h3>Қазақша Instagram Story жасаңыз.</h3>
-              <p>Фон таңдап, мәтін жазып, қазақша қаріпті қойыңыз — дайын 9:16 суретті телефонға жүктеңіз. Дизайнер керек емес.</p>
-              <ul class="chips" aria-label="Мүмкіндіктер">
-                <li>9:16 PNG</li>
-                <li>Дайын фондар</li>
-                <li>Логотип қосу</li>
-              </ul>
-              <div class="project-ctas"><a class="btn btn-ghost cta" href="/tanba/stories/">Story жасау <span class="arrow" aria-hidden="true">→</span></a><a class="project-more" href="/tanba/tanystyru/">Толығырақ</a></div>
-            </div>
-            <div class="project-preview">
-              <div class="tanba-shell">
-                <div class="tanba-mock">
-                  <img src="/tanba/assets/story-cards/create.webp" alt="Таңба редакторында жасалған қазақша Story үлгісі" width="819" height="1024" loading="lazy" decoding="async"/>
-                  <div class="tanba-mock-overlay">
-                    <small>STORIES</small>
-                    <strong>Бүгін —<br/>сіздің күніңіз</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-card dauystap" data-reveal>
-            <div class="project-meta">
-              <p class="project-label">03 / DauysTap <span class="badge">Жаңа</span></p>
-              <h3>Сөйлеңіз — мәтін өзі жазылады.</h3>
-              <p>Микрофонды басып қазақша сөйлеңіз, мәтін бірден шығады. Жазылған мәтінді табиғи дауыспен тыңдап, видеодағы сөздерді мәтінге айналдырыңыз.</p>
-              <ul class="chips" aria-label="Мүмкіндіктер">
-                <li>Сөйлеп жазу</li>
-                <li>Мәтіннен дауыс · MP3</li>
-                <li>Видео → мәтін</li>
-                <li>KK · RU · EN</li>
-              </ul>
-              <div class="project-ctas"><a class="btn btn-ghost cta" href="/dauystap/">Сөйлеп көру <span class="arrow" aria-hidden="true">→</span></a><a class="project-more" href="/dauystap/tanystyru/">Толығырақ</a></div>
-            </div>
-            <div class="project-preview" aria-hidden="true">
-              <div class="dt-phone">
-                <div class="dt-screen">
-                  <div class="dt-top"><b>DauysTap</b><span>Тарих</span></div>
-                  <div class="dt-hero-card">
-                    <small>KK · RU · EN</small>
-                    <strong>Сөйлеп жаз.</strong>
-                    <div class="dt-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                    <span class="dt-btn">Микрофонды қосу</span>
-                  </div>
-                  <div class="dt-loader"><div><span>Танылуда</span><b>72%</b></div><i><em></em></i></div>
-                </div>
-              </div>
-            </div>
-          </article>
+        <div id="rows"></div>
+        <div class="spec-foot">
+          <span>Сары сызық — қазақ тіліне тән әріптер. Белгі әр қаріпте сол жерде тексеріледі.</span>
+          <a class="btn tinted glass sm" href="/qarip/">Барлық қаріпті көру</a>
         </div>
       </div>
     </section>
+  </div>
 
-    <section class="section why" aria-labelledby="why-title">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <p class="section-kicker">Неге AQSUEK</p>
-          <h2 id="why-title">Қазақша контент жасау кедергісіз болуы керек</h2>
-        </div>
-        <ul class="why-grid" data-reveal>
-          <li>
-            <span class="why-mark" aria-hidden="true">Ә</span>
-            <h3>Әріптер дұрыс шығады</h3>
-            <p>Әр қаріп Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І әріптеріне тексерілген. Сұрақ белгісі мен бос төртбұрыш болмайды.</p>
-          </li>
-          <li>
-            <span class="why-mark" aria-hidden="true">₸0</span>
-            <h3>Тегін және жеңіл</h3>
-            <p>Тіркелусіз ашылады, телефонда да жұмыс істейді. DauysTap-ты тіркелмей-ақ байқап көруге болады, ал көбірек қолдану үшін Google арқылы бір рет кіресіз.</p>
-          </li>
-          <li>
-            <span class="why-mark" aria-hidden="true">✓</span>
-            <h3>Деректеріңіз сізде</h3>
-            <p>Мәтін тарихы өз браузеріңізде сақталады. Аудио мен видео серверде қалмайды. <a href="/privacy/">Құпиялық саясаты</a></p>
-          </li>
-        </ul>
+  <section class="block" id="tools">
+    <div class="wrap">
+      <div class="head">
+        <h2>Үш құрал</h2>
+        <p>Әрқайсысы бір жұмысты істейді. Тіркелу қажет емес, телефонда да ашылады.</p>
       </div>
-    </section>
-
-    <section class="section manifesto" id="manifesto" aria-labelledby="manifesto-title">
-      <div class="wrap" data-reveal>
-        <h2 id="manifesto-title">Қазақша контент<br/>әдемі болуы керек.</h2>
-        <p>Қазақша әріптерді қолдамайтын қаріп іздеуден, дизайн құралдарында Қ, Ғ, Ң, І, Ә, Ө, Ү, Ұ әріптерінің дұрыс шықпауынан шаршадым.</p>
-        <p>Сондықтан өзім қолданғым келетін құралдарды жасап жүрмін — қаріптен бастап дауысқа дейін.</p>
-        <p class="glyphs" aria-label="Қазақ әріптері">Ә Ғ Қ Ң Ө Ұ Ү Һ І</p>
+      <div class="tools">
+        <article class="tool glass">
+          <div class="vis"><div class="v-qarip" aria-hidden="true">
+            <div style="font-family:Geologica;font-weight:800">Ә</div><div style="font-family:Lora">Ғ</div><div style="font-family:Comfortaa">Қ</div>
+            <div style="font-family:'Yeseva One'">Ң</div><div style="font-family:Onest;font-weight:700">Ө</div><div style="font-family:Lora;font-style:italic">Ұ</div>
+          </div></div>
+          <div class="name"><h3>Qarip</h3></div>
+          <p class="what">Қазақ әріптерін толық қолдайтын қаріптер каталогы.</p>
+          <ul><li>300-ден астам қаріп, 5 санат</li><li>Өз мәтініңізбен тексеру</li><li>Лицензиясы көрсетілген</li></ul>
+          <div class="acts"><a class="btn tinted glass sm" href="/qarip/">Каталогты ашу</a><a class="more" href="/qarip/tanystyru/">Қалай жұмыс істейді</a></div>
+        </article>
+        <article class="tool glass">
+          <div class="vis"><div class="v-story" aria-hidden="true"><small>AQSUEK</small>Бүгін — сіздің күніңіз</div></div>
+          <div class="name"><h3>Таңба Stories</h3><span class="tag">Beta</span></div>
+          <p class="what">Қазақша мәтінді Instagram Story-ге екі жолмен қоясыз.</p>
+          <ul><li>Story жасау: фон, мәтін, 9:16 PNG</li><li>Мәтінді мөлдір PNG етіп көшіру</li><li>Instagram-да «Қою» арқылы қою</li></ul>
+          <div class="acts"><a class="btn tinted glass sm" href="/tanba/stories/">Таңбаны ашу</a></div>
+        </article>
+        <article class="tool glass">
+          <div class="vis"><div class="v-voice" aria-hidden="true">
+            <div class="mic">●</div>
+            <p>Сәлеметсіз бе, бүгінгі жиналысты бастайық <em>…</em></p>
+          </div></div>
+          <div class="name"><h3>DauysTap</h3><span class="tag">Жаңа</span></div>
+          <p class="what">Сөйлеңіз, мәтін өзі жазылады. Мәтінді дауыспен тыңдай аласыз.</p>
+          <ul><li>Қазақша, орысша, ағылшынша</li><li>Мәтіннен дауыс, MP3</li><li>Видеодағы сөзді мәтінге айналдыру</li></ul>
+          <div class="acts"><a class="btn tinted glass sm" href="/dauystap/">Сөйлеп көру</a><a class="more" href="/dauystap/tanystyru/">Қалай жұмыс істейді</a></div>
+        </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section faq" id="faq" aria-labelledby="faq-title">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <p class="section-kicker">Сұрақтар</p>
-          <h2 id="faq-title">Жиі қойылатын сұрақтар</h2>
-        </div>
-        <div class="faq-list" data-reveal>
-          <details>
-            <summary>AQSUEK құралдары ақылы ма?</summary>
-            <p>Жоқ. Qarip, Таңба және DauysTap тегін. DauysTap-та бір адамға күніне 40 жазу және 50 дауыс беріледі — лимит түн ортасында жаңарады.</p>
-          </details>
-          <details>
-            <summary>Қаріптерді коммерциялық жобаға қолдануға бола ма?</summary>
-            <p>Әр қаріптің лицензиясы әртүрлі. Qarip-те әр қаріптің бетінде лицензиясын тексеріңіз: кейбіреулері тек жеке қолданысқа тегін.</p>
-          </details>
-          <details>
-            <summary>Бағдарлама орнату керек пе?</summary>
-            <p>Жоқ. Барлық құрал телефонда да, компьютерде де браузерде ашылады.</p>
-          </details>
-          <details>
-            <summary>DauysTap қазақша сөзді тани ма?</summary>
-            <p>Иә. Қазақша, орысша және ағылшынша, тіпті араласып сөйлесеңіз де таниды. Мәтінді дауыспен оқып беріп, видеодағы сөздерді мәтінге айналдырады.</p>
-          </details>
-          <details>
-            <summary>Менің аудиом мен мәтінім сақтала ма?</summary>
-            <p>Жоқ. Аудио мен мәтін тек тану үшін жіберіледі, серверде сақталмайды. Мәтін тарихы тек өз браузеріңізде тұрады.</p>
-          </details>
-        </div>
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><h2>Неге AQSUEK</h2></div>
+      <div class="princ">
+        <div class="glass"><span class="glyph"><mark class="kz">Ә</mark></span><h3>Әріптер дұрыс шығады</h3><p>Әр қаріп тоғыз қазақ әрпіне тексерілген. Сұрақ белгісі мен бос төртбұрыш болмайды.</p></div>
+        <div class="glass"><span class="glyph">₸0</span><h3>Тегін</h3><p>Тіркелусіз ашылады. DauysTap-ты күніне 3 рет тіркелмей байқауға болады, Google арқылы кірсеңіз 40 жазу мен 50 дауыс.</p></div>
+        <div class="glass"><span class="glyph">✓</span><h3>Деректер сізде қалады</h3><p>Мәтін тарихы өз браузеріңізде сақталады. Аудио мен видео серверде қалмайды. <a href="/privacy/">Құпиялық саясаты</a></p></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section changelog" id="changelog" aria-labelledby="changelog-title">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <p class="section-kicker">Жаңартулар</p>
-          <h2 id="changelog-title">Не жаңа</h2>
-        </div>
-        <ol class="changelog-list" data-reveal>
-          <li>
-            <time datetime="2026-11-02">02.11.26</time>
-            <span>DauysTap — сөйлеп жазу, мәтіннен дауыс, видеодан мәтін. Тіркелмей-ақ байқап көріңіз.</span>
-          </li>
-          <li>
-            <time datetime="2026-10-27">27.10.26</time>
-            <span>Qarip — 23 жаңа қаріп, барлығы 320</span>
-          </li>
-          <li>
-            <time datetime="2026-09-14">14.09.26</time>
-            <span>Таңба — mobile UX және жүктеу ағыны жаңартылды</span>
-          </li>
-          <li>
-            <time datetime="2026-09-12">12.09.26</time>
-            <span>Таңба Beta — Stories редакторы мен қаріп каталогы</span>
-          </li>
+  <section class="block">
+    <div class="wrap">
+      <div class="man glass strong">
+        <blockquote>Қазақша контент орысша не ағылшынша контенттен қиын болмауы керек.</blockquote>
+        <p>Дизайн құралдарында Қ, Ғ, Ң, І, Ә, Ө, Ү, Ұ әріптері басқа қаріппен шығып, мәтін ала-құла көрінетінінен шаршадым. Сондықтан өзім қолданғым келетін құралдарды жасап жүрмін: қаріптен бастап дауысқа дейін.</p>
+        <p class="sig">AQSUEK авторы</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="faq">
+    <div class="wrap two">
+      <div class="glass">
+        <div class="head"><h2>Жиі қойылатын сұрақтар</h2></div>
+        <details open><summary>AQSUEK құралдары ақылы ма?</summary><p>Жоқ, негізгі мүмкіндіктер тегін. DauysTap-та қызмет бәріне жетуі үшін күнделікті лимит бар.</p></details>
+        <details><summary>Қаріптерді коммерциялық жобаға қолдануға бола ма?</summary><p>Бұл әр қаріптің лицензиясына байланысты. Қаріп бетінде лицензия белгісі тұр, қолданар алдында тексеріңіз.</p></details>
+        <details><summary>Бағдарлама орнату керек пе?</summary><p>Жоқ. Барлық құрал браузерде, телефонда да, компьютерде де ашылады.</p></details>
+        <details><summary>DauysTap қазақша сөзді тани ма?</summary><p>Иә. Қазақша, орысша және ағылшынша сөйлеуді таниды, тілдер араласса да түсінеді.</p></details>
+        <details><summary>Менің аудиом мен мәтінім сақтала ма?</summary><p>Мәтін тарихы тек өз браузеріңізде сақталады. Аудио мен видео өңделген соң серверде қалмайды.</p></details>
+      </div>
+      <div class="glass">
+        <div class="head"><h2>Не жаңа</h2></div>
+        <ol class="log" reversed>
+          <li><time datetime="2026-11-02">02.11.26</time><span>DauysTap: сөйлеп жазу, мәтіннен дауыс, видеодан мәтін. Тіркелмей байқап көріңіз.</span></li>
+          <li><time datetime="2026-10-27">27.10.26</time><span>Qarip: 23 жаңа қаріп, барлығы 320.</span></li>
+          <li><time datetime="2026-09-14">14.09.26</time><span>Таңба: телефондағы редактор мен жүктеу жаңартылды.</span></li>
+          <li><time datetime="2026-09-12">12.09.26</time><span>Таңба Beta: Stories редакторы мен қаріп каталогы.</span></li>
         </ol>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>
 
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <div>
-        <p class="footer-copy">AQSUEK © 2026</p>
-        <p class="footer-note">Қазақ тіліне арналған тегін құралдар · <a href="mailto:ekunat00@gmail.com">ekunat00@gmail.com</a></p>
+<footer>
+  <div class="wrap">
+    <div class="foot glass">
+      <div style="display:grid;gap:8px">
+        <a class="logo" href="/">AQSU<span>E</span>K</a>
+        <div class="mail">Ұсыныс пен қате туралы: <code id="em">ekunat00@gmail.com</code><button class="copy glass strong" id="cp" type="button">Көшіру</button></div>
       </div>
-      <nav class="footer-links" aria-label="Төменгі мәзір">
-        <a href="/qarip/tanystyru/">Qarip</a>
-        <a href="/tanba/tanystyru/">Таңба</a>
-        <a href="/dauystap/tanystyru/">DauysTap</a>
-        <a href="/tanba/stories/">Stories</a>
-        <a href="/blog/">Мақалалар</a>
-        <a href="/about/">Жоба туралы</a>
-        <a href="/privacy/">Құпиялық</a>
+      <nav aria-label="Төменгі мәзір">
+        <a href="/qarip/">Qarip</a><a href="/tanba/stories/">Таңба</a><a href="/dauystap/">DauysTap</a>
+        <a href="/blog/">Мақалалар</a><a href="/about/">Жоба туралы</a><a href="/privacy/">Құпиялық</a>
       </nav>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script src="/home.js?v=aqsuek2" defer></script>
-  <script src="/liquid-glass.js?v=lg20" defer></script>
+<nav class="tabbar glass strong" aria-label="Құралдар">
+  <a class="on" href="/" aria-current="page"><b>А</b>Басты</a>
+  <a href="/qarip/"><b>Ә</b>Qarip</a>
+  <a href="/tanba/stories/"><b>Т</b>Таңба</a>
+  <a href="/dauystap/"><b>●</b>DauysTap</a>
+</nav>
+
+<script src="/aq/glass.js?v=1"></script>
+<script>
+const FONTS=[
+  {n:"Geologica",c:"Гротеск",css:"'Geologica',sans-serif",w:700},
+  {n:"Lora",c:"Сериф",css:"'Lora',serif",w:500},
+  {n:"Onest",c:"Санс-сериф",css:"'Onest',sans-serif",w:500},
+  {n:"Comfortaa",c:"Дөңгелек",css:"'Comfortaa',sans-serif",w:600},
+  {n:"Yeseva One",c:"Дисплей",css:"'Yeseva One',serif",w:400}
+];
+const t=document.getElementById('t'), sz=document.getElementById('sz'), rows=document.getElementById('rows');
+function render(){
+  const txt=AQ.markKZ(t.value.trim()||"Қазақ тілі — ғажап тіл");
+  rows.innerHTML=FONTS.map(f=>`<div class="row"><div class="meta"><strong>${f.n}</strong><span>${f.c}</span></div>${AQ.badge(f.ok)}<div class="sample" style="font-family:${f.css};font-weight:${f.w};font-size:${sz.value}px">${txt}</div></div>`).join('');
+}
+t.addEventListener('input',render); sz.addEventListener('input',render); render();
+Promise.all(FONTS.map(f=>AQ.kzCount(f.n,f.w).then(n=>f.ok=n))).then(render);
+</script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4cff9e1227a64f6ea836c3fd64686153"}'></script>
 </body>
 </html>

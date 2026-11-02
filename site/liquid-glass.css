@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Geologica:wght@700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&display=swap");
 
 /* ==========================================================================
@@ -24,8 +25,8 @@
   --lg-muted:#5a6378;
 
   /* System-blue-ish accent used for the one tinted action per view. */
-  --lg-tint:#0a56ff;
-  --lg-tint-deep:#0940c8;
+  --lg-tint:#0A7C8A;
+  --lg-tint-deep:#07606C;
 
   /* Regular glass — adaptive, the default material for chrome. */
   --lg-reg:rgba(255,255,255,.52);
@@ -88,7 +89,7 @@
    1. Wallpaper — static and calm on purpose. Every page, editor included.
    ========================================================================== */
 html{
-  background:#eef1fa;
+  background:#e9eef4;
   font-family:var(--lg-sans);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
@@ -104,12 +105,11 @@ html::before{
   z-index:-2;
   pointer-events:none;
   background:
-    radial-gradient(42% 34% at 14% 6%,  #cfdcff 0%, transparent 62%),
-    radial-gradient(36% 30% at 86% 4%,  #ffdcec 0%, transparent 62%),
-    radial-gradient(42% 36% at 94% 58%, #d3efff 0%, transparent 62%),
-    radial-gradient(40% 36% at 4% 64%,  #e5dcff 0%, transparent 62%),
-    radial-gradient(48% 40% at 52% 98%, #d9f4e8 0%, transparent 64%),
-    linear-gradient(180deg,#f5f7fd 0%, #eef1fa 100%);
+    radial-gradient(46% 38% at 8% 4%,   rgba(127,211,220,.75) 0%, transparent 64%),
+    radial-gradient(36% 30% at 92% 22%, rgba(255,200,107,.55) 0%, transparent 62%),
+    radial-gradient(44% 38% at 40% 104%, rgba(159,184,255,.6) 0%, transparent 64%),
+    radial-gradient(30% 26% at 84% 86%, rgba(255,158,177,.4) 0%, transparent 62%),
+    linear-gradient(180deg,#eef2f6 0%, #e9eef4 100%);
 }
 
 /* Let the wallpaper through the legacy opaque page shell. */
@@ -613,7 +613,7 @@ body.qarip-font-page .font-download,
   background-image:
     radial-gradient(160px 160px at var(--bx,50%) var(--by,50%),
       rgba(255,255,255,.42), transparent 66%),
-    linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+    linear-gradient(180deg, rgba(10,124,138,.96), rgba(7,96,108,.96))!important;
   border:1px solid rgba(255,255,255,.28)!important;
   border-radius:var(--lg-r-pill)!important;
   color:#fff!important;
@@ -648,7 +648,7 @@ html.qarip-home .font-card .card-bottom a[download],
 html.qarip-home #catalog .font-card .font-download,
 html.qarip-home #catalog .font-card .card-bottom a[aria-label$="жүктеу"],
 html.qarip-home #catalog .font-card .card-bottom a[download]{
-  background-color:rgba(10,86,255,.12)!important;
+  background-color:rgba(10,124,138,.12)!important;
   background-image:
     radial-gradient(120px 120px at var(--bx,50%) var(--by,50%),
       rgba(255,255,255,.7), transparent 70%)!important;
@@ -666,13 +666,13 @@ html.qarip-home .font-card .card-bottom a[download]:hover,
 html.qarip-home #catalog .font-card .font-download:hover,
 html.qarip-home #catalog .font-card .card-bottom a[aria-label$="жүктеу"]:hover,
 html.qarip-home #catalog .font-card .card-bottom a[download]:hover{
-  background-color:rgba(10,86,255,.2)!important;
+  background-color:rgba(10,124,138,.2)!important;
   transform:none;
 }
 
 /* Detail page keeps a single solid primary action. */
 body.qarip-font-page .font-detail-actions .font-download{
-  background:linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+  background:linear-gradient(180deg, rgba(10,124,138,.96), rgba(7,96,108,.96))!important;
   color:#fff!important;
   border:1px solid rgba(255,255,255,.28)!important;
   box-shadow:
@@ -763,7 +763,7 @@ input[type="range"]{ accent-color:var(--lg-tint); }
    ========================================================================== */
 /* Stories chrome icons — filled by the shared disc system below */
 html.qarip-stories .leto-export{
-  background:linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+  background:linear-gradient(180deg, rgba(10,124,138,.96), rgba(7,96,108,.96))!important;
   color:#fff!important;
   -webkit-backdrop-filter:blur(12px) saturate(1.4);
   backdrop-filter:blur(12px) saturate(1.4);
@@ -853,7 +853,7 @@ html.qarip-stories .leto-export{
   background-image:
     radial-gradient(160px 160px at var(--bx,50%) var(--by,50%),
       rgba(255,255,255,.42), transparent 66%),
-    linear-gradient(180deg, rgba(38,110,255,.96), rgba(9,64,200,.96))!important;
+    linear-gradient(180deg, rgba(10,124,138,.96), rgba(7,96,108,.96))!important;
 }
 
 /* Untinted glass + plain fills: blob only, so their own colour shows. */
@@ -1965,7 +1965,7 @@ html.qarip-stories .leto-choice-alt{
   cursor:pointer;
 }
 html.qarip-stories .leto-choice-start{
-  background:linear-gradient(180deg,rgba(38,110,255,.96),rgba(9,64,200,.96));
+  background:linear-gradient(180deg,rgba(10,124,138,.96),rgba(7,96,108,.96));
   color:#fff;
 }
 html.qarip-stories .leto-choice-alt{
@@ -2036,4 +2036,33 @@ html.qarip-stories .leto-hint-card button{
   html:not(.qarip-nav-open) .qarip-nav-toggle{ display:none !important; }
   .topbar nav a, .site-nav a{ text-decoration:none !important; }
   .topbar nav a:hover, .site-nav a:hover{ text-decoration:underline !important; text-underline-offset:4px; }
+}
+
+
+/* ==========================================================================
+   AQSUEK redesign skin (Nov 2026) — brings every older page in line with the
+   new home, Qarip catalog and About pages (/aq/glass.css): steppe-teal
+   accent, Geologica headings, gold underline for Kazakh letters.
+   ========================================================================== */
+:root{
+  --lg-ink:#0E1A26;
+  --lg-muted:#4D5D70;
+  --lg-tint:#07606C;
+  --lg-tint-deep:#05505A;
+  /* home.css / landing.css accent tokens */
+  --accent:#0A7C8A;
+  --accent-soft:#E2F2F4;
+}
+html:not(.qarip-stories) h1,
+html:not(.qarip-stories) h2{
+  font-family:"Geologica",var(--lg-sans);
+  letter-spacing:-.025em;
+  text-wrap:balance;
+}
+html:not(.qarip-stories) a:not([class]){ color:#0A7C8A; }
+html:not(.qarip-stories) .site-header .brand,
+html:not(.qarip-stories) .topbar .brand{
+  font-family:"Geologica",var(--lg-sans);
+  font-weight:800;
+  letter-spacing:.02em;
 }

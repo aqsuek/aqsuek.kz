@@ -6,7 +6,7 @@ html.qarip-stories{
   --leto-ink:#f4f4f5;
   --leto-muted:#9aa6c4;
   --leto-line:#ffffff14;
-  --leto-yellow:#0040dc;
+  --leto-yellow:#0A7C8A;
   --leto-pink:#f06848;
   --leto-dock-stack:calc(88px + env(safe-area-inset-bottom));
 }
@@ -70,7 +70,7 @@ html.qarip-stories .leto-top-right{display:flex;gap:8px;align-items:center}
 html.qarip-stories .leto-export{
   width:auto;min-width:0;height:40px;padding:0 14px;border:0;border-radius:14px;
   background:var(--leto-yellow);color:#fff;display:inline-grid;place-items:center;
-  cursor:pointer;box-shadow:0 8px 24px #0040dc55;
+  cursor:pointer;box-shadow:0 8px 24px #0A7C8A55;
   font:800 13px/1 var(--lg-sans);flex:0 0 auto;box-sizing:border-box;
 }
 html.qarip-stories .leto-stage{
@@ -734,7 +734,7 @@ html.qarip-stories{
   --leto-ink:#0d1526;
   --leto-muted:#5a6378;
   --leto-line:rgba(15,23,42,.10);
-  --leto-yellow:#0a56ff;
+  --leto-yellow:#0A7C8A;
   --leto-pink:#e8623c;
   --leto-fill:rgba(15,23,42,.05);
   --leto-fill-hi:rgba(15,23,42,.09);
@@ -832,7 +832,7 @@ html.qarip-stories .leto-file{
 html.qarip-stories .leto-file{ border-style:dashed; }
 html.qarip-stories .leto-layout-grid button.active{
   border-color:var(--leto-yellow);
-  background:rgba(10,86,255,.08);
+  background:rgba(10,124,138,.08);
 }
 html.qarip-stories .leto-layout-grid .lo-frame{
   background:linear-gradient(160deg,#e9edf8,#dde3f2);
