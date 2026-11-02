@@ -43,6 +43,9 @@ const AQ=(()=>{
   const CAT_BASE=/(^|\.)aqsuek\.kz$/.test(location.hostname)?location.origin:'https://aqsuek.kz';
   const CAT_URL=CAT_BASE+'/qarip/data/fonts.json';
   const abs=u=>{try{return u?new URL(u,CAT_BASE+'/').href:null}catch(_){return null}};
+  // GitHub Pages doesn't carry the zip/rar archives; they live on the tanba-fonts-v1 tag (same rule as qarip-lib.js).
+  const ARCHIVE_CDN='https://raw.githubusercontent.com/aqsuek/aqsuek.kz/tanba-fonts-v1/site/tanba/downloads/';
+  const archive=u=>{const m=/\/(?:qarip|tanba)\/downloads\/([^/?#]+\.(?:zip|rar))$/i.exec(String(u||''));return m?ARCHIVE_CDN+m[1]:abs(u)};
   const CAT_KK={"Display":"Дисплей","Handwritten":"Қолжазба","Monospace":"Моно","Sans Serif":"Санс-сериф","Serif":"Сериф"};
   function norm(f){
     if(!f||typeof f!=='object'||!(f.name||f.family))return null;
@@ -53,7 +56,7 @@ const AQ=(()=>{
     if(!google&&!faces.length)return null;
     const catKey=String(f.category||f.style||'Other');
     return {name,slug:String(f.slug||name.toLowerCase().replace(/\s+/g,'-')),family:google||String(f.family||'AQ '+name),google,faces,w:400,
-      catKey,cat:String(f.style||CAT_KK[catKey]||catKey),license:f.license==='open'?'open':'check',download:abs(f.download),
+      catKey,cat:String(f.style||CAT_KK[catKey]||catKey),license:f.license==='open'?'open':'check',download:archive(f.download),
       // The catalog names Google as the maker of its Google-hosted fonts; show the designer instead.
       maker:String((/google/i.test(f.maker||'')?f.author:f.maker)||f.author||''),stories:f.useCase==='stories'||/\bstories\b/i.test(String(f.tags||'')),ok:null,failed:false};
   }

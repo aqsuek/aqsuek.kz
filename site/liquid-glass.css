@@ -2059,7 +2059,6 @@ html:not(.qarip-stories) h2{
   letter-spacing:-.025em;
   text-wrap:balance;
 }
-html:not(.qarip-stories) a:not([class]){ color:#0A7C8A; }
 html:not(.qarip-stories) .site-header .brand,
 html:not(.qarip-stories) .topbar .brand{
   font-family:"Geologica",var(--lg-sans);
